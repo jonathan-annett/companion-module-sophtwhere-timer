@@ -17,7 +17,16 @@ class ModuleInstance extends InstanceBase {
 		this.updateActions() // export actions
 		this.updateFeedbacks() // export feedbacks
 		this.updateVariableDefinitions() // export variable definitions
+
+		const api = require('./server.js').api;
+
+		api.config(config);
+
+		api.setVariableValues = this.setVariableValues.bind(this);
 	}
+
+		
+	
 	// When module gets deleted
 	async destroy() {
 		this.log('debug', 'destroy')
