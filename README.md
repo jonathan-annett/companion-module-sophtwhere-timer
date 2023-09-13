@@ -1,3 +1,3 @@
-# companion-module-[replace with module name]
+# companion-module-sophtwhere-timer
 
 See [HELP.md](./companion/HELP.md) and [LICENSE](./LICENSE)

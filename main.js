@@ -39,19 +39,22 @@ class ModuleInstance extends InstanceBase {
 	// Return config fields for web config
 	getConfigFields() {
 		return [
+
 			{
-				type: 'textinput',
-				id: 'host',
-				label: 'Target IP',
-				width: 8,
-				regex: Regex.IP,
+				type: 'static-text',
+				id: 'info',
+				width: 12,
+				label: 'Information',
+				value:
+					'You can override the default internal port. If you use port 8088, the timer will be accessible on http://localhost:8088\n\nPlease restart Companion after changing and saving the port',
 			},
 			{
 				type: 'textinput',
 				id: 'port',
-				label: 'Target Port',
+				label: 'Internal Port',
 				width: 4,
 				regex: Regex.PORT,
+				value : 8088
 			},
 		]
 	}
