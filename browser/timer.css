@@ -584,6 +584,13 @@ div.buttons div.btn {
    margin: 4px 2px;
    cursor: pointer;
 }
+
+#link,
+#link a {
+    cursor:pointer;
+    z-index:9999;
+}
+
 div.buttons div.btn2 {
     
    width:80px;
