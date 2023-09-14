@@ -1217,7 +1217,7 @@ function onDocKeyDown(ev){
     }
 }
 
-if (runMode !== "presenter") {
+if (runMode !== "presenter" && (location.protocol === 'http:' && !location.hostname.endsWith('.com')) ) {
     restartWS();
 }
 

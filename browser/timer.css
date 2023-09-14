@@ -207,11 +207,15 @@ html.showmessages.over #remain_info_message {
     display:block;
 }
 
+ 
 html.reduced #messages_enabled {
     display:none;
     
 }
 
+ 
+html.show_custom_message.showmessages.impending #remain_info_message,
+html.show_custom_message.showmessages.over #remain_info_message ,
 html.edit_custom_message.showmessages.impending #remain_info_message,
 html.edit_custom_message.showmessages.over #remain_info_message {
     top: 5%;
@@ -324,6 +328,8 @@ html.over.showmessages #remain_info_message:before {
     content : "Time is Up";
 }
 
+html.paused.over #remain_info_message,
+html.paused.impending #remain_info_message,
 html.paused #remain_info_message {
     color:#202020;
     display : block;
@@ -340,6 +346,8 @@ html.paused #ends_disp {
     
 }
 
+html.over.showmessages.paused #remain_info_message:before,
+html.impending.showmessages.paused #remain_info_message:before,
 html.paused #remain_info_message:before {
     content : "Paused (for ";
 }

@@ -384,7 +384,7 @@ module.exports = function (self) {
 
 		'remaining': {
 			type: 'button',
-			category: 'Timer',
+			category: 'Time Remaining',
 			name: 'Remaining',
 			style: {
 				text: '$(timer:remain)',
@@ -408,7 +408,7 @@ module.exports = function (self) {
 
 		'elapsed': {
 			type: 'button',
-			category: 'Timer',
+			category: 'Time Elapsed',
 			name: 'Elapsed',
 			style: {
 				text: '$(timer:elapsed)',
@@ -501,95 +501,11 @@ module.exports = function (self) {
 			feedbacks: [
 				
 			],
-		},
-
-
-
-		'bar': {
-			type: 'button',
-			category: 'Timer',
-			name: 'Toggle Bar Display',
-			style: {
-				text: 'Bar Toggle',
-				size: '18',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'bar',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
-		'time': {
-			type: 'button',
-			category: 'Timer',
-			name: 'Toggle Time Display',
-			style: {
-				text: 'Time Toggle',
-				size: '18',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'time',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
-
-
+		},		
 		
-		'plus1': {
-			type: 'button',
-			category: 'Timer',
-			name: 'Plus1',
-			style: {
-				text: '+ 1 sec',
-				size: '18',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'plus1',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
-
 		'minus1': {
 			type: 'button',
-			category: 'Timer',
+			category: 'Adjust Timer',
 			name: 'Minus1',
 			style: {
 				text: '- 1 sec',
@@ -614,37 +530,9 @@ module.exports = function (self) {
 			],
 		},
 
-		
-		'plus1min': {
-			type: 'button',
-			category: 'Timer',
-			name: 'Plus1Min',
-			style: {
-				text: '+ 1 min',
-				size: '18',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'plus1Min',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
-
 		'minus1min': {
 			type: 'button',
-			category: 'Timer',
+			category: 'Adjust Timer',
 			name: 'Minus1Min',
 			style: {
 				text: '- 1 min',
@@ -669,9 +557,65 @@ module.exports = function (self) {
 			],
 		},
 
+		
+		'plus1min': {
+			type: 'button',
+			category: 'Adjust Timer',
+			name: 'Plus1Min',
+			style: {
+				text: '+ 1 min',
+				size: '18',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'plus1Min',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+		'plus1': {
+			type: 'button',
+			category: 'Adjust Timer',
+			name: 'Plus1',
+			style: {
+				text: '+ 1 sec',
+				size: '18',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'plus1',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+
 		'catchup': {
 			type: 'button',
-			category: 'Timer',
+			category: 'Adjust Timer',
 			name: 'Catchup to Real Time',
 			style: {
 				text: 'Realtime',
@@ -696,9 +640,64 @@ module.exports = function (self) {
 			],
 		},
 
+		
+		'bar': {
+			type: 'button',
+			category: 'Display Modes',
+			name: 'Toggle Bar Display',
+			style: {
+				text: 'Bar Toggle',
+				size: '18',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'bar',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+		'time': {
+			type: 'button',
+			category: 'Display Modes',
+			name: 'Toggle Time Display',
+			style: {
+				text: 'Time Toggle',
+				size: '18',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'time',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
 		'messages': {
 			type: 'button',
-			category: 'Timer',
+			category: 'Display Modes',
 			name: 'Toggle Messages',
 			style: {
 				text: 'Messages',
@@ -729,7 +728,7 @@ module.exports = function (self) {
 	hmsKeys.forEach(function(k){
 		presets[`Remaining ${k}`]={
 			type: 'button',
-			category: 'Timer - Remaining',
+			category: 'Time Remaining',
 			name: `Remaining ${k}`,
 			style: {
 				text: `$(timer:remain_${k})`,
@@ -755,7 +754,7 @@ module.exports = function (self) {
 	hmsKeys.forEach(function(k){
 		presets[`Elapsed ${k}`]={
 			type: 'button',
-			category: 'Timer - Elapsed',
+			category: 'Time Elapsed',
 			name: `Elapsed ${k}`,
 			style: {
 				text: `$(timer:elapsed_${k})`,
@@ -812,7 +811,7 @@ module.exports = function (self) {
    stdTimes.forEach(function(mins){
 		presets[`${mins} Minutes`] =  {
 			type: 'button',
-			category: 'Hot Start Timer Buttons',
+			category: 'Hot Start Buttons',
 			name: `start${mins}`,
 			style: {
 				text: `${mins} mins`,
@@ -836,7 +835,7 @@ module.exports = function (self) {
 
 	presets['1 Hour'] =  {
 		type: 'button',
-		category: 'Hot Start Timer Buttons',
+		category: 'Hot Start Buttons',
 		name: `start60`,
 		style: {
 			text: `1 hour`,
@@ -859,7 +858,7 @@ module.exports = function (self) {
 
 	presets['2 Hours'] =  {
 		type: 'button',
-		category: 'Hot Start Timer Buttons',
+		category: 'Hot Start Buttons',
 		name: `start120`,
 		style: {
 			text: `2 hours`,
