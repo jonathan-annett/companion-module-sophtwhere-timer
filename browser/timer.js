@@ -900,7 +900,7 @@ function onDocKeyDown(ev){
             
             break; 
             case "ArrowRight": 
-                bumpStart(factor);
+                bumpStart(factor);setHtmlClass
                 bumpEnd(seekEndDelta,endDelta);
                 
                 durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
@@ -1201,7 +1201,9 @@ function onDocKeyDown(ev){
     }
 }
 
-restartWS();
+if (runMode !== "presenter") {
+    restartWS();
+}
 
 function restartWS() {
 
@@ -1217,6 +1219,37 @@ function restartWS() {
                     }
                    
                 });
+                break;
+            }
+
+            case "customMessage" : {
+
+
+                       
+                html.classList.remove("edit_custom_message");
+                html.classList.remove("show_custom_message");
+                custom_message.innerText = msg.text.trim();
+                custom_message.contentEditable=false;
+                
+
+                if (custom_message.innerText.length>0) {
+                    html.classList.add("show_custom_message");                    
+                }
+                localStorage.setItem("custom_message",custom_message.innerText);
+                break;
+            }
+
+            case "presenter" : {
+                if (runMode !== "presenter") {
+                    location.replace("/?presenter");
+                }
+                break;
+            }
+
+            case "control" : {
+                if (runMode === "presenter") {
+                    location.replace("/");
+                }
                 break;
             }
 
@@ -1262,14 +1295,20 @@ function connectWS(cb) {
             // e.g. server process killed or network down
             // event.code is usually 1006 in this case
             cb(undefined,"aborted",event.reason,event.code);
-            setTimeout(restartWS,1500);
+            if (ws_conn) {
+                ws_conn = undefined;
+                setTimeout(restartWS,1500);
+            }
         }
         };
         
         socket.onerror = function(error) {
-            ws_conn = undefined;
-            setTimeout(restartWS,1500);
             cb(error);
+            if (ws_conn) {
+                ws_conn = undefined;
+                setTimeout(restartWS,1500);
+            }
+           
         };
         
         

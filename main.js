@@ -3,6 +3,7 @@ const UpgradeScripts = require('./upgrades')
 const UpdateActions = require('./actions')
 const UpdateFeedbacks = require('./feedbacks')
 const UpdateVariableDefinitions = require('./variables')
+const { splitHMS } = require('./splitHMS')
 
 class ModuleInstance extends InstanceBase {
 	constructor(internal) {
@@ -22,9 +23,30 @@ class ModuleInstance extends InstanceBase {
 
 		api.config(config);
 
-		api.setVariableValues = this.setVariableValues.bind(this);
+		const setVars = this.setVariableValues.bind(this);
+
+		api.setVariableValues = function (vars) {
+			const vars2 = {};
+			Object.keys(vars).forEach(function(k){
+				const val = vars[k];
+				vars2[k]=val;
+				if (k==="remain" || k==="elapsed") {
+					const extra = splitHMS(val);
+					Object.keys(extra).forEach(function(kk){
+						vars2[`${k}_${kk}`] = extra[kk];
+					});
+				}
+			});
+			setVars(vars2);
+		}
+
+		
+
+	 
 	}
 
+
+	
 		
 	
 	// When module gets deleted
@@ -46,7 +68,7 @@ class ModuleInstance extends InstanceBase {
 				width: 12,
 				label: 'Information',
 				value:
-					'You can override the default internal port. If you use port 8088, the timer will be accessible on http://localhost:8088\n\nPlease restart Companion after changing and saving the port',
+					'You can override the default internal port. If you use port 8088, the timer will be accessible http://localhost:8088/\n\nPlease restart Companion after changing and saving the port',
 			},
 			{
 				type: 'textinput',

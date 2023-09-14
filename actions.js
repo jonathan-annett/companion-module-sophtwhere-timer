@@ -1,7 +1,36 @@
 const { combineRgb } = require('@companion-module/base');
+const { splitHMS } = require('./splitHMS')
 
 module.exports = function (self) {
+
+	const hmsKeys = Object.keys(splitHMS('0:0'));
+	 
 	self.setActionDefinitions({
+
+
+		show : {
+
+			name: 'Show Timer',
+			options: [],
+			callback: async (event) => {
+
+			 
+				loadOpen().then(function(open){
+               
+					console.log("open is ready",open);
+					open.default(`http://localhost:${self.config.port}/`).then(function(x){
+						 
+
+						 
+					}).catch(function(err){
+						console.log("could not start browser",err);
+					});
+				}).catch(function(err){
+					console.log("could not load open",err);
+				});
+
+			},
+		},
 
 	
 		restart : {
@@ -209,142 +238,61 @@ module.exports = function (self) {
 				});
 			},
 		},
+
+		catchup  : {
+			name: 'Catchup to realtime',
+			options: [
+				],
+			callback: async (event) => {0
+				const api = require('./server.js').api;
+				api.send({
+					cmd:"catchup"
+				});
+			},
+		},
+
+		messages : {
+			name: 'Toggle Messages Display',
+			options: [
+				],
+			callback: async (event) => {0
+				const api = require('./server.js').api;
+				api.send({
+					cmd:"messages"
+				});
+			},
+		},
+
+		customMessage : {
+			name: 'Display Custom Message',
+			options: [
+				{
+					id: 'text',
+					type: 'textinput',
+					label: 'Text',
+					default: ""
+				}, 
+				],
+			callback: async (event) => {0
+				const api = require('./server.js').api;
+				api.send({
+					cmd:"customMessage",
+					text:event.options.text
+				});
+			},
+		},
 		
 	})
 
 	const presets = {
-
-
-
-		'remaining': {
-			type: 'button',
-			category: 'Timer',
-			name: 'Remaining',
-			style: {
-				text: '$(timer:remain)',
-				size: '12',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-					 
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
-
-
-		'elapsed': {
-			type: 'button',
-			category: 'Timer',
-			name: 'Elapsed',
-			style: {
-				text: '$(timer:elapsed)',
-				size: '12',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-					 
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
-
-
-		'default': {
-			type: 'button',
-			category: 'Timer',
-			name: 'Default Duration',
-			style: {
-				text: '$(timer:default)',
-				size: '12',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-					 
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
-
-		'endsAt': {
-			type: 'button',
-			category: 'Timer',
-			name: 'Ends At',
-			style: {
-				text: '$(timer:endsAt)',
-				size: '7',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-					 
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
-
-		'startedAt': {
-			type: 'button',
-			category: 'Timer',
-			name: 'Started At',
-			style: {
-				text: '$(timer:startedAt)',
-				size: '7',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-					 
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
 
 		'restart': {
 			type: 'button',
 			category: 'Timer',
 			name: 'Restart',
 			style: {
-				text: '$(timer:remain)\nRestart\n$(timer:default)',
-				size: '12',
+				text: 'Restart',
+				size: '18',
 				color: combineRgb(255, 255, 255),
 			    bgcolor: combineRgb(0, 0, 0),
 	
@@ -391,6 +339,130 @@ module.exports = function (self) {
 				
 			],
 		},
+
+
+		'remaining': {
+			type: 'button',
+			category: 'Timer',
+			name: 'Remaining',
+			style: {
+				text: '$(timer:remain)',
+				size: '24',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+					 
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+		'elapsed': {
+			type: 'button',
+			category: 'Timer',
+			name: 'Elapsed',
+			style: {
+				text: '$(timer:elapsed)',
+				size: '24',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+					 
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+
+		'default': {
+			type: 'button',
+			category: 'Timer',
+			name: 'Default Duration',
+			style: {
+				text: 'Next\n$(timer:default)',
+				size: '24',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+					 
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+		'endsAt': {
+			type: 'button',
+			category: 'Timer',
+			name: 'Ends At',
+			style: {
+				text: 'Ends At\n$(timer:endsAt)',
+				size: '18',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+					 
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+		'startedAt': {
+			type: 'button',
+			category: 'Timer',
+			name: 'Started At',
+			style: {
+				text: 'Started\n$(timer:startedAt)',
+				size: '18',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+					 
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+
 
 		'bar': {
 			type: 'button',
@@ -556,7 +628,143 @@ module.exports = function (self) {
 			],
 		},
 
+		'catchup': {
+			type: 'button',
+			category: 'Timer',
+			name: 'Catchup to Real Time',
+			style: {
+				text: 'Realtime',
+				size: '14',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'catchup',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+		'messages': {
+			type: 'button',
+			category: 'Timer',
+			name: 'Toggle Messages',
+			style: {
+				text: 'Messages',
+				size: '14',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'messages',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
 	};
+
+
+	hmsKeys.forEach(function(k){
+		presets[`Remaining ${k}`]={
+			type: 'button',
+			category: 'Timer',
+			name: `Remaining ${k}`,
+			style: {
+				text: `$(timer:remain_${k})`,
+				size: '24',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+					 
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		};
+	});
+
+	hmsKeys.forEach(function(k){
+		presets[`Elapsed ${k}`]={
+			type: 'button',
+			category: 'Timer',
+			name: `Elapsed ${k}`,
+			style: {
+				text: `$(timer:elapsed_${k})`,
+				size: '24',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+					 
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		};
+	});
+
+
+	presets['show']= {
+		type: 'button',
+		category: 'Timer',
+		name: 'Show Timer',
+		style: {
+			text: 'Open Browser',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(0, 0, 0),
+
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'show',
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [
+			
+		],
+	};
+
 	
    const stdTimes = [5,10,15,20,25,30,35,40,45,50,55]
 
@@ -706,6 +914,13 @@ module.exports = function (self) {
 
 
 	self.setPresetDefinitions(presets);
+
+
+	async function loadOpen(){
+		const open =  await import('open');
+		return open;
+	}
+	
 
 
 }

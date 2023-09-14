@@ -12,6 +12,7 @@
 	},
 	"dependencies": {
 		"@companion-module/base": "~1.4.0",
+		"open": "^9.1.0",
 		"ws": "^8.14.1"
 	},
 	"devDependencies": {
