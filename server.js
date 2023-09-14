@@ -161,6 +161,11 @@ function api_config(cfg) {
                     break;
                 }
 
+                case "undopause" : {
+                    data = {  cmd : "keys",keys :[ "'" ] }
+                    break;
+                }
+
                 case "bar" : {
                     data = {  cmd : "keys",keys :[ 'b' ] }
                     break;

@@ -84,6 +84,7 @@ let seekEndsAt      = readNumber ( "seekEndsAt",      endsAt        );
 
 let lastUpdateTick = 0;
 let lastTimeText   = "";
+let lastEndsAtText = "";
 let enterTimeText  = "";
 let enterHoursText = "";
 let tab_id = "tab_"+Date.now().toString(); 
@@ -315,6 +316,13 @@ custom_message.addEventListener('focus', function(){
              remainInfoDisp.textContent =  runMode === "presenter" ? "Paused" : secToStr(pausedMsec / oneSecond);
              endsDisp.textContent =  new Date(seekEndsAt+pausedMsec).toLocaleTimeString();
              extraTimeDisp.textContent = "+ "+secToStr((pauseAcum+pausedMsec) / oneSecond)+" pauses";
+
+             if (ws_conn && lastEndsAtText !== endsDisp.textContent) {
+                lastEndsAtText = endsDisp.textContent;
+                ws_conn.send(JSON.stringify({setVariableValues:{endsAt:lastEndsAtText}}));
+             }
+
+            
              
          } else {
              remainInfoDisp.textContent = "";
@@ -393,6 +401,7 @@ custom_message.addEventListener('focus', function(){
                      if (ws_conn) {
                         ws_conn.send(JSON.stringify({setVariableValues:{remain:timeText,elapsed:elapsedText}}));
                      }
+
                   }
          }
          localStorage.setItem("remainDispClass",html.className);
@@ -776,6 +785,9 @@ function onDocKeyDown(ev){
              
                     endsAt = seekEndsAt;
                     endsDisp.textContent =  new Date(seekEndsAt).toLocaleTimeString();
+                    if (ws_conn) {
+                      ws_conn.send(JSON.stringify({setVariableValues:{endsAt:endsDisp.textContent}}));
+                    }
                     
                 }
                 
@@ -794,6 +806,10 @@ function onDocKeyDown(ev){
                 seekEndsAt = startedAt + thisDuration;
                 endsAt = seekEndsAt;
                 endsDisp.textContent =  new Date(seekEndsAt).toLocaleTimeString();
+
+                if (ws_conn) {
+                    ws_conn.send(JSON.stringify({setVariableValues:{endsAt:endsDisp.textContent}}));
+                }
                     
                 break;
             
@@ -1295,10 +1311,13 @@ function connectWS(cb) {
             // e.g. server process killed or network down
             // event.code is usually 1006 in this case
             cb(undefined,"aborted",event.reason,event.code);
-            if (ws_conn) {
-                ws_conn = undefined;
-                setTimeout(restartWS,1500);
-            }
+           
+        }
+
+
+        if (ws_conn) {
+            ws_conn = undefined;
+            setTimeout(restartWS,1500);
         }
         };
         

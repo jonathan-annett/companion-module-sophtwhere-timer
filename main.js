@@ -68,15 +68,16 @@ class ModuleInstance extends InstanceBase {
 				width: 12,
 				label: 'Information',
 				value:
-					'You can override the default internal port. If you use port 8088, the timer will be accessible http://localhost:8088/\n\nPlease restart Companion after changing and saving the port',
+					'You can override the default internal port. If you use port 8088, the timer will be accessible http://localhost:8088/',
 			},
 			{
 				type: 'textinput',
 				id: 'port',
-				label: 'Internal Port',
+				label: 'HTTP Port',
 				width: 4,
 				regex: Regex.PORT,
-				value : 8088
+				default : '8088'
+				
 			},
 		]
 	}

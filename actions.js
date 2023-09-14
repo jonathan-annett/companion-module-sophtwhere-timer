@@ -165,6 +165,18 @@ module.exports = function (self) {
 			},
 		},
 
+		undopause : {
+			name: 'Undo Pause',
+			options: [
+				],
+			callback: async (event) => {0
+				const api = require('./server.js').api;
+				api.send({
+					cmd:"undopause"
+				});
+			},
+		},
+
 		bar : {
 			name: 'Toggle Bar Display',
 			options: [
@@ -339,6 +351,35 @@ module.exports = function (self) {
 				
 			],
 		},
+
+		
+		'undopause': {
+			type: 'button',
+			category: 'Timer',
+			name: 'Undo Pause',
+			style: {
+				text: 'Undo Pause',
+				size: '18',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'undopause',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
 
 
 		'remaining': {
@@ -688,11 +729,11 @@ module.exports = function (self) {
 	hmsKeys.forEach(function(k){
 		presets[`Remaining ${k}`]={
 			type: 'button',
-			category: 'Timer',
+			category: 'Timer - Remaining',
 			name: `Remaining ${k}`,
 			style: {
 				text: `$(timer:remain_${k})`,
-				size: '24',
+				size: '18',
 				color: combineRgb(255, 255, 255),
 			    bgcolor: combineRgb(0, 0, 0),
 	
@@ -714,11 +755,11 @@ module.exports = function (self) {
 	hmsKeys.forEach(function(k){
 		presets[`Elapsed ${k}`]={
 			type: 'button',
-			category: 'Timer',
+			category: 'Timer - Elapsed',
 			name: `Elapsed ${k}`,
 			style: {
 				text: `$(timer:elapsed_${k})`,
-				size: '24',
+				size: '18',
 				color: combineRgb(255, 255, 255),
 			    bgcolor: combineRgb(0, 0, 0),
 	

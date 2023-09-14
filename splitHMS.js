@@ -13,16 +13,16 @@ function splitHMS(hms) {
 	ss = ('0' + s).substr(-2);
 
 	return {
-		h : h === '0' ? '' : h, 
-		m : m === '0' ? '' : m, 
-		s : s === '0' ? '' : s, 
 		hh, 
 		mm, 
 		ss,
-		m_ss: m + ':' + ss,
+		h : h === '0' ? '' : h, 
+		m : m === '0' ? '' : m, 
+		s : s === '0' ? '' : s, 
 		mm_ss: mm + ':' + ss,
-		h_mm_ss: h + ':' + mm + ':+ss',
-		hh_mm_ss: h + ':' + mm + ':+ss'
+		hh_mm_ss: h + ':' + mm + ':'+ss,
+		m_ss: m + ':' + ss,
+		h_mm_ss: h + ':' + mm + ':'+ss,
 	};
 
 }
