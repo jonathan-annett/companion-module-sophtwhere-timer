@@ -4,6 +4,7 @@ const http      = require('http');
 const WebSocket = require('ws');
 
 const files = [
+    // these files are cached for the browser
     'timer.html',
     'timer.js',
     'timer.css',
@@ -12,8 +13,7 @@ const files = [
 
 const content = {};
 files.forEach(function(fn){
-    const body =  fs.readFileSync(path.join(__dirname,'browser',fn),'utf8');
-   
+    const body =  fs.readFileSync(path.join(__dirname,'browser',fn),'utf8');   
     content['/'+fn]= {
         body: body,
         headers : {
@@ -21,7 +21,6 @@ files.forEach(function(fn){
             'content-length' : content.length
         }
     };
-
 });
 
 
@@ -31,12 +30,11 @@ content['/']=content['/timer.html'];
 const connections = [];
 
 function api_config(cfg) {
-    console.log(cfg);
+   
     const HTTP_PORT=cfg.port;
 
     closeConnections ();
    
-
     const server = http.createServer(function(request, response) {
         const data = content [request.url.split('?')[0]];
         console.log(request.socket.remoteAddress);

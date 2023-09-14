@@ -806,7 +806,7 @@ module.exports = function (self) {
 	};
 
 	
-   const stdTimes = [5,10,15,20,25,30,35,40,45,50,55]
+   const stdTimes = [5,10,15,20,25,30,35,40,45,50,55];
 
    stdTimes.forEach(function(mins){
 		presets[`${mins} Minutes`] =  {
