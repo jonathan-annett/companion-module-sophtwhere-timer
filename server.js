@@ -204,6 +204,12 @@ function api_config(cfg) {
                 }
 
 
+              //  case "pip" : {
+              //      data = {  cmd : "keys",keys :[ 'o' ] }
+               //     break;
+              //  }
+
+
 
             }
             const json = JSON.stringify(data,undefined,4);

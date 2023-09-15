@@ -200,6 +200,10 @@ module.exports = function (self) {
 				});
 			},
 		},
+
+	
+
+
 		minus1 : {
 			name: 'subtract 1 second from current timer',
 			options: [
@@ -287,10 +291,14 @@ module.exports = function (self) {
 				],
 			callback: async (event) => {0
 				const api = require('./server.js').api;
-				api.send({
-					cmd:"customMessage",
-					text:event.options.text
-				});
+					this.parseVariables(event.options.text,function(err,text){
+						console.log({err,text});
+						api.send({
+							cmd:"customMessage",
+							text:text||err&&err.message||text
+						});
+		
+					});
 			},
 		},
 		

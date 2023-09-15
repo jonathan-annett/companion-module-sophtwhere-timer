@@ -55,6 +55,8 @@ let pauseAcum = 0;
   
 let runMode = "controller";
 
+let togglePIPMode = setupPip("remain_disp","remain_disp_video",192,108,"50px Arial",".mainDiv > .progressDiv > .progress",getInheritedBackgroundColor);
+
   if (window.location.search.startsWith("?presenter")) {
 
       html.classList.add("reduced");
@@ -72,6 +74,8 @@ let runMode = "controller";
      } else {
          document.title = "Presentation Timer - Control Screen";
      }
+
+   
 
   }
   
@@ -997,7 +1001,13 @@ function onDocKeyDown(ev){
                 html.classList.toggle("showtimenow");
                 writeNumber("showtimenow",html.classList.contains("showtimenow") ? 1 : 0);
                 break;
-                
+
+            case "o":
+            case "O":
+
+                togglePIPMode();
+                break;
+
             case "p":
             case "P":
                 
@@ -1255,6 +1265,7 @@ function restartWS() {
                 break;
             }
 
+
             case "presenter" : {
                 if (runMode !== "presenter") {
                     location.replace("/?presenter");
@@ -1332,3 +1343,151 @@ function connectWS(cb) {
         
         
 }
+
+function simulateKey (keyCode, type, modifiers) {
+	var evtName = (typeof(type) === "string") ? "key" + type : "keydown";	
+	var modifier = (typeof(modifiers) === "object") ? modifier : {};
+
+	var event = document.createEvent("HTMLEvents");
+	event.initEvent(evtName, true, false);
+	event.keyCode = keyCode;
+	
+	for (var i in modifiers) {
+		event[i] = modifiers[i];
+	}
+
+	document.dispatchEvent(event);
+}
+
+
+function setupPip(sourceId,targetId,width,height,font,fgQuery,getFGColor) {
+    const target = document.getElementById(targetId);
+    if (!target.requestPictureInPicture) return null;
+    
+    const content = document.getElementById(sourceId);
+    const fgEl = fgQuery ? document.querySelector(fgQuery) : content;
+    getFGColor = getFGColor || getInheritedColor;
+
+    const bg = getInheritedBackgroundColor(content);
+    let lastContent = "";
+    const source = document.createElement('canvas');
+    source.width = width;
+    source.height = height;
+    
+    target.style.position = 'absolute';
+    target.style.bottom=0;
+    target.style.right=0;
+    target.style.opacity=0;
+    
+    const ctx = source.getContext('2d');
+    ctx.font = font;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    anim();
+  
+    const stream = source.captureStream();
+    target.srcObject = stream;
+    
+    
+    togglePictureInPicture.enterPIP = enterPIP;
+    togglePictureInPicture.exitPIP = exitPIP;
+
+    
+  
+    return togglePictureInPicture;
+    
+    function anim() {
+      const str = content.textContent;
+      if (lastContent!==str) { 
+        ctx.fillStyle = bg;
+        ctx.fillRect( 0, 0, source.width, source.height );
+        ctx.fillStyle = getFGColor(fgEl);
+        ctx.fillText( str, source.width / 2, source.height / 2 );
+        lastContent = str;
+      }
+      requestAnimationFrame( anim );
+    }
+  
+    function togglePictureInPicture() {
+      if (document.pictureInPictureElement) {
+        document.exitPictureInPicture();
+      } else if (document.pictureInPictureEnabled) {
+        target.requestPictureInPicture();
+      }
+    }
+    
+    function enterPIP() {
+     if (document.pictureInPictureElement) {
+        return false;
+      } else if (document.pictureInPictureEnabled) {
+        target.requestPictureInPicture();
+        return true;
+      }
+    }
+    
+    function exitPIP() {
+     if (document.pictureInPictureElement) {
+        document.exitPictureInPicture();
+        return true;
+      } else if (document.pictureInPictureEnabled) {
+        return false;
+      }
+    }
+
+
+
+  }
+
+
+  function getInheritedBackgroundColor(el) {
+    // get default style for current browser
+    var defaultStyle = getDefaultBackground() // typically "rgba(0, 0, 0, 0)"
+    
+    // get computed color for el
+    var backgroundColor = window.getComputedStyle(el).backgroundColor
+    
+    // if we got a real value, return it
+    if (backgroundColor != defaultStyle) return backgroundColor
+  
+    // if we've reached the top parent el without getting an explicit color, return default
+    if (!el.parentElement) return defaultStyle
+    
+    // otherwise, recurse and try again on parent element
+    return getInheritedBackgroundColor(el.parentElement)
+  }
+  
+  function getDefaultBackground() {
+    // have to add to the document in order to use getComputedStyle
+    var div = document.createElement("div")
+    document.head.appendChild(div)
+    var bg = window.getComputedStyle(div).backgroundColor
+    document.head.removeChild(div)
+    return bg
+  }
+
+
+  function getInheritedColor(el) {
+    // get default style for current browser
+    var defaultStyle = getDefaultColor() // typically "rgba(0, 0, 0, 0)"
+    
+    // get computed color for el
+    var color = window.getComputedStyle(el).color
+    
+    // if we got a real value, return it
+    if (color != defaultStyle) return color
+  
+    // if we've reached the top parent el without getting an explicit color, return default
+    if (!el.parentElement) return defaultStyle
+    
+    // otherwise, recurse and try again on parent element
+    return getInheritedColor(el.parentElement);
+  }
+  
+  function getDefaultColor() {
+    // have to add to the document in order to use getComputedStyle
+    var div = document.createElement("div")
+    document.head.appendChild(div)
+    var bg = window.getComputedStyle(div).color
+    document.head.removeChild(div)
+    return bg
+  }
