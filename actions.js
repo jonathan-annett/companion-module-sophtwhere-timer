@@ -291,14 +291,14 @@ module.exports = function (self) {
 				],
 			callback: async (event) => {0
 				const api = require('./server.js').api;
-					this.parseVariables(event.options.text,function(err,text){
-						console.log({err,text});
-						api.send({
-							cmd:"customMessage",
-							text:text||err&&err.message||text
-						});
-		
-					});
+					 
+				
+				api.send({
+					cmd:"customMessage",
+					text:event.options.text
+				});
+
+				 
 			},
 		},
 		
