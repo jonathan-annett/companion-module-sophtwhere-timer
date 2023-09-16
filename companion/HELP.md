@@ -2,7 +2,7 @@
 
 This connection enables a countdown timer on your computer, which you display using a web browser.
 
-**TLDR** *Experts can click <a href="http://localhost:8099" target="_blank" rel="noopener"><span>here</span> </a> to open the timer page, once they are familiar with these instructions.*
+**TLDR** *Experts can click <a href="http://localhost:8088" target="_blank" rel="noopener"><span>here</span> </a> to open the timer page, once they are familiar with these instructions.*
 
 About the Timer's Display Modes 
 ===
@@ -45,7 +45,7 @@ Activating Dual Display Mode
 *First, close any timer browser windows that might be open.*
 
 
-Click <a href="http://localhost:8099" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use for the operator:
+Click <a href="http://localhost:8088" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use for the operator:
 
 ![Screenshot1](Screenshot1.png)
 
@@ -62,7 +62,7 @@ Activating Single Display Mode
 
 *First, close any timer browser windows that might be open.*
 
-Click <a href="http://localhost:8099" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use as the stage display:
+Click <a href="http://localhost:8088" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use as the stage display:
 
 ![Screenshot1](Screenshot1.png)
 
