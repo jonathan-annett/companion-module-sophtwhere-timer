@@ -145,7 +145,7 @@ function api_config(cfg,updated) {
 
             switch (data.cmd) {
                 case "start" : {
-                    if (data.msecs) {
+                    if (typeof data.msecs === 'number') {
                         let seconds = (data.msecs/60000).toFixed(3);
                         while (seconds.endsWith("0")) {
                             seconds = seconds.substring(0,seconds.length-1);
@@ -166,7 +166,7 @@ function api_config(cfg,updated) {
 
 
                 case "default" : {
-                    if (data.msecs) {
+                    if (typeof data.msecs === 'number') {
                         let seconds = (data.msecs/60000).toFixed(3);
                         while (seconds.endsWith("0")) {
                             seconds = seconds.substring(0,seconds.length-1);

@@ -383,6 +383,7 @@ custom_message.addEventListener('focus', function(){
                      
                      lastTimeText = timeText;
                      let expired = false;
+                     let impending = false;
                      if (secondsRemain >=  0 ) {
                          
                         clearHtmlClass("over");
@@ -390,8 +391,9 @@ custom_message.addEventListener('focus', function(){
                         if (elapsedMSec >= 0) {
                             if (secondsRemain <= 60 ) {
                                 setHtmlClass("impending");
+                                impending=true;
                             } else {
-                                clearHtmlClass("impending");
+                                clearHtmlClass("impending");                                
                             }
                         }
                         
@@ -399,13 +401,17 @@ custom_message.addEventListener('focus', function(){
                      } else {
                         expired = true;
                         setHtmlClass("over");
-                        clearHtmlClass("impending");
-    
+                        clearHtmlClass("impending");    
                         setBarPct(100);
                      }
                      localStorage.setItem("remainDisp",timeText);
                      if (server_conn) {
-                        server_conn.send(JSON.stringify({setVariableValues:{expired,remain:timeText,elapsed:elapsedText,pausedMsec}}));
+                        server_conn.send(JSON.stringify({
+                            setVariableValues:{
+                                expired,impending,
+                                remain:timeText,
+                                elapsed:elapsedText,
+                                pausedMsec}}));
                      }
 
                   }
@@ -556,6 +562,16 @@ custom_message.addEventListener('focus', function(){
     clearHtmlClass("countup-override");
     clearHtmlClass("paused");
     setBarPct(0);
+
+    if (server_conn) {
+        server_conn.send(JSON.stringify({
+            setVariableValues:{
+                startedAt:startedDisp.textContent,
+                endsAt:endsDisp.textContent,
+                default:durationDisp.textContent,
+                pausedMsec:0}
+            }));
+      }
   }
   
   function setPresenterMode() {

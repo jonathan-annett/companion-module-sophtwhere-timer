@@ -7,8 +7,8 @@ module.exports = async function (self) {
 			name: 'expired',
 			type: 'boolean',
 			defaultStyle: {
-				bgcolor: combineRgb(255, 0, 0),
-				color: combineRgb(0, 0, 0),
+				bgcolor: combineRgb(0, 0, 0),
+				color: combineRgb(255, 0, 0),
 			},
 			options: [
 				{
@@ -25,6 +25,31 @@ module.exports = async function (self) {
 			callback: (feedback) => {
 				const hasExpired = self.getVariableValue('expired') ? '1' : '0';
 				return hasExpired === feedback.options.expiredStatus;				 
+			},
+		},
+
+		Impending: {
+			name: 'impending',
+			type: 'boolean',
+			defaultStyle: {
+				bgcolor: combineRgb(0, 0, 0),
+				color: combineRgb(255, 128, 0),
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Which Status?',
+					id: 'impendingStatus',
+					default: '1',
+					choices: [
+						{ id: '0', label: 'Running' },
+						{ id: '1', label: 'Impending' },
+					],
+				},
+			],
+			callback: (feedback) => {
+				const hasExpired = self.getVariableValue('impending') ? '1' : '0';
+				return hasExpired === feedback.options.impendingStatus;				 
 			},
 		},
 
@@ -98,7 +123,6 @@ module.exports = async function (self) {
 				},
 			],
 			callback: (feedback) => {
-				console.log("showbar",self.getVariableValue('showbar'), "is", typeof self.getVariableValue('showbar') , feedback.options.displayStatus, "is", typeof feedback.options.displayStatus)
 				return self.getVariableValue('showbar') === feedback.options.displayStatus;				 
 			},
 		},

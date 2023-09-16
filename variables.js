@@ -2,6 +2,7 @@ module.exports = async function (self) {
 	self.setVariableDefinitions([
 
 		{ variableId: 'expired', name: 'timer expired'  },
+		{ variableId: 'impending', name: 'timer impending'  },
 		
 		{ variableId: 'remain', name: 'remaining'  },
 		{ variableId: 'remain_h', name: 'remaining h'  },

@@ -422,7 +422,26 @@ module.exports = function (self) {
 				},
 			],
 			feedbacks: [
-				
+				{
+					feedbackId: 'Expired',
+					style: {
+						bgcolor: combineRgb(0, 0, 0),
+					    color: combineRgb(255, 0, 0),
+					},
+					options: {
+						expiredStatus: '1',
+					},
+				},
+				{
+					feedbackId: 'Impending',
+					style: {
+						bgcolor: combineRgb(0, 0, 0),
+					    color: combineRgb(255, 128, 0),
+					},
+					options: {
+						impendingStatus: '1',
+					},
+				},
 			],
 		},
 
@@ -769,7 +788,27 @@ module.exports = function (self) {
 				},
 			],
 			feedbacks: [
-				
+				{
+					feedbackId: 'Expired',
+					style: {
+						bgcolor: combineRgb(0, 0, 0),
+					    color: combineRgb(255, 0, 0),
+					},
+					options: {
+						expiredStatus: '1',
+					},
+				},
+
+				{
+					feedbackId: 'Impending',
+					style: {
+						bgcolor: combineRgb(0, 0, 0),
+					    color: combineRgb(255, 128, 0),
+					},
+					options: {
+						impendingStatus: '1',
+					},
+				},
 			],
 		};
 	});
