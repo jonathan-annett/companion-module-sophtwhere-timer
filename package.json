@@ -11,9 +11,7 @@
 		"url": "git+https://github.com/jonathan-annett/companion-module-sophtwhere-timer.git"
 	},
 	"dependencies": {
-		"@companion-module/base": "~1.4.0",
-		"open": "^9.1.0",
-		"ws": "^8.14.1"
+		"@companion-module/base": "~1.4.0"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^1.2.0"

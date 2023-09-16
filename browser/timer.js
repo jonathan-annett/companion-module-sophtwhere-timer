@@ -12,7 +12,7 @@ var timerWin;
 
 window.addEventListener ("unload",onControlUnload);
 
-let ws_conn;
+let server_conn;
 
 let doc = document;
 let qs = doc.querySelector.bind(doc);
@@ -139,15 +139,16 @@ custom_message.addEventListener('focus', function(){
        
        displayUpdate();
        
-       if ( readNumber("showbar",0)===1) {
+       if ( readNumber("showbar",0) === 1) {
            setHtmlClass("showbar");
+       } else {
+           clearHtmlClass("showbar");
        }
        
         if ( readNumber("showtimenow",0) === 1 ) {
            setHtmlClass("showtimenow");
          } else {
-           clearHtmlClass("showtimenow");
-            
+           clearHtmlClass("showtimenow");            
          } 
          
          
@@ -321,9 +322,9 @@ custom_message.addEventListener('focus', function(){
              endsDisp.textContent =  new Date(seekEndsAt+pausedMsec).toLocaleTimeString();
              extraTimeDisp.textContent = "+ "+secToStr((pauseAcum+pausedMsec) / oneSecond)+" pauses";
 
-             if (ws_conn && lastEndsAtText !== endsDisp.textContent) {
+             if (server_conn && lastEndsAtText !== endsDisp.textContent) {
                 lastEndsAtText = endsDisp.textContent;
-                ws_conn.send(JSON.stringify({setVariableValues:{endsAt:lastEndsAtText}}));
+                server_conn.send(JSON.stringify({setVariableValues:{endsAt:lastEndsAtText,pausedMsec}}));
              }
 
             
@@ -381,7 +382,7 @@ custom_message.addEventListener('focus', function(){
                      
                      
                      lastTimeText = timeText;
-                     
+                     let expired = false;
                      if (secondsRemain >=  0 ) {
                          
                         clearHtmlClass("over");
@@ -396,14 +397,15 @@ custom_message.addEventListener('focus', function(){
                         
                         setBar(elapsedMSec,thisDuration);
                      } else {
+                        expired = true;
                         setHtmlClass("over");
                         clearHtmlClass("impending");
     
                         setBarPct(100);
                      }
                      localStorage.setItem("remainDisp",timeText);
-                     if (ws_conn) {
-                        ws_conn.send(JSON.stringify({setVariableValues:{remain:timeText,elapsed:elapsedText}}));
+                     if (server_conn) {
+                        server_conn.send(JSON.stringify({setVariableValues:{expired,remain:timeText,elapsed:elapsedText,pausedMsec}}));
                      }
 
                   }
@@ -596,10 +598,7 @@ function onLocalStorage(ev){
           setBarPct(Number(localStorage.getItem("barpct")));
        } else {
            clearHtmlClass("showbar");
-       }
-       
-      
-       
+       }      
      }  
       
      if (ev.key === "elapsedDisp"){
@@ -776,7 +775,9 @@ function onDocKeyDown(ev){
                     writeNumber("pausedAt",pausedAt);
                     endsAt = seekEndsAt;
                     extraTimeDisp.textContent = "+ "+secToStr(pauseAcum / oneSecond)+" pauses";
-             
+                    if (server_conn) {
+                        server_conn.send(JSON.stringify({setVariableValues:{pausedMsec:1}}));
+                    }
                 } else {
                     let pausedMsec = pausedAt ? timeNow-pausedAt : 0;
                     pausedAt = undefined;
@@ -789,8 +790,8 @@ function onDocKeyDown(ev){
              
                     endsAt = seekEndsAt;
                     endsDisp.textContent =  new Date(seekEndsAt).toLocaleTimeString();
-                    if (ws_conn) {
-                      ws_conn.send(JSON.stringify({setVariableValues:{endsAt:endsDisp.textContent}}));
+                    if (server_conn) {
+                      server_conn.send(JSON.stringify({setVariableValues:{endsAt:endsDisp.textContent,pausedMsec:0}}));
                     }
                     
                 }
@@ -811,8 +812,8 @@ function onDocKeyDown(ev){
                 endsAt = seekEndsAt;
                 endsDisp.textContent =  new Date(seekEndsAt).toLocaleTimeString();
 
-                if (ws_conn) {
-                    ws_conn.send(JSON.stringify({setVariableValues:{endsAt:endsDisp.textContent}}));
+                if (server_conn) {
+                    server_conn.send(JSON.stringify({setVariableValues:{endsAt:endsDisp.textContent}}));
                 }
                     
                 break;
@@ -956,11 +957,13 @@ function onDocKeyDown(ev){
                   break;
                   
             case "b":
-            case "B":
+            case "B": {
+                const toggledState = html.classList.contains("showbar") ? 0 : 1;
                 html.classList.toggle("showbar");
-                writeNumber("showbar",html.classList.contains("showbar") ? 1 : 0);
+                writeNumber("showbar",toggledState);
                 
                 break;
+             }
             case "*":// numkey pad use
             case " ":
                 const preserve_default = defaultDuration;
@@ -997,11 +1000,12 @@ function onDocKeyDown(ev){
                 break;
                 
             case "t":
-            case "T":
+            case "T": {
+                const toggledState = html.classList.contains("showtimenow") ? 0 : 1;
                 html.classList.toggle("showtimenow");
-                writeNumber("showtimenow",html.classList.contains("showtimenow") ? 1 : 0);
+                writeNumber("showtimenow",toggledState);
                 break;
-
+            }
             case "o":
             case "O":
 
@@ -1091,8 +1095,8 @@ function onDocKeyDown(ev){
             clearHtmlClass("editing");
             writeNumber("defaultDuration",defaultDuration);
 
-            if (ws_conn) {
-                ws_conn.send(JSON.stringify({setVariableValues:{default:dispNextMins.textContent}}));
+            if (server_conn) {
+                server_conn.send(JSON.stringify({setVariableValues:{default:dispNextMins.textContent}}));
             }
 
             
@@ -1117,8 +1121,8 @@ function onDocKeyDown(ev){
         startedAt += factor;   
         startedDisp.textContent = new Date(startedAt).toLocaleTimeString();
         writeNumber("startedAt",startedAt);
-        if (ws_conn) {
-            ws_conn.send(JSON.stringify({setVariableValues:{startedAt:startedDisp.textContent}}));
+        if (server_conn) {
+            server_conn.send(JSON.stringify({setVariableValues:{startedAt:startedDisp.textContent}}));
         }
     }
     
@@ -1130,8 +1134,8 @@ function onDocKeyDown(ev){
     
        endsDisp.textContent    = new Date(seekEndsAt).toLocaleTimeString();
        writeNumber("seekEndsAt",seekEndsAt);
-       if (ws_conn) {
-        ws_conn.send(JSON.stringify({setVariableValues:{endsAt:endsDisp.textContent}}));
+       if (server_conn) {
+        server_conn.send(JSON.stringify({setVariableValues:{endsAt:endsDisp.textContent}}));
        }
    }
 
@@ -1157,6 +1161,12 @@ function onDocKeyDown(ev){
           localStorage.removeItem(nm);
       } else {
           localStorage.setItem(nm,val.toString());
+      }
+
+      if (server_conn && ["showtimenow","showmessages","showbar"].indexOf(nm)>=0) {
+        const vars = {};
+        vars[nm]=val.toString()||'0';
+        server_conn.send(JSON.stringify({setVariableValues:vars})); 
       }
   }
 
@@ -1227,138 +1237,93 @@ function onDocKeyDown(ev){
     }
 }
 
-if (runMode !== "presenter" && (location.protocol === 'http:' && !location.hostname.endsWith('.com')) ) {
-    restartWS();
+if (
+    (runMode !== 'presenter') && 
+    (location.protocol === 'http:' && !location.hostname.endsWith('.com')) &&
+    (typeof openLongPollPoster === 'function') ) {
+    restartLongPoll();
 }
 
-function restartWS() {
 
-    connectWS(function(err,cmd,msg,code) {
-        console.log(err,cmd,msg,code);
-        switch (cmd) {
-            case "keys": {
-                msg.keys.forEach(function(key) {
-                    if (key.startsWith('~')) {
-                        onDocKeyUp({key:key.substring(1),preventDefault: function (){}});
-                    } else {
-                        onDocKeyDown({key:key,preventDefault: function (){}});
-                    }
+function restartLongPoll() {
+
+
+     server_conn = openLongPollPoster( readNumber('lastLongPollId',0),function(message,lastId){    
+       const {error,cmd,code} = message;
+       processServerMessage(error,cmd,message,code);    
+       writeNumber('lastLongPollId',server_conn.lastId);
+     });
+
+     processServerMessage(undefined,'opened');    
+}
+
+
+
+function processServerMessage(err,cmd,msg,code) {
+    console.log(err,cmd,msg,code);
+    switch (cmd) {
+        case "keys": {
+            msg.keys.forEach(function(key) {
+                if (key.startsWith('~')) {
+                    onDocKeyUp({key:key.substring(1),preventDefault: function (){}});
+                } else {
+                    onDocKeyDown({key:key,preventDefault: function (){}});
+                }
+               
+            });
+            break;
+        }
+
+        case "customMessage" : {
+
+
                    
-                });
-                break;
+            html.classList.remove("edit_custom_message");
+            html.classList.remove("show_custom_message");
+            custom_message.innerText = msg.text.trim();
+            custom_message.contentEditable=false;
+            
+
+            if (custom_message.innerText.length>0) {
+                html.classList.add("show_custom_message");                    
             }
-
-            case "customMessage" : {
-
-
-                       
-                html.classList.remove("edit_custom_message");
-                html.classList.remove("show_custom_message");
-                custom_message.innerText = msg.text.trim();
-                custom_message.contentEditable=false;
-                
-
-                if (custom_message.innerText.length>0) {
-                    html.classList.add("show_custom_message");                    
-                }
-                localStorage.setItem("custom_message",custom_message.innerText);
-                break;
-            }
-
-
-            case "presenter" : {
-                if (runMode !== "presenter") {
-                    location.replace("/?presenter");
-                }
-                break;
-            }
-
-            case "control" : {
-                if (runMode === "presenter") {
-                    location.replace("/");
-                }
-                break;
-            }
-
-            case "opened": {
-                if (ws_conn) {
-                    ws_conn.send(JSON.stringify({setVariableValues:{default:dispNextMins.textContent,endsAt:endsDisp.textContent,startedAt:startedDisp.textContent}}));
-                }
-
-                break;
-            }
+            localStorage.setItem("custom_message",custom_message.innerText);
+            break;
         }
 
 
-       
-
-    } );
-
-}
-function connectWS(cb) {
-    let socket = new WebSocket(location.origin.replace('http://','ws://').replace('https://','wss://'));
-    socket.onopen = function(e) {
-            ws_conn = socket;
-            cb (undefined,"opened");
-    };
-
-    socket.onmessage = function(event) {
-        const json = event.data;
-        try {
-            const msg = JSON.parse(json);
-            cb (undefined,msg.cmd,msg);
-
-        } catch (x) {
-
-        }
-    };
-
-    socket.onclose = function(event) {
-        ws_conn = undefined;
-        if (event.wasClean) {
-            cb(undefined,"closed",event.reason,event.code);
-            // alert(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-        } else {
-            // e.g. server process killed or network down
-            // event.code is usually 1006 in this case
-            cb(undefined,"aborted",event.reason,event.code);
-           
-        }
-
-
-        if (ws_conn) {
-            ws_conn = undefined;
-            setTimeout(restartWS,1500);
-        }
-        };
-        
-        socket.onerror = function(error) {
-            cb(error);
-            if (ws_conn) {
-                ws_conn = undefined;
-                setTimeout(restartWS,1500);
+        case "presenter" : {
+            if (runMode !== "presenter") {
+                location.replace("/?presenter");
             }
-           
-        };
-        
-        
-}
+            break;
+        }
 
-function simulateKey (keyCode, type, modifiers) {
-	var evtName = (typeof(type) === "string") ? "key" + type : "keydown";	
-	var modifier = (typeof(modifiers) === "object") ? modifier : {};
+        case "control" : {
+            if (runMode === "presenter") {
+                location.replace("/");
+            }
+            break;
+        }
 
-	var event = document.createEvent("HTMLEvents");
-	event.initEvent(evtName, true, false);
-	event.keyCode = keyCode;
-	
-	for (var i in modifiers) {
-		event[i] = modifiers[i];
-	}
+        case "opened": {
+            if (server_conn) {
+                console.log("sending startup values",dispNextMins.textContent);
+                server_conn.send(JSON.stringify({setVariableValues:{
+                    default:dispNextMins.textContent,
+                    endsAt:endsDisp.textContent,
+                    startedAt:startedDisp.textContent,
+                    showtime:localStorage.getItem('showtime')||'0',
+                    showbar:localStorage.getItem('showbar')||'0',
+                    showmessages:localStorage.getItem('showmessages')||'0',
+                    pausedMsec:localStorage.getItem('pausedMsec')||'0',
+                }}));
+            }
 
-	document.dispatchEvent(event);
-}
-
+            break;
+        }
+    }
+} 
 
 function setupPip(sourceId,targetId,width,height,font,fgQuery,getFGColor) {
     const target = document.getElementById(targetId);

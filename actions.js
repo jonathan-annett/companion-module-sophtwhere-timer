@@ -7,31 +7,6 @@ module.exports = function (self) {
 	 
 	self.setActionDefinitions({
 
-
-		show : {
-
-			name: 'Show Timer',
-			options: [],
-			callback: async (event) => {
-
-			 
-				loadOpen().then(function(open){
-               
-					console.log("open is ready",open);
-					open.default(`http://localhost:${self.config.port}/`).then(function(x){
-						 
-
-						 
-					}).catch(function(err){
-						console.log("could not start browser",err);
-					});
-				}).catch(function(err){
-					console.log("could not load open",err);
-				});
-
-			},
-		},
-
 	
 		restart : {
 			name: 'Restart',
@@ -203,7 +178,6 @@ module.exports = function (self) {
 
 	
 
-
 		minus1 : {
 			name: 'subtract 1 second from current timer',
 			options: [
@@ -333,6 +307,35 @@ module.exports = function (self) {
 			],
 		},
 
+		
+		'default': {
+			type: 'button',
+			category: 'Timer',
+			name: 'Default Duration',
+			style: {
+				text: 'Restart\n$(timer:default)',
+				size: '18',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'restart',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+
 		'pause': {
 			type: 'button',
 			category: 'Timer',
@@ -356,7 +359,16 @@ module.exports = function (self) {
 				},
 			],
 			feedbacks: [
-				
+				{
+					feedbackId: 'Paused',
+					style: {
+						bgcolor: combineRgb(0,0,255),
+						color: combineRgb(255, 255, 255),
+					},
+					options: {
+						pausedStatus: '1',
+					},
+				},
 			],
 		},
 
@@ -438,30 +450,6 @@ module.exports = function (self) {
 			],
 		},
 
-
-		'default': {
-			type: 'button',
-			category: 'Timer',
-			name: 'Default Duration',
-			style: {
-				text: 'Next\n$(timer:default)',
-				size: '24',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-					 
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
 
 		'endsAt': {
 			type: 'button',
@@ -652,10 +640,10 @@ module.exports = function (self) {
 		'bar': {
 			type: 'button',
 			category: 'Display Modes',
-			name: 'Toggle Bar Display',
+			name: 'Toggle Progress Bar Display',
 			style: {
-				text: 'Bar Toggle',
-				size: '18',
+				text: 'Progress\nBar',
+				size: '14',
 				color: combineRgb(255, 255, 255),
 			    bgcolor: combineRgb(0, 0, 0),
 	
@@ -672,17 +660,26 @@ module.exports = function (self) {
 				},
 			],
 			feedbacks: [
-				
+				{
+					feedbackId: 'ShowBarDisplay',
+					style: {
+						bgcolor: combineRgb(0,255, 0),
+						color: combineRgb(0, 0, 0),
+					},
+					options: {
+						displayStatus: '1',
+					},
+				},
 			],
 		},
 
 		'time': {
 			type: 'button',
 			category: 'Display Modes',
-			name: 'Toggle Time Display',
+			name: 'Toggle Time Of Day Display',
 			style: {
-				text: 'Time Toggle',
-				size: '18',
+				text: 'Time Of Day',
+				size: '14',
 				color: combineRgb(255, 255, 255),
 			    bgcolor: combineRgb(0, 0, 0),
 	
@@ -699,17 +696,26 @@ module.exports = function (self) {
 				},
 			],
 			feedbacks: [
-				
+				{
+					feedbackId: 'ShowTimeNow',
+					style: {
+						bgcolor: combineRgb(0,255, 0),
+						color: combineRgb(0, 0, 0),
+					},
+					options: {
+						displayStatus: '1',
+					},
+				},
 			],
 		},
 
 		'messages': {
 			type: 'button',
 			category: 'Display Modes',
-			name: 'Toggle Messages',
+			name: 'Toggle Last Minute & Time is Up Messages',
 			style: {
-				text: 'Messages',
-				size: '14',
+				text: 'Last Minute\n\nTime is Up',
+				size: '7',
 				color: combineRgb(255, 255, 255),
 			    bgcolor: combineRgb(0, 0, 0),
 	
@@ -726,7 +732,16 @@ module.exports = function (self) {
 				},
 			],
 			feedbacks: [
-				
+				{
+					feedbackId: 'ShowMessages',
+					style: {
+						bgcolor: combineRgb(0,255, 0),
+						color: combineRgb(0, 0, 0),
+					},
+					options: {
+						displayStatus: '1',
+					},
+				},
 			],
 		},
 
@@ -786,34 +801,7 @@ module.exports = function (self) {
 	});
 
 
-	presets['show']= {
-		type: 'button',
-		category: 'Timer',
-		name: 'Show Timer',
-		style: {
-			text: 'Open Browser',
-			size: '14',
-			color: combineRgb(255, 255, 255),
-			bgcolor: combineRgb(0, 0, 0),
 
-		},
-		steps: [
-			{
-				down: [
-					{
-						actionId: 'show',
-						options: {},
-					},
-				],
-				up: [],
-			},
-		],
-		feedbacks: [
-			
-		],
-	};
-
-	
    const stdTimes = [5,10,15,20,25,30,35,40,45,50,55];
 
    stdTimes.forEach(function(mins){
@@ -960,15 +948,7 @@ module.exports = function (self) {
 	};
 
 
-
 	self.setPresetDefinitions(presets);
-
-
-	async function loadOpen(){
-		const open =  await import('open');
-		return open;
-	}
-	
 
 
 }

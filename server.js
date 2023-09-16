@@ -1,14 +1,15 @@
 const fs        = require('fs');
 const path  =require('path');
 const http      = require('http');
-const WebSocket = require('ws');
+const startLongPollPoster = require('./longPollPoster.js');
 
 const files = [
     // these files are cached for the browser
     'timer.html',
     'timer.js',
     'timer.css',
-    'fsapi.js'
+    'fsapi.js',
+    'longPollPoster.js'
 ];
 
 const content = {};
@@ -23,19 +24,54 @@ files.forEach(function(fn){
     };
 });
 
+const help_md_src = path.join(__dirname,'HELP.md');
+const help_md_dest = path.join(__dirname,'companion','HELP.md');
+
+
+const help_md = fs.readFileSync(help_md_src,'utf8');  
+
 
 content['/index.html']=content['/timer.html'];
 content['/']=content['/timer.html'];
- 
-const connections = [];
 
-function api_config(cfg) {
-   
+
+
+function api_config(cfg,updated) {
+    console.log({cfg});
+
     const HTTP_PORT=cfg.port;
 
-    closeConnections ();
-   
-    const server = http.createServer(function(request, response) {
+    if (fs.existsSync(help_md_dest)) {
+        const fixedupHelp = help_md.replace(/localhost\:8088/g,`localhost:${HTTP_PORT}`);
+        const existingHelp = fs.readFileSync(help_md_dest,'utf8');  
+        if (fixedupHelp!==existingHelp) {
+            fs.writeFileSync(help_md_dest,fixedupHelp);
+            if (updated) {
+                console.log("updated",cfg);
+		        return;
+            }
+        }
+    }
+
+
+
+    const connections = startLongPollPoster(defaultHTTPHandler);
+
+    const server = http.createServer(connections.handler);
+
+    connections.on('message',function(msg){
+
+          // msg is parsed json object as sent by client(s)
+
+          if ( msg.setVariableValues ) {
+                module.exports.api.setVariableValues( msg.setVariableValues );
+          } else {
+                console.log("unhandled message:",msg,typeof msg);
+          }
+
+    });
+
+    function defaultHTTPHandler(request, response) {
         const data = content [request.url.split('?')[0]];
         console.log(request.socket.remoteAddress);
         if (data) {
@@ -50,12 +86,8 @@ function api_config(cfg) {
         console.log((new Date()) + ' Received request for ' + request.url);
         response.writeHead(404);
         response.end();
-    });
+    }
 
-
-    const wss = new WebSocket.Server({ server: server })
-
-    wss.on('connection', onWSConnection);
 
     function onWSConnection (ws) {
 
@@ -206,12 +238,18 @@ function api_config(cfg) {
 
 
             }
+
+            connections.send(data);
+
+            /*
             const json = JSON.stringify(data,undefined,4);
             if (connections.length) { console.log("sending:",json);}
 
             connections.forEach(function(connection){
                 connection.send(json);
             });
+
+            */
         } catch (x) {
             console.log((new Date()) , x);
         }

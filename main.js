@@ -5,6 +5,7 @@ const UpdateFeedbacks = require('./feedbacks')
 const UpdateVariableDefinitions = require('./variables')
 const { splitHMS } = require('./splitHMS')
 
+
 class ModuleInstance extends InstanceBase {
 	constructor(internal) {
 		super(internal)
@@ -19,13 +20,14 @@ class ModuleInstance extends InstanceBase {
 		this.updateFeedbacks() // export feedbacks
 		this.updateVariableDefinitions() // export variable definitions
 
-		const api = require('./server.js').api;
+		this.api = require('./server.js').api;
 
-		api.config(config);
+		this.api.config(config);
 
 		const setVars = this.setVariableValues.bind(this);
+		const checkFeedbacks = this.checkFeedbacks.bind(this);
 
-		api.setVariableValues = function (vars) {
+		this.api.setVariableValues = function (vars) {
 			const vars2 = {};
 			Object.keys(vars).forEach(function(k){
 				const val = vars[k];
@@ -38,6 +40,7 @@ class ModuleInstance extends InstanceBase {
 				}
 			});
 			setVars(vars2);
+			checkFeedbacks();
 		}
 
 		
@@ -56,6 +59,7 @@ class ModuleInstance extends InstanceBase {
 
 	async configUpdated(config) {
 		this.config = config
+		this.api.config(config,true);
 	}
 
 	// Return config fields for web config
@@ -68,7 +72,7 @@ class ModuleInstance extends InstanceBase {
 				width: 12,
 				label: 'Information',
 				value:
-					'You can override the default internal port. If you use port 8088, the timer will be accessible http://localhost:8088/',
+					'Use the link on the help page to open the timer window',
 			},
 			{
 				type: 'textinput',

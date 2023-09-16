@@ -5,6 +5,23 @@ function splitHMS(hms) {
 	}
 	let [hh, mm, ss] = parts;
 
+
+	const hours = ( Number(hh) +
+	                (Number(mm) / 60) + 
+				    (Number(ss) / 3600)  ).toFixed(2) ;
+
+	const  minutes = ( (Number(hh) * 60 ) +
+				       Number(mm)  +
+					   (Number(ss) / 60)  ).toFixed(2);
+
+	const  seconds =  ( (Number(hh) * 3600 ) +
+	                    (Number(mm) * 60) +
+				   	    Number(ss) ).toFixed(0)  ;
+
+	const  msec = seconds * 1000;
+
+	 
+
 	let h = Number(hh).toString();
 	let m = Number(mm).toString();
 	let s = Number(ss).toString();
@@ -23,6 +40,11 @@ function splitHMS(hms) {
 		hh_mm_ss: h + ':' + mm + ':'+ss,
 		m_ss: m + ':' + ss,
 		h_mm_ss: h + ':' + mm + ':'+ss,
+		
+		hours,
+		minutes,
+		seconds,
+		milliseconds : msec
 	};
 
 }

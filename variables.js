@@ -1,5 +1,8 @@
 module.exports = async function (self) {
 	self.setVariableDefinitions([
+
+		{ variableId: 'expired', name: 'timer expired'  },
+		
 		{ variableId: 'remain', name: 'remaining'  },
 		{ variableId: 'remain_h', name: 'remaining h'  },
 		{ variableId: 'remain_hh', name: 'remaining hh'  },
@@ -11,6 +14,13 @@ module.exports = async function (self) {
 		{ variableId: 'remain_hh_mm_ss', name: 'remaining hh:mm:ss'  },		
 		{ variableId: 'remain_m_ss', name: 'remaining m:ss'  },
 		{ variableId: 'remain_mm_ss', name: 'remaining mm:ss'  },
+		
+
+		{ variableId: 'remain_hours', name: 'remaining hours'  },
+		{ variableId: 'remain_minutes', name: 'remaining minutes'  },
+		{ variableId: 'remain_seconds', name: 'remaining seconds'  },
+		{ variableId: 'remain_milliseconds', name: 'remaining milliseconds'  },
+
 
 		{ variableId: 'elapsed', name: 'elapsed'  },
 		{ variableId: 'elapsed_h', name: 'elapsed h'  },
@@ -23,10 +33,26 @@ module.exports = async function (self) {
 		{ variableId: 'elapsed_hh_mm_ss', name: 'elapsed hh:mm:ss'  },		
 		{ variableId: 'elapsed_m_ss', name: 'elapsed m:ss'  },
 		{ variableId: 'elapsed_mm_ss', name: 'elapsed mm:ss'  },
-		
+		{ variableId: 'elapsed_hours', name: 'elapsed hours'  },
+		{ variableId: 'elapsed_minutes', name: 'elapsed minutes'  },
+		{ variableId: 'elapsed_seconds', name: 'elapsed seconds'  },
+		{ variableId: 'elapsed_milliseconds', name: 'elapsed milliseconds'  },
+
 		{ variableId: 'default', name: 'default'  },
 		{ variableId: 'startedAt', name: 'started at'  },
-		{ variableId: 'endsAt', name: 'ends at'  }
+		{ variableId: 'endsAt', name: 'ends at'  },
+
+		{ variableId: 'showtimenow', name: 'Show Time Now'  },
+		{ variableId: 'showmessages', name: 'Show Messages'  },	
+		{ variableId: 'showbar', name: 'Show Bar'  },	
+
+		{ variableId: 'pausedMsec', name: 'Paused Milliseconds'  },	
+
+
+	 
+	 	
+ 
+
 		
 	])
 }
