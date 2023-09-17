@@ -23,7 +23,6 @@ class ModuleInstance extends InstanceBase {
 
 		
 
-		this.api.setActions = this.setActionDefinitions.bind(this);
 		this.api.config(config);
 
 		const setVars = this.setVariableValues.bind(this);
