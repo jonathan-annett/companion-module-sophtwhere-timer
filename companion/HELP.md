@@ -31,7 +31,7 @@ In this mode, you will use a browser as a controller display screen, and a float
 
   ![Screenshot4](Screenshot4.png)
 
-Single Display Mode 
+Single Display Mode
 ---
 
 ![Screenshot3](Screenshot3.png)

@@ -23,8 +23,7 @@ module.exports = async function (self) {
 				},
 			],
 			callback: (feedback) => {
-				const hasExpired = self.getVariableValue('expired') ? '1' : '0';
-				return hasExpired === feedback.options.expiredStatus;				 
+				return (self.getVariableValue('expired') ? '1' : '0') === feedback.options.expiredStatus;				 		 
 			},
 		},
 
@@ -48,8 +47,7 @@ module.exports = async function (self) {
 				},
 			],
 			callback: (feedback) => {
-				const hasExpired = self.getVariableValue('impending') ? '1' : '0';
-				return hasExpired === feedback.options.impendingStatus;				 
+				return (self.getVariableValue('impending') ? '1' : '0') === feedback.options.impendingStatus;				 
 			},
 		},
 
@@ -73,11 +71,35 @@ module.exports = async function (self) {
 				},
 			],
 			callback: (feedback) => {
-				const isPaused = Number(self.getVariableValue('pausedMsec')) === 0 ? '0' : '1';
-				return isPaused === feedback.options.pausedStatus;				 
+				return (self.getVariableValue('pausing') ? '1' : '0') === feedback.options.pausedStatus;				 		 
 			},
 		},
 
+		PauseBackLog: {
+			name: 'pausebacklog',
+			type: 'boolean',
+			defaultStyle: {
+				bgcolor: combineRgb(0,128,128),
+				color: combineRgb(0, 0, 0),
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Which Status?',
+					id: 'backlogStatus',
+					default: '1',
+					choices: [
+						{ id: '0', label: 'No Backlog' },
+						{ id: '1', label: 'Paused Backlog Exists' },
+					],
+				},
+			],
+			callback: (feedback) => {
+				const isPausing = self.getVariableValue('pausing');
+				const pauseAccumText = self.getVariableValue('pauses') ;
+				return ( (pauseAccumText==='0:00' && !isPausing ) ? '0' : '1') === feedback.options.backlogStatus;				 		 
+			},
+		},
 
 		ShowTimeNow: {
 			name: 'Show Time Now',

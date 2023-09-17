@@ -8,15 +8,111 @@
 
 */
 
+:root {
+    --color-main-background : black;
+    --color-main-font:#a0a0a0;
+
+
+    --color-remain-running : white;
+    --color-remain-running-impending : orange;
+    --color-remain-running-expired : red;
+
+    --color-remain-adjust-down : cyan;
+    --color-remain-adjust-up : yellow;
+
+    --color-remain-future : #202020;
+    --color-remain-future-paused : #202020;
+    
+
+    --color-remain-paused : darkgray;
+    --color-remain-paused-impending : rgba(255, 166, 0, 0.192);
+    --color-remain-paused-expired : maroon;
+
+    --color-remain-paused-blink : yellow;
+    --color-remain-paused-impending-blink : orange;
+    --color-remain-paused-expired-blink : red;
+
+    --color-remain-info-running : orange;
+    --color-remain-info-running-impending : orange;
+    --color-remain-info-running-expired : red;
+
+    --color-remain-info-paused : darkgray;
+    --color-remain-info-paused-impending : rgba(255, 166, 0, 0.192);
+    --color-remain-info-paused-expired : maroon;
+
+    --color-custom-message : white;
+    --color-custom-message-editing : yellow;
+
+    --color-next-default-editing:lime;
+
+
+    --color-keyboard-help-text: #a0a0a0;
+    --color-keyboard-help-text--editing-custom :lime;
+
+    --color-button-background : #008CBA;
+    --color-button-font : white;
+    
+    --color-button2-background : #e7e7e7;
+    --color-button2-font : black;
+
+    --color-button-background-hover:lime;
+    --color-button-font-hover:black;
+    
+    --color-button-background-hover-set:purple;
+    --color-button-font-hover-set:black;
+
+    --color-button-background-hover-setting: yellow;
+    --color-button-font-hover-setting:black;
+
+    --color-progress-bar : #529f44f7;
+    --color-progress-bar-background : #34495e;
+
+    --color-future-start :  lime;
+
+    --color-drag-to-monitor-text: rgb(103, 110, 110);
+
+    --color-pip-background : var(--color-main-background);
+    --color-pip-running : white;
+    --color-pip-paused : rgba(169, 169, 169, 0.726);
+    --color-pip-impending : orange;
+    --color-pip-expired : red;
+    
+    
+
+}
+
+ 
+#remain_disp_video_text {
+    background-color: var(--color-pip-background);
+    color : var(--color-pip-running);
+}  
+html.impending  #remain_disp_video_text {
+    color : var(--color-pip-impending);
+}  
+html.over  #remain_disp_video_text {
+    color : var(--color-pip-expired);
+}  
+html.paused  #remain_disp_video_text {
+    color : var(--color-pip-paused);
+} 
+ 
+ 
+html.paused  #remain_disp_video_text {
+    color : var(--color-pip-paused);
+}  
+
+
 body {
     
-    background-color :#000000;
-    color:#a0a0a0;
+    background-color:var(--color-main-background);
+    color:var(--color-main-font);
     font-size:2.5vh;
     font-family: 'Lucida', sans-serif;
     overflow: hidden; 
     user-select: none;                
 }
+
+
 
 
     .blink {
@@ -33,7 +129,7 @@ body {
 /* the main countdown (remaining) display takes up 40% of the available height, and is centered verticaly and horizontally */
 #remain_disp {
     
-    color:white;
+    color:var(--color-remain-running);
     
     font-size: 40vh;
     position : absolute;
@@ -97,8 +193,9 @@ html.reduced #now_disp:before {
 }
 
 html.future #started_disp:before {
-     content:"will start at "; 
-     color : lime;
+     content:"will start at ";
+     
+     color:  var(--color-future-start);
 }
 
 
@@ -138,7 +235,7 @@ html.reduced #ends_disp {
 
 html.future #elapsed_disp:before {
     content:"standby ";
-    color : darkgray;
+    color: darkgray;
     font-size : 4vh;
 }
 
@@ -156,13 +253,13 @@ html.future #elapsed_disp:before {
   width : 50vw;
   text-align: center;
   font-size : 4vh;
-  color : lime;
+  color: var(--color-future-start);
   top : calc( 27% + 0px);
 }
 
 html.reduced.future #elapsed_disp {
     display : block; 
-     color : lime;
+     color:  var(--color-future-start);
 }
 
  
@@ -179,7 +276,7 @@ html.reduced.future #elapsed_disp {
 
 #custom_message,
 #remain_info_message {
-    color : red;
+    color: var(--color-remain-running-expired);
     display : none; 
     position:absolute;
     width:100vw;
@@ -191,7 +288,7 @@ html.reduced.future #elapsed_disp {
 
 html.showmessages.reduced.impending #remain_info_message,
 html.showmessages.impending #remain_info_message {
-    color:orange;
+    color:var(--color-remain-info-running);
 }
 
 html.show_custom_message #custom_message,
@@ -223,58 +320,65 @@ html.edit_custom_message.showmessages.over #remain_info_message {
 
 
 html.over #remain_disp {
-    color:red;
+    color:var(--color-remain-running-expired);
     
 }
 
 html.show_custom_message #custom_message {
-    color :white;
+    color: var(--color-custom-message);
 }
 
 html.edit_custom_message #custom_message {
-    color :yellow;
+    color: var(--color-custom-message-editing);
 }
 
 html.impending #remain_disp {
-    color:orange;
+    color: var(--color-remain-running-impending);
 }
 
 
 #remain_disp.adjusting {
-    color:yellow;
+    color:var(--color-remain-adjust-up);
 }
 
 #remain_disp.adjustingDown {
-    color:cyan;
+    color:var(--color-remain-adjust-down);
 }
 
 html.reduced #remain_disp.adjusting   {
-     color:white;
+     color: var(--color-remain-running);
 }
 
 html.reduced #remain_disp.adjustingDown  {
-     color:white;
+     color:var(--color-remain-running);
 }
 
 html.reduced.over #remain_disp  {
-    color:red;
+    color:var(--color-remain-running-expired);
 }
 
 html.reduced.impending #remain_disp,
 html.reduced.future.impending #remain_disp, 
 html.future.impending #remain_disp {
-    color:orange;
+    color:var(--color-remain-running-impending);
 }
 
 
 html.future #remain_disp {
-    color:#202020;
+    color: var(--color-remain-future);
 }
 
 html.reduced.future #remain_disp {
-    color:#202020;
+    color:var(--color-remain-future);
 }
 
+html.future.paused #remain_disp {
+    color: var(--color-remain-future-paused);
+}
+
+html.reduced.future.paused #remain_disp {
+    color:var(--color-remain-future-paused);
+}
 
 
 #key_disp {
@@ -316,7 +420,8 @@ html.reduced.future #remain_disp {
 
 html.editing #disp_next_mins {
     
-    color:lime;
+    color: var(--color-next-default-editing);
+
 }
 
 
@@ -328,23 +433,50 @@ html.over.showmessages #remain_info_message:before {
     content : "Time is Up";
 }
 
-html.paused.over #remain_info_message,
-html.paused.impending #remain_info_message,
+
 html.paused #remain_info_message {
-    color:#202020;
+    color: var(--color-remain-info-paused);
+    display : block;
+}
+
+html.paused.impending #remain_info_message {
+    color: var(--color-remain-info-paused-impending);
+    display : block;
+}
+
+html.paused.over #remain_info_message {
+    color: var(--color-remain-info-paused-expired);
     display : block;
 }
 
 html.paused #remain_disp {
-    color : #a0a0a0;
+    color: var(--color-remain-paused);;
 }
 
+html.impending.paused #remain_disp {
+    color: var(--color-remain-paused-impending);
+}
+
+html.over.paused #remain_disp {
+    color: var(--color-remain-paused-expired);
+}
 
 html.paused #ends_disp {
     animation: blinker 1s infinite;
-    color : red;
-    
+    color: var(--color-remain-paused-blink);    
 }
+
+html.impending.paused #ends_disp {
+    animation: blinker 1s infinite;
+    color: var(--color-remain-paused-impending-blink);    
+}
+
+
+html.over.paused #ends_disp {
+    animation: blinker 1s infinite;
+    color: var(--color-remain-paused-expired-blink);    
+}
+
 
 html.over.showmessages.paused #remain_info_message:before,
 html.impending.showmessages.paused #remain_info_message:before,
@@ -368,20 +500,20 @@ html.reduced.paused #remain_info_message:after {
 /* keyboard help text*/
 #disp_next_mins:before {
     content:"[←],[→] = fix a late/early start (seconds), [↓],[↑] = Nudge end time (seconds), [Space] = start countdown using "; 
-    color:#a0a0a0;
+    color: var(--color-keyboard-help-text);
 }
 
 
 /*keyboard help text displayed while control key is held down*/
 html.controlling #disp_next_mins:before {
     content:"[←],[→] = fix a late/early start (minutes), [↓],[↑] = Nudge end time (minutes), [Enter] = catchup to real time. "; 
-    color:#a0a0a0;
+    color: var(--color-keyboard-help-text);
 }
 
 /*keyboard help text displayed while typing in a minutes value*/
 html.editing #disp_next_mins:before {
     content:  "[Enter] = save default countdown... or  [Space] = start countdown using "; 
-    color:#a0f0a0;
+    color: var(--color-keyboard-help-text);
 }
 
 /*keyboard help text displayed while shift key is held down*/
@@ -397,23 +529,23 @@ html.shifting.controlling #disp_next_mins:before {
 
 /*while editing the custom message, hide the minutes entry field by making it the same colour as the background*/
 html.edit_custom_message #disp_next_mins {
-    color:black;
+    color: var(--color-main-background);
 }
 
 /*keyboard help text displayed while editing the custom message text*/
 html.edit_custom_message #disp_next_mins:before {
    content : "Editing custom message...          [Enter] = Show On Remote Display.  ";
-   color:lime;
+   color:var(--color-keyboard-help-text--editing-custom);
 }
 
-/*the change the colour of minutes entry field while the custom message is displayed*/
+/*change the colour of minutes entry field while the custom message is displayed*/
 html.show_custom_message #disp_next_mins {
     color:yellow;
 }
 
 
 html.controlling #disp_next_mins{
-    color : #000000;
+    color:var(--color-main-background);
 }
 
 .fs_only {
@@ -478,7 +610,7 @@ html.reduced #drag_to_monitor {
   bottom : 10px;
   width : 100vw;
   text-align:center;
-  color : rgb(103, 110, 110);
+  color: var(--color-drag-to-monitor-text);
   font-size:3vh;
 }
 
@@ -511,13 +643,13 @@ body:fullscreen #fs_help {
 .mainDiv > .progressDiv{
   width: 100%;
   height: 30px;
-  background: #34495e;
+  background: var(--color-progress-bar-background);
 }
 
 .mainDiv > .progressDiv > .progress{
   width: 0%;
   height: 30px;
-  background: #529f44f7;
+  background:  var(--color-progress-bar); 
 }
 
 
@@ -527,7 +659,7 @@ html.impending .mainDiv > .progressDiv > .progress{
 
 html.over .mainDiv > .progressDiv > .progress{
     
-  background: red;
+  background: var(--color-remain-running-expired);
     
 }
 
@@ -540,11 +672,12 @@ html.over .mainDiv > .progressDiv > .progress{
   z-index:25;
 }
 
-
+/*
 .mainDiv > h2{
   font-family: sans-serif;
   color: #2c3e50;
 }
+*/
 
 div.buttons  {
   position : absolute;
@@ -552,7 +685,7 @@ div.buttons  {
   left:   0;
   height: 100px;
   right:  180px;
-  background-color:black;
+  background-color:var(--color-main-background);
   opacity: 0.5;
   z-index: 9999;
 }
@@ -573,9 +706,10 @@ div.buttons div.btn {
    left :10px;
    top:10px;
    width:50px;
-   background-color: #008CBA;
+ 
+   background-color:  var(--color-button-background);
    border: none;
-   color: white;
+   color:  var(--color-button-font);
    padding: 13px 24px;
    text-align: center;
    text-decoration: none;
@@ -594,7 +728,8 @@ div.buttons div.btn {
 div.buttons div.btn2 {
     
    width:80px;
-   background-color: #e7e7e7; color: black;
+   background-color:  var(--color-button2-background);
+   color: var(--color-button2-font);
    padding: 13px 12px;
    
     
@@ -603,17 +738,19 @@ div.buttons div.btn2 {
 
 
 div.buttons div.btn:hover {
-  background-color: lime;
-  color:black;
+  background-color:  var(--color-button-background-hover);
+  color: var(--color-button-font-hover);
 }
 
 html.shifting div.buttons div.btn:hover {
-  background-color: purple;
-  color:black;
+  background-color: var(--color-button-background-hover-set);
+  color:var(--color-button-font-hover-set);
 }
 html.editing.shifting div.buttons div.btn:hover {
-  background-color: yellow;
-  color:black;
+
+
+  background-color: var(--color-button-background-hover-setting);
+  color: var(--color-button-font-hover-setting);
 }
 
 #btnresume {
@@ -624,6 +761,12 @@ html.paused #btnresume {
    display:inline-block;
    animation: blinker 1s infinite;
 }
+
+html.overlay #btnfloat {
+    display:inline-block;
+    animation: blinker 1s infinite;
+ }
+ 
 
 html.paused #btnpause {
    display:none;

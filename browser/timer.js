@@ -55,7 +55,13 @@ let pauseAcum = 0;
   
 let runMode = "controller";
 
-let togglePIPMode = setupPip("remain_disp","remain_disp_video",192,108,"50px Arial",".mainDiv > .progressDiv > .progress",getInheritedBackgroundColor);
+let togglePIPMode = setupPip(
+    "remain_disp",
+    "remain_disp_video",
+    192,108,
+    "50px Arial",
+    "#remain_disp_video_text",
+    "overlay");
 
   if (window.location.search.startsWith("?presenter")) {
 
@@ -91,7 +97,7 @@ let lastTimeText   = "";
 let lastEndsAtText = "";
 let enterTimeText  = "";
 let enterHoursText = "";
-let tab_id = "tab_"+Date.now().toString(); 
+window.tab_id = "tab_"+Date.now().toString(); 
 
 custom_message.addEventListener('focus', function(){
   setTimeout(function(){
@@ -227,11 +233,16 @@ custom_message.addEventListener('focus', function(){
    function openTimerWindow(close) {
       if (close===true) {
          if (timerWin) timerWin.close();
+         if (window.opener) window.close();
          timerWin = undefined;
       } else {
          timerWin = open("timer.html?presenter", 'remote_timer_window', "location=0");
-         if (timerWin) timerWin.addEventListener ("unload",onTimerWinUnload);
-
+         if (timerWin) {
+            timerWin.addEventListener ("load",function(){
+                console.log("timer win loaded");
+                timerWin.addEventListener ("unload",onTimerWinUnload);
+            });
+         }
       }
       return false;
   }
@@ -241,6 +252,7 @@ custom_message.addEventListener('focus', function(){
       
       let tabCount = getTabCount(),timeNow =  Date.now() ;
       let controllerCount = getTabCount(true);
+      let pausing = false;
       
       if (tabCount===1) {
           clearHtmlClass("twoplus");
@@ -318,13 +330,21 @@ custom_message.addEventListener('focus', function(){
          
          
          if (pausedMsec!=0) {
-             remainInfoDisp.textContent =  runMode === "presenter" ? "Paused" : secToStr(pausedMsec / oneSecond);
+             const pausedTimeStr = secToStr(pausedMsec / oneSecond);
+             remainInfoDisp.textContent =  runMode === "presenter" ? "Paused" : pausedTimeStr;
              endsDisp.textContent =  new Date(seekEndsAt+pausedMsec).toLocaleTimeString();
-             extraTimeDisp.textContent = "+ "+secToStr((pauseAcum+pausedMsec) / oneSecond)+" pauses";
-
+             const accumTimeStr = secToStr((pauseAcum+pausedMsec) / oneSecond);
+             extraTimeDisp.textContent = "+ "+accumTimeStr+" pauses";
+             pausing = true;
              if (server_conn && lastEndsAtText !== endsDisp.textContent) {
                 lastEndsAtText = endsDisp.textContent;
-                server_conn.send(JSON.stringify({setVariableValues:{endsAt:lastEndsAtText,pausedMsec}}));
+                server_conn.send(JSON.stringify({
+                    setVariableValues:{
+                        endsAt:lastEndsAtText,
+                        paused:pausedTimeStr,
+                        pauses:accumTimeStr,
+                        pausing}
+                    }));
              }
 
             
@@ -384,6 +404,7 @@ custom_message.addEventListener('focus', function(){
                      lastTimeText = timeText;
                      let expired = false;
                      let impending = false;
+                   
                      if (secondsRemain >=  0 ) {
                          
                         clearHtmlClass("over");
@@ -408,10 +429,9 @@ custom_message.addEventListener('focus', function(){
                      if (server_conn) {
                         server_conn.send(JSON.stringify({
                             setVariableValues:{
-                                expired,impending,
+                                expired,impending,pausing,
                                 remain:timeText,
-                                elapsed:elapsedText,
-                                pausedMsec}}));
+                                elapsed:elapsedText}}));
                      }
 
                   }
@@ -569,7 +589,10 @@ custom_message.addEventListener('focus', function(){
                 startedAt:startedDisp.textContent,
                 endsAt:endsDisp.textContent,
                 default:durationDisp.textContent,
-                pausedMsec:0}
+                paused:'0:00',
+                pausing:false,
+                expired:false,
+                impending:defaultDuration<=60000}
             }));
       }
   }
@@ -786,13 +809,21 @@ function onDocKeyDown(ev){
             case '"':
                 
                 html.classList.toggle("paused");
+                lastTimeText="";
+                togglePIPMode.lastContent="";
                 if (html.classList.contains("paused")) {
                     pausedAt = Date.now();
                     writeNumber("pausedAt",pausedAt);
                     endsAt = seekEndsAt;
-                    extraTimeDisp.textContent = "+ "+secToStr(pauseAcum / oneSecond)+" pauses";
+                    const pauseAccumText = secToStr(pauseAcum / oneSecond);
+                    extraTimeDisp.textContent = "+ "+pauseAccumText+" pauses";
                     if (server_conn) {
-                        server_conn.send(JSON.stringify({setVariableValues:{pausedMsec:1}}));
+                        server_conn.send(JSON.stringify({
+                            setVariableValues:{
+                                default:secToStr(defaultDuration/1000),
+                                pausing:true,
+                                pauses:pauseAccumText,
+                                paused:'0:00'}}));
                     }
                 } else {
                     let pausedMsec = pausedAt ? timeNow-pausedAt : 0;
@@ -801,13 +832,21 @@ function onDocKeyDown(ev){
                     pauseAcum += pausedMsec;
                     writeNumber("pausedAt",pausedAt);
                     writeNumber("pauseAcum",pauseAcum);
+
+                    const pauseAccumText = secToStr(pauseAcum / oneSecond);
     
-                    extraTimeDisp.textContent = "+ "+secToStr(pauseAcum / oneSecond)+" pauses";
+                    extraTimeDisp.textContent = "+ "+pauseAccumText+" pauses";
              
                     endsAt = seekEndsAt;
                     endsDisp.textContent =  new Date(seekEndsAt).toLocaleTimeString();
                     if (server_conn) {
-                      server_conn.send(JSON.stringify({setVariableValues:{endsAt:endsDisp.textContent,pausedMsec:0}}));
+                      server_conn.send(JSON.stringify({
+                        setVariableValues:{
+                            default:secToStr(defaultDuration/1000),
+                            endsAt:endsDisp.textContent,
+                            pausing:false,
+                            pauses:pauseAccumText,
+                            paused:'0:00'}}));
                     }
                     
                 }
@@ -822,6 +861,8 @@ function onDocKeyDown(ev){
                 clearHtmlClass("paused");
                 pausedAt = undefined;
                 pauseAcum = 0;
+                writeNumber("pausedAt",pausedAt);
+                writeNumber("pauseAcum",pauseAcum);
                 extraTimeDisp.textContent = "";
                 
                 seekEndsAt = startedAt + thisDuration;
@@ -829,7 +870,11 @@ function onDocKeyDown(ev){
                 endsDisp.textContent =  new Date(seekEndsAt).toLocaleTimeString();
 
                 if (server_conn) {
-                    server_conn.send(JSON.stringify({setVariableValues:{endsAt:endsDisp.textContent}}));
+                    server_conn.send(JSON.stringify({
+                        setVariableValues:{
+                            endsAt:endsDisp.textContent,
+                            pauses:'0:00',
+                            paused:'0:00'}}));
                 }
                     
                 break;
@@ -960,7 +1005,7 @@ function onDocKeyDown(ev){
             case "i":
             case "I":
                 if (controlling && shifting) {
-                    ev.preventDefault();
+                  //  ev.preventDefault();
                 }
                 break;  
             case "F":
@@ -1086,15 +1131,29 @@ function onDocKeyDown(ev){
                 break;
 
 	    case "R":
-            case "r":
-              ev.preventDefault();
-        	  openTimerWindow(tabCount>1);
+        case "r":
+
+              if (!controlling) {
+                ev.preventDefault();
+                if (!isSingleScreenMode()) {
+                    openTimerWindow(tabCount>1);
+                }
+              }
               break;
 
       
     }}
 }
 
+
+function isSingleScreenMode() {
+    if ( window.location.search.startsWith("?presenter") )  {
+        return false;
+    }
+    return html.classList.contains("reduced") && 
+           html.classList.contains("showbuttons") &&
+           runMode === "presenter";
+}
 
     function saveEditedTime(){
         if ( !  (  (enterTimeText === "" ) || (enterTimeText === "" ) ) ) {
@@ -1234,6 +1293,7 @@ function onDocKeyDown(ev){
   
  
   function onTimerWinUnload(){
+      localStorage.removeItem (timerWin.tab_id);
       timerWin=undefined;
   }
   
@@ -1242,6 +1302,8 @@ function onDocKeyDown(ev){
         timerWin.close();
         timerWin = undefined;
      }
+     localStorage.removeItem (tab_id);
+     localStorage.removeItem ("controller_"+tab_id);
   }
   
 
@@ -1270,10 +1332,29 @@ function restartLongPoll() {
        writeNumber('lastLongPollId',server_conn.lastId);
      });
 
-     processServerMessage(undefined,'opened');    
+    // processServerMessage(undefined,'opened');    
 }
 
-
+function getTimerColors(){
+    if (server_conn) {
+        const msg =  {
+            setTimerColors: {
+    
+            } 
+        };
+        let shouldSend=false;
+        (msg.names||getCustomColorNames()).forEach(function(n){
+            const color = getCustomColor(n);
+            if (color) {
+                msg.setTimerColors[n]=color;
+                shouldSend=true;
+            }
+        });
+        if (shouldSend) {
+            server_conn.send(JSON.stringify(msg));
+        }
+    }
+}
 
 function processServerMessage(err,cmd,msg,code) {
     console.log(err,cmd,msg,code);
@@ -1307,6 +1388,44 @@ function processServerMessage(err,cmd,msg,code) {
             break;
         }
 
+        case "setTimerColor" : {
+
+            const oldColor = setCustomColor(msg.name,msg.color);
+
+
+            break;
+        }
+
+        case "setTimerColors" : {
+
+            setCustomColors(msg.colors);
+            
+            break;
+        }
+
+        case "getTimerColor" : {
+            if (server_conn&& msg.name) {
+                const msg =  {
+                    setTimerColors: {
+            
+                    } 
+                };
+                const color = getCustomColor(msg.name);
+                if (color) {
+                    msg.setTimerColors[msg.name]=color;
+                    server_conn.send(JSON.stringify(msg));
+                }
+            }
+            break;
+        }
+
+        case "getTimerColors" : {
+            getTimerColors();
+            
+            break;
+        }
+
+     
 
         case "presenter" : {
             if (runMode !== "presenter") {
@@ -1325,15 +1444,20 @@ function processServerMessage(err,cmd,msg,code) {
         case "opened": {
             if (server_conn) {
                 console.log("sending startup values",dispNextMins.textContent);
+                let pausedMsec = pausedAt ?  Date.now()-pausedAt : 0;
+                 
                 server_conn.send(JSON.stringify({setVariableValues:{
-                    default:dispNextMins.textContent,
+                    default:secToStr(defaultDuration/1000),
                     endsAt:endsDisp.textContent,
                     startedAt:startedDisp.textContent,
-                    showtime:localStorage.getItem('showtime')||'0',
+                    showtimenow:localStorage.getItem('showtimenow')||'0',
                     showbar:localStorage.getItem('showbar')||'0',
                     showmessages:localStorage.getItem('showmessages')||'0',
-                    pausedMsec:localStorage.getItem('pausedMsec')||'0',
+                    paused: secToStr(pausedMsec / 1000),
+                    pauses: secToStr((pausedMsec+pauseAcum) / 1000),
                 }}));
+                lastTimeText="";
+                getTimerColors();
             }
 
             break;
@@ -1341,16 +1465,15 @@ function processServerMessage(err,cmd,msg,code) {
     }
 } 
 
-function setupPip(sourceId,targetId,width,height,font,fgQuery,getFGColor) {
+function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass) {
     const target = document.getElementById(targetId);
     if (!target.requestPictureInPicture) return null;
     
     const content = document.getElementById(sourceId);
     const fgEl = fgQuery ? document.querySelector(fgQuery) : content;
-    getFGColor = getFGColor || getInheritedColor;
-
-    const bg = getInheritedBackgroundColor(content);
-    let lastContent = "";
+   
+    const bg = getInheritedBackgroundColor(fgEl);
+    togglePictureInPicture.lastContent = "";
     const source = document.createElement('canvas');
     source.width = width;
     source.height = height;
@@ -1379,12 +1502,12 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,getFGColor) {
     
     function anim() {
       const str = content.textContent;
-      if (lastContent!==str) { 
+      if ( togglePictureInPicture.lastContent!==str) { 
         ctx.fillStyle = bg;
         ctx.fillRect( 0, 0, source.width, source.height );
-        ctx.fillStyle = getFGColor(fgEl);
+        ctx.fillStyle = getInheritedColor(fgEl);
         ctx.fillText( str, source.width / 2, source.height / 2 );
-        lastContent = str;
+        togglePictureInPicture.lastContent = str;
       }
       requestAnimationFrame( anim );
     }
@@ -1392,16 +1515,20 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,getFGColor) {
     function togglePictureInPicture() {
       if (document.pictureInPictureElement) {
         document.exitPictureInPicture();
+        html.classList.remove(htmlClass);
       } else if (document.pictureInPictureEnabled) {
         target.requestPictureInPicture();
+        html.classList.add(htmlClass);
       }
     }
     
     function enterPIP() {
      if (document.pictureInPictureElement) {
+        html.classList.add(htmlClass);
         return false;
       } else if (document.pictureInPictureEnabled) {
         target.requestPictureInPicture();
+        html.classList.add(htmlClass);
         return true;
       }
     }
@@ -1409,8 +1536,10 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,getFGColor) {
     function exitPIP() {
      if (document.pictureInPictureElement) {
         document.exitPictureInPicture();
+        html.classList.remove(htmlClass);
         return true;
       } else if (document.pictureInPictureEnabled) {
+        html.classList.remove(htmlClass);
         return false;
       }
     }
@@ -1471,4 +1600,97 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,getFGColor) {
     var bg = window.getComputedStyle(div).color
     document.head.removeChild(div)
     return bg
+  }
+
+
+  function getCustomColor(name) {
+    return window.getComputedStyle(document.documentElement).getPropertyValue(`--color-${name}`);
+  }
+
+  function setCustomColor(name,newColor,notify) {
+   
+     let shouldSend = false;
+
+     const current =  getCustomColor(name);
+     if (current==='') return null;
+     if (current===newColor) return false;
+     document.documentElement.style.setProperty(`--color-${name}`, newColor);
+
+    if (notify!==false && server_conn) {
+        const msg = {
+            setTimerColors: {
+    
+            } 
+        };
+
+        msg.setTimerColors[name] = newColor;
+        server_conn.send(JSON.stringify(msg));
+    }
+
+     return current;
+  }
+
+  function getCustomColorNames() {
+    return Array.from(document.styleSheets)
+    .filter(
+      sheet =>
+        sheet.href === null || sheet.href.startsWith(window.location.origin)
+    )
+    .reduce(
+      (acc, sheet) =>
+        (acc = [
+          ...acc,
+          ...Array.from(sheet.cssRules).reduce(
+            (def, rule) =>
+              (def =
+                rule.selectorText === ":root"
+                  ? [
+                      ...def,
+                      ...Array.from(rule.style).filter(name =>
+                        name.startsWith("--")
+                      )
+                    ]
+                  : def),
+            []
+          )
+        ]),
+      []
+    ).map(function(n){
+        return n.replace(/^--color-/,'');
+    });
+  }
+
+  function getCustomColors (names) {
+    const result = {};
+    (names||getCustomColorNames()).forEach(function(n){
+        result[n]=getCustomColor(n);
+    });
+    return result;
+  }
+
+  function setCustomColors(colors,notify) {
+    const changed = {};
+    const msg = notify!==false && server_conn ? {
+        setTimerColors: {
+
+        } 
+    }: false;
+    let shouldSend = false;
+    Object.keys(colors).forEach(function(n){
+        const newColor = colors[n];
+        const was =  setCustomColor(n,newColor,false);
+        if (was) {
+            changed[n]=was;
+            if (msg) {
+                msg.setTimerColors[n] = newColor;
+                shouldSend=true;
+            }
+        }
+    });
+
+    if (shouldSend) {
+        server_conn.send(JSON.stringify(msg));
+     }
+
+    return changed;
   }

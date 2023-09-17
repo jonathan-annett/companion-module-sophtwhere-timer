@@ -24,7 +24,7 @@ function openLongPollPoster(lastId,cb) {
     }
     const msg_poll_url = "/msg-poll";
 
-  
+     let opened=false;
 
     let callbacks = [];
 
@@ -44,10 +44,19 @@ function openLongPollPoster(lastId,cb) {
 
     function nextMessage() {
 
+        if (!opened) {
+            return setTimeout(function(){
+                callbacks.forEach(function(fn){fn({cmd:"opened"})});
+                opened=true;
+                nextMessage();  
+            },100);            
+        }
+
         getMsg(function(err,messages){
             
             if (messages) {
 
+            
                 messages.forEach(function(x){
                     const msg = JSON.parse(x.msg);
                     callbacks.forEach(function(fn){fn(msg)});
@@ -56,7 +65,8 @@ function openLongPollPoster(lastId,cb) {
             }
 
             if (err) {
-                console.log(err);
+                console.log("error in longpoll:",err);
+                opened=false;
             }
 
             nextMessage();

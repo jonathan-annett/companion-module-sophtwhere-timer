@@ -28,12 +28,11 @@ const help_md_src = path.join(__dirname,'HELP.md');
 const help_md_dest = path.join(__dirname,'companion','HELP.md');
 
 
-const help_md = fs.readFileSync(help_md_src,'utf8');  
+
 
 
 content['/index.html']=content['/timer.html'];
 content['/']=content['/timer.html'];
-
 
 
 function api_config(cfg,updated) {
@@ -41,7 +40,8 @@ function api_config(cfg,updated) {
 
     const HTTP_PORT=cfg.port;
 
-    if (fs.existsSync(help_md_dest)) {
+    if (fs.existsSync(help_md_dest) && fs.existsSync(help_md_src) ) {
+        const help_md = fs.readFileSync(help_md_src,'utf8');  
         const fixedupHelp = help_md.replace(/localhost\:8088/g,`localhost:${HTTP_PORT}`);
         const existingHelp = fs.readFileSync(help_md_dest,'utf8');  
         if (fixedupHelp!==existingHelp) {
@@ -54,11 +54,11 @@ function api_config(cfg,updated) {
     }
 
 
-
     const connections = startLongPollPoster(defaultHTTPHandler);
 
     const server = http.createServer(connections.handler);
 
+ 
     connections.on('message',function(msg){
 
           // msg is parsed json object as sent by client(s)
@@ -66,7 +66,13 @@ function api_config(cfg,updated) {
           if ( msg.setVariableValues ) {
                 module.exports.api.setVariableValues( msg.setVariableValues );
           } else {
+              if (msg.setTimerColors) {
+
+                module.exports.api.updateTimerColors (msg.setTimerColors);
+
+              } else {
                 console.log("unhandled message:",msg,typeof msg);
+              }
           }
 
     });
@@ -86,50 +92,6 @@ function api_config(cfg,updated) {
         console.log((new Date()) + ' Received request for ' + request.url);
         response.writeHead(404);
         response.end();
-    }
-
-
-    function onWSConnection (ws) {
-
-        console.log('timer browser ws connected');
-
-        const forcePresenter = JSON.stringify({cmd:"presenter"});
-        const forceControl = JSON.stringify({cmd:"control"});
-        connections.forEach(function(conn){
-            conn.send(forcePresenter);
-        });
-
-        connections.push(ws);
-
-        ws.send(forceControl);
-
-        ws.on('message',onWsMessage);
-        ws.on('close',onWsClose);
-
-        function onWsMessage(message) {
-            try {
-    
-            const msg = JSON.parse( message.toString('utf8'));
-                if ( msg.setVariableValues ) {
-                    module.exports.api.setVariableValues( msg.setVariableValues );
-                } else {
-                    console.log("unhandled message:",msg);
-                }
-        
-            } catch(e) {
-                console.log("error parsing message:",e);
-            }
-        
-        }
-
-        function onWsClose(){
-            const ix = connections.indexOf(ws);
-            if (ix>=0) {
-                connections.splice(ix,1);
-                console.log('ws disconnected ');        
-            }
-        }
-        
     }
 
     server.listen(HTTP_PORT, function() {
@@ -241,25 +203,11 @@ function api_config(cfg,updated) {
 
             connections.send(data);
 
-            /*
-            const json = JSON.stringify(data,undefined,4);
-            if (connections.length) { console.log("sending:",json);}
-
-            connections.forEach(function(connection){
-                connection.send(json);
-            });
-
-            */
         } catch (x) {
             console.log((new Date()) , x);
         }
     }
 
-    function closeConnections () {
-        connections.splice(0,connections.length).forEach(function(conn){
-            conn.close();
-        });
-    }
 
 }
 
@@ -279,7 +227,8 @@ module.exports = {
         
       },
     
-      config : api_config
+      config : api_config,
+      
     }
 
 };

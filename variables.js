@@ -3,6 +3,7 @@ module.exports = async function (self) {
 
 		{ variableId: 'expired', name: 'timer expired'  },
 		{ variableId: 'impending', name: 'timer impending'  },
+		{ variableId: 'pausing', name: 'timer is pausing'  },
 		
 		{ variableId: 'remain', name: 'remaining'  },
 		{ variableId: 'remain_h', name: 'remaining h'  },
@@ -17,14 +18,13 @@ module.exports = async function (self) {
 		{ variableId: 'remain_mm_ss', name: 'remaining mm:ss'  },
 		
 
-		{ variableId: 'remain_hours', name: 'remaining hours'  },
+		{ variableId: 'remain_hours',   name: 'remaining hours'  },
 		{ variableId: 'remain_minutes', name: 'remaining minutes'  },
 		{ variableId: 'remain_seconds', name: 'remaining seconds'  },
-		{ variableId: 'remain_milliseconds', name: 'remaining milliseconds'  },
+	
 
-
-		{ variableId: 'elapsed', name: 'elapsed'  },
-		{ variableId: 'elapsed_h', name: 'elapsed h'  },
+		{ variableId: 'elapsed',    name: 'elapsed'  },
+		{ variableId: 'elapsed_h',  name: 'elapsed h'  },
 		{ variableId: 'elapsed_hh', name: 'elapsed hh'  },
 		{ variableId: 'elapsed_m',  name: 'elapsed m'  },
 		{ variableId: 'elapsed_mm', name: 'elapsed mm'  },
@@ -37,23 +37,17 @@ module.exports = async function (self) {
 		{ variableId: 'elapsed_hours', name: 'elapsed hours'  },
 		{ variableId: 'elapsed_minutes', name: 'elapsed minutes'  },
 		{ variableId: 'elapsed_seconds', name: 'elapsed seconds'  },
-		{ variableId: 'elapsed_milliseconds', name: 'elapsed milliseconds'  },
-
-		{ variableId: 'default', name: 'default'  },
+		
+		{ variableId: 'default',   name: 'default'  },
 		{ variableId: 'startedAt', name: 'started at'  },
-		{ variableId: 'endsAt', name: 'ends at'  },
+		{ variableId: 'endsAt',    name: 'ends at'  },
 
-		{ variableId: 'showtimenow', name: 'Show Time Now'  },
-		{ variableId: 'showmessages', name: 'Show Messages'  },	
-		{ variableId: 'showbar', name: 'Show Bar'  },	
+		{ variableId: 'showtimenow',   name: 'Show Time Now'  },
+		{ variableId: 'showmessages',  name: 'Show Messages'  },	
+		{ variableId: 'showbar',       name: 'Show Bar'  },	
 
-		{ variableId: 'pausedMsec', name: 'Paused Milliseconds'  },	
-
-
-	 
-	 	
- 
-
+		{ variableId: 'paused', name: 'paused'  },
+		{ variableId: 'pauses', name: 'Accumulated pause time'  },
 		
 	])
 }

@@ -3,15 +3,50 @@ const { splitHMS } = require('./splitHMS')
 
 module.exports = function (self) {
 
-	const hmsKeys = Object.keys(splitHMS('0:0'));
-	 
-	self.setActionDefinitions({
+	   
+    const timerColors = {};
+	let timerColorIndex = {};
+    const choiceArray = [];
+    const setTimerColorDef = {
+        name: 'Set Timer Color',
+        options: [
+            {
+                type: 'dropdown',
+                label: 'Timer Color Name',
+                id: 'timerColorName',
+                default: '0',
+                tooltip: 'Name of Color in timer screen',
+                choices: choiceArray,
+                minChoicesForSearch: 0
+                },
+
+                {
+                id: 'htmlColor',
+                type: 'textinput',
+                label: 'HTML Color',
+                default: "#FFFFFF"
+                }, 
+            ],
+        callback: async (event) => {
+            const api = require('./server.js').api;
+			const colorName = timerColorIndex[event.options.timerColorName];
+            console.log("updating color:",event.options);                                 
+            api.send({
+                cmd:"setTimerColor",
+                name:colorName,
+                color:event.options.htmlColor
+            });            
+                
+        }
+    };   
+
+	const actionDefs = {
 
 	
 		restart : {
 			name: 'Restart',
 			options: [
-				],
+			],
 			callback: async (event) => {0
 				const api = require('./server.js').api;
 				api.send({
@@ -275,8 +310,63 @@ module.exports = function (self) {
 				 
 			},
 		},
+
+
+		setTimerColor : setTimerColorDef,
 		
-	})
+	};
+    
+    function updateTimerColors(colors) {
+         
+        Object.keys(colors).forEach(function(n){
+            timerColors[n]= colors[n];
+        });
+       
+        choiceArray.splice(0,choiceArray.length);
+		
+		timerColorIndex = {};
+		Object.keys(actionDefs).filter(function(k){
+			return k.startsWith('setTimerColor-');
+		}).forEach(function(k){
+			delete actionDefs[k];
+		});
+
+        Object.keys(timerColors).forEach(function(colorName,id){
+            choiceArray.push({id : id.toString(),label:colorName});
+			timerColorIndex[id.toString()]=colorName;
+			const currentColor =  timerColors[colorName];
+
+			actionDefs['setTimerColor-'+colorName] = {
+				name: 'Set Timer Color:'+colorName,
+				options: [
+						{
+							id: 'htmlColor'+colorName,
+							type: 'textinput',
+							label: 'HTML Color for '+colorName,
+							default:currentColor 
+					}
+				],
+				callback: async (event) => {
+					const api = require('./server.js').api;
+					api.send({
+						cmd:"setTimerColor",
+						name:colorName,
+						color:event.options['htmlColor'+colorName]
+					});            						
+				}
+			};   
+		
+        });
+
+		self.setActionDefinitions(actionDefs);
+
+    }
+
+	self.api.updateTimerColors = updateTimerColors;
+
+	const hmsKeys = Object.keys(splitHMS('0:0'));
+	 
+	self.setActionDefinitions(actionDefs)
 
 	const presets = {
 
@@ -364,6 +454,7 @@ module.exports = function (self) {
 					style: {
 						bgcolor: combineRgb(0,0,255),
 						color: combineRgb(255, 255, 255),
+						text : "Paused\n$(timer:paused)"
 					},
 					options: {
 						pausedStatus: '1',
@@ -396,11 +487,20 @@ module.exports = function (self) {
 				},
 			],
 			feedbacks: [
-				
+				{
+					feedbackId: 'PauseBackLog',
+					style: {
+						bgcolor: combineRgb(0,128,128),
+						color: combineRgb(255, 255, 255),
+						text : "Undo Pause\n$(timer:pauses)",
+						size: '14'
+					},
+					options: {
+						backlogStatus: '1',
+					},
+				},
 			],
 		},
-
-
 
 		'remaining': {
 			type: 'button',
@@ -451,6 +551,54 @@ module.exports = function (self) {
 			name: 'Elapsed',
 			style: {
 				text: '$(timer:elapsed)',
+				size: '24',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+					 
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+		'paused': {
+			type: 'button',
+			category: 'Time Paused',
+			name: 'Paused',
+			style: {
+				text: '$(timer:paused)',
+				size: '24',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+					 
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+		'pauses': {
+			type: 'button',
+			category: 'Accumulated Pause Time',
+			name: 'Pauses',
+			style: {
+				text: '$(timer:pauses)',
 				size: '24',
 				color: combineRgb(255, 255, 255),
 			    bgcolor: combineRgb(0, 0, 0),
@@ -766,7 +914,6 @@ module.exports = function (self) {
 
 	};
 
-
 	hmsKeys.forEach(function(k){
 		presets[`Remaining ${k}`]={
 			type: 'button',
@@ -838,7 +985,6 @@ module.exports = function (self) {
 			],
 		};
 	});
-
 
 
    const stdTimes = [5,10,15,20,25,30,35,40,45,50,55];
