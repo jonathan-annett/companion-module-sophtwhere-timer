@@ -58,10 +58,12 @@ let runMode = "controller";
 let togglePIPMode = setupPip(
     "remain_disp",
     "remain_disp_video",
-    192,108,
-    "50px Arial",
+    192*2,108*2,
+    '100px "Lucida", sans-serif',
     "#remain_disp_video_text",
-    "overlay");
+    "overlay",
+    "#remain_info_message",
+    '40px "Lucida", sans-serif');
 
   if (window.location.search.startsWith("?presenter")) {
 
@@ -590,6 +592,7 @@ custom_message.addEventListener('focus', function(){
                 endsAt:endsDisp.textContent,
                 default:durationDisp.textContent,
                 paused:'0:00',
+                pauses:'0:00',
                 pausing:false,
                 expired:false,
                 impending:defaultDuration<=60000}
@@ -1465,13 +1468,13 @@ function processServerMessage(err,cmd,msg,code) {
     }
 } 
 
-function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass) {
+function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQry,toplinefont) {
     const target = document.getElementById(targetId);
     if (!target.requestPictureInPicture) return null;
     
     const content = document.getElementById(sourceId);
     const fgEl = fgQuery ? document.querySelector(fgQuery) : content;
-   
+    const topLineEl = toplineQry ? document.querySelector(toplineQry) : null;
     const bg = getInheritedBackgroundColor(fgEl);
     togglePictureInPicture.lastContent = "";
     const source = document.createElement('canvas');
@@ -1506,7 +1509,15 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass) {
         ctx.fillStyle = bg;
         ctx.fillRect( 0, 0, source.width, source.height );
         ctx.fillStyle = getInheritedColor(fgEl);
+        ctx.font = font;
         ctx.fillText( str, source.width / 2, source.height / 2 );
+        if (topLineEl) {            
+            ctx.font = toplinefont;
+            const text = window.getComputedStyle(topLineEl,':before')['content'];
+            if (text !== 'none') {            
+                ctx.fillText( text.replace(/^\"|\"$/g,''), source.width / 2,32,source.width);
+            }
+        }
         togglePictureInPicture.lastContent = str;
       }
       requestAnimationFrame( anim );

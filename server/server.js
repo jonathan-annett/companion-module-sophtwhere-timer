@@ -14,7 +14,7 @@ const files = [
 
 const content = {};
 files.forEach(function(fn){
-    const body =  fs.readFileSync(path.join(__dirname,'browser',fn),'utf8');   
+    const body =  fs.readFileSync(path.join(__dirname,'..','browser',fn),'utf8');   
     content['/'+fn]= {
         body: body,
         headers : {
@@ -25,7 +25,7 @@ files.forEach(function(fn){
 });
 
 const help_md_src = path.join(__dirname,'HELP.md');
-const help_md_dest = path.join(__dirname,'companion','HELP.md');
+const help_md_dest = path.join(__dirname,'..','companion','HELP.md');
 
 
 

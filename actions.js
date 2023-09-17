@@ -1,5 +1,6 @@
 const { combineRgb } = require('@companion-module/base');
-const { splitHMS } = require('./splitHMS')
+const { splitHMS } = require('./server/splitHMS')
+const getApi=function(){ return require('./server/server.js').api; };
 
 module.exports = function (self) {
 
@@ -28,7 +29,7 @@ module.exports = function (self) {
                 }, 
             ],
         callback: async (event) => {
-            const api = require('./server.js').api;
+            const api = getApi();
 			const colorName = timerColorIndex[event.options.timerColorName];
             console.log("updating color:",event.options);                                 
             api.send({
@@ -48,8 +49,7 @@ module.exports = function (self) {
 			options: [
 			],
 			callback: async (event) => {0
-				const api = require('./server.js').api;
-				api.send({
+				getApi().send({
 					cmd:"start"
 				});
 			},
@@ -92,7 +92,7 @@ module.exports = function (self) {
 				}, 
 			],
 			callback: async (event) => {0
-				const api = require('./server.js').api;
+				const api =  getApi();
 				let tally = event.options.days;
 				tally = (tally * 24) + event.options.hours;
 				tally = (tally * 60) + event.options.mins;
@@ -146,7 +146,7 @@ module.exports = function (self) {
 				}, 
 			],
 			callback: async (event) => {0
-				const api = require('./server.js').api;
+				const api =  getApi();
 				let tally = event.options.days;
 				tally = (tally * 24) + event.options.hours;
 				tally = (tally * 60) + event.options.mins;
@@ -167,9 +167,8 @@ module.exports = function (self) {
 			name: 'Pause',
 			options: [
 				],
-			callback: async (event) => {0
-				const api = require('./server.js').api;
-				api.send({
+			callback: async (event) => {
+				getApi().send({
 					cmd:"pause"
 				});
 			},
@@ -180,8 +179,7 @@ module.exports = function (self) {
 			options: [
 				],
 			callback: async (event) => {0
-				const api = require('./server.js').api;
-				api.send({
+				getApi().send({
 					cmd:"undopause"
 				});
 			},
@@ -192,8 +190,7 @@ module.exports = function (self) {
 			options: [
 				],
 			callback: async (event) => {0
-				const api = require('./server.js').api;
-				api.send({
+				getApi().send({
 					cmd:"bar"
 				});
 			},
@@ -204,8 +201,7 @@ module.exports = function (self) {
 			options: [
 				],
 			callback: async (event) => {0
-				const api = require('./server.js').api;
-				api.send({
+				getApi().send({
 					cmd:"time"
 				});
 			},
@@ -218,8 +214,7 @@ module.exports = function (self) {
 			options: [
 				],
 			callback: async (event) => {0
-				const api = require('./server.js').api;
-				api.send({
+				getApi().send({
 					cmd:"minus1"
 				});
 			},
@@ -231,8 +226,7 @@ module.exports = function (self) {
 			options: [
 				],
 			callback: async (event) => {0
-				const api = require('./server.js').api;
-				api.send({
+				getApi().send({
 					cmd:"plus1"
 				});
 			},
@@ -244,8 +238,7 @@ module.exports = function (self) {
 			options: [
 				],
 			callback: async (event) => {0
-				const api = require('./server.js').api;
-				api.send({
+				getApi().send({
 					cmd:"minus1Min"
 				});
 			},
@@ -257,8 +250,7 @@ module.exports = function (self) {
 			options: [
 				],
 			callback: async (event) => {0
-				const api = require('./server.js').api;
-				api.send({
+				getApi().send({
 					cmd:"plus1Min"
 				});
 			},
@@ -269,8 +261,7 @@ module.exports = function (self) {
 			options: [
 				],
 			callback: async (event) => {0
-				const api = require('./server.js').api;
-				api.send({
+				getApi().send({
 					cmd:"catchup"
 				});
 			},
@@ -281,8 +272,7 @@ module.exports = function (self) {
 			options: [
 				],
 			callback: async (event) => {0
-				const api = require('./server.js').api;
-				api.send({
+				getApi().send({
 					cmd:"messages"
 				});
 			},
@@ -299,10 +289,7 @@ module.exports = function (self) {
 				}, 
 				],
 			callback: async (event) => {0
-				const api = require('./server.js').api;
-					 
-				
-				api.send({
+				getApi().send({
 					cmd:"customMessage",
 					text:event.options.text
 				});
@@ -347,8 +334,7 @@ module.exports = function (self) {
 					}
 				],
 				callback: async (event) => {
-					const api = require('./server.js').api;
-					api.send({
+					getApi().send({
 						cmd:"setTimerColor",
 						name:colorName,
 						color:event.options['htmlColor'+colorName]

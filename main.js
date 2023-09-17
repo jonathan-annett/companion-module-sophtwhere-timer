@@ -3,7 +3,7 @@ const UpgradeScripts = require('./upgrades')
 const UpdateActions = require('./actions')
 const UpdateFeedbacks = require('./feedbacks')
 const UpdateVariableDefinitions = require('./variables')
-const { splitHMS } = require('./splitHMS')
+const { splitHMS } = require('./server/splitHMS')
 
 
 class ModuleInstance extends InstanceBase {
@@ -14,7 +14,7 @@ class ModuleInstance extends InstanceBase {
 	async init(config) {
 		this.config = config
 
-		this.api = require('./server.js').api;
+		this.api = require('./server/server.js').api;
 
 		this.updateStatus(InstanceStatus.Ok)
 		this.updateActions() // export actions
