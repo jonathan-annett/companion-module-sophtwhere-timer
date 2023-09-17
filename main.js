@@ -50,7 +50,6 @@ class ModuleInstance extends InstanceBase {
 		}).catch(function(err){
 			console.log("err",err);
 		});
-				
 		
 	}
 		

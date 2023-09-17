@@ -2,6 +2,8 @@
 
 This connection enables a countdown timer on your computer, which you display using a web browser.
 
+**You don't need to install any additional software, the timer runs locally in your browser, and is automatically enabled when your add this connection**
+
 **TLDR** *Click a link below to open the timer page, once you are familiar with these instructions.*
 
 <!--other links-->
@@ -12,12 +14,14 @@ About the Timer's Display Modes
 Dual Display Mode
 ---
 
-In this mode, you will use one browser as a controller display screen, with another browser window which you drag to a spare monitor, and to diplay a stage timer screen.
+In this mode, you will use one browser as a controller display screen, with another browser window which you drag to a spare monitor, and to display a stage timer screen.
 
-  * controller screen has more information, useful for an operator
+  * the controller screen has information which may be useful for an operator
   ![Screenshot1](Screenshot1.png)
 
-  * stage timer screen has a countdown timer, and optionally a progress bar, the time of day display, and custom messages entered by the operator.
+  * the stage timer screen has a countdown timer, intended to be viewed by a presenter. 
+  
+  * there's an optional progress bar, the time of day, and custom messages entered by the operator.
   ![Screenshot3](Screenshot3.png)
 
 
@@ -26,8 +30,6 @@ Overlay Mode
 
 In this mode, you will use a browser as a controller display screen, and a floating "always on top" window which displays the countdown.
 
-  * controller screen has more information, useful for an operator
-  ![Screenshot1](Screenshot1.png)
   * the floating overlay window only shows the remaining time
 
 

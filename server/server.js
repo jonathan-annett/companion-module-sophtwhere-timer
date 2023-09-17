@@ -53,8 +53,6 @@ function api_config(cfg,updated) {
         const help_md = fs.readFileSync(help_md_src,'utf8');  
         const ipsArrayHtml=ipLinksArray(HTTP_PORT,module.exports.api.ip_list);
         
-        console.log(module.exports.api.ip_list,ipsArrayHtml);
-
         const fixedupHelp = help_md
            .replace(/localhost\:8088/g,`localhost:${HTTP_PORT}`)
            .replace('<!--other links-->',ipsArrayHtml);
