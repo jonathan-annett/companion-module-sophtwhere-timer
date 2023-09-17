@@ -35,13 +35,31 @@ content['/index.html']=content['/timer.html'];
 content['/']=content['/timer.html'];
 
 
+function ipLink(port,ip) {
+    return `<a href="http://${ip}:${port}" target="_blank" rel="noopener"><span>http://${ip}:${port}</span></a>`;
+}
+
+function ipLinksArray(port,ips){
+    const fn = ipLink.bind(null,port);
+    return '  - '+ips.map(fn).join('\n  - ')+'\n';
+}
+
 function api_config(cfg,updated) {
     
     const HTTP_PORT=cfg.port;
-
+    console.log(help_md_dest,help_md_src);
     if (fs.existsSync(help_md_dest) && fs.existsSync(help_md_src) ) {
+        
         const help_md = fs.readFileSync(help_md_src,'utf8');  
-        const fixedupHelp = help_md.replace(/localhost\:8088/g,`localhost:${HTTP_PORT}`);
+        const ipsArrayHtml=ipLinksArray(HTTP_PORT,module.exports.api.ip_list);
+        
+        console.log(module.exports.api.ip_list,ipsArrayHtml);
+
+        const fixedupHelp = help_md
+           .replace(/localhost\:8088/g,`localhost:${HTTP_PORT}`)
+           .replace('<!--other links-->',ipsArrayHtml);
+           
+
         const existingHelp = fs.readFileSync(help_md_dest,'utf8');  
         if (fixedupHelp!==existingHelp) {
             fs.writeFileSync(help_md_dest,fixedupHelp);
@@ -103,6 +121,7 @@ function api_config(cfg,updated) {
         try {
 
             switch (data.cmd) {
+
                 case "start" : {
                     if (typeof data.msecs === 'number') {
                         let seconds = (data.msecs/60000).toFixed(3);
@@ -122,7 +141,6 @@ function api_config(cfg,updated) {
                     };
                     break;
                 }
-
 
                 case "default" : {
                     if (typeof data.msecs === 'number') {
@@ -164,7 +182,6 @@ function api_config(cfg,updated) {
                     data = {  cmd : "keys",keys :[ 't' ] }
                     break;
                 }
-
                 
                 case "plus1Min" : {
                     data = {  cmd : "keys",keys :[ 'Control','ArrowUp','~Control' ] }

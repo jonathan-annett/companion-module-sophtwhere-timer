@@ -2,7 +2,13 @@
 
 This connection enables a countdown timer on your computer, which you display using a web browser.
 
-**TLDR** *Experts can click <a href="http://localhost:8088" target="_blank" rel="noopener"><span>here</span> </a> to open the timer page, once they are familiar with these instructions.*
+**TLDR** *Click a link below to open the timer page, once you are familiar with these instructions.*
+
+  - <a href="http://192.168.16.1:8088" target="_blank" rel="noopener"><span>http://192.168.16.1:8088</span></a>
+  - <a href="http://192.168.110.1:8088" target="_blank" rel="noopener"><span>http://192.168.110.1:8088</span></a>
+  - <a href="http://192.168.149.26:8088" target="_blank" rel="noopener"><span>http://192.168.149.26:8088</span></a>
+  - <a href="http://127.0.0.1:8088" target="_blank" rel="noopener"><span>http://127.0.0.1:8088</span></a>
+
 
 About the Timer's Display Modes 
 ===

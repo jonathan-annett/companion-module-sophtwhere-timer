@@ -2,7 +2,9 @@
 
 This connection enables a countdown timer on your computer, which you display using a web browser.
 
-**TLDR** *Experts can click <a href="http://localhost:8088" target="_blank" rel="noopener"><span>here</span> </a> to open the timer page, once they are familiar with these instructions.*
+**TLDR** *Click a link below to open the timer page, once you are familiar with these instructions.*
+
+<!--other links-->
 
 About the Timer's Display Modes 
 ===

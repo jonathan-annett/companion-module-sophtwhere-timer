@@ -164,6 +164,9 @@ module.exports = async function (self) {
 				return ( self.getVariableValue(varName) ? '1' : '0') === feedback.options[optionStateName];				 		 
 			},
 
+			
+			
+
 		};
 
 	}

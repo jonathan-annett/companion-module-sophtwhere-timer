@@ -15,42 +15,43 @@ class ModuleInstance extends InstanceBase {
 		this.config = config
 
 		this.api = require('./server/server.js').api;
+		const api = this.api;
 
 		this.updateStatus(InstanceStatus.Ok)
 		this.updateActions() // export actions
 		this.updateFeedbacks() // export feedbacks
 		this.updateVariableDefinitions() // export variable definitions
 
-		
-
-		this.api.config(config);
-
 		const setVars = this.setVariableValues.bind(this);
 		const checkFeedbacks = this.checkFeedbacks.bind(this);
+			
+		this.parseVariablesInString('$(internal:all_ip)').then(function(ips){
+			api.ip_list = ips.replace(/\\n/g,'\n').trim().split('\n');
+			api.config(config);
 
+			api.setVariableValues = function (vars) {
+				const vars2 = {};
+				Object.keys(vars).forEach(function(k){
+					const val = vars[k];
+					vars2[k]=val;
+					if (k==="remain" || k==="elapsed" ) {
+						const extra = splitHMS(val);
+						Object.keys(extra).forEach(function(kk){
+							vars2[`${k}_${kk}`] = extra[kk];
+						});
+					}
+
+				});
+				setVars(vars2);
+				checkFeedbacks();
+			};
+
+		}).catch(function(err){
+			console.log("err",err);
+		});
+				
 		
-		 
-		this.api.setVariableValues = function (vars) {
-			const vars2 = {};
-			Object.keys(vars).forEach(function(k){
-				const val = vars[k];
-				vars2[k]=val;
-				if (k==="remain" || k==="elapsed" ) {
-					const extra = splitHMS(val);
-					Object.keys(extra).forEach(function(kk){
-						vars2[`${k}_${kk}`] = extra[kk];
-					});
-				}
-
-			});
-			setVars(vars2);
-			checkFeedbacks();
-		}
-	 
 	}
-
-
-	
 		
 	
 	// When module gets deleted
