@@ -8,6 +8,10 @@ module.exports = async function (self) {
 		{ variableId: 'adjusting_up', name: 'timer is speeding up to match target'  },
 		
 		{ variableId: 'adjusting_down', name: 'timer is slowing down to match target'  },
+
+		{ variableId: 'adjusting_delta', name: 'timer adjustment delta'  },
+		{ variableId: 'remain_actual', name: 'actual time remaining'  },
+
 		
 		
 		{ variableId: 'remain', name: 'remaining'  },

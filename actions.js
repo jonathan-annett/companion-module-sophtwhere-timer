@@ -531,6 +531,50 @@ module.exports = function (self) {
 			],
 		},
 
+		'actual_remaining': {
+			type: 'button',
+			category: 'Actual Time Remaining',
+			name: 'Actual Remaining',
+			style: {
+				text: '$(timer:remain_actual)',
+				size: '24',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+					 
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'Expired',
+					style: {
+						bgcolor: combineRgb(0, 0, 0),
+					    color: combineRgb(255, 0, 0),
+					},
+					options: {
+						expiredStatus: '1',
+					},
+				},
+				{
+					feedbackId: 'Impending',
+					style: {
+						bgcolor: combineRgb(0, 0, 0),
+					    color: combineRgb(255, 128, 0),
+					},
+					options: {
+						impendingStatus: '1',
+					},
+				},
+			],
+		},
+
+
 		'elapsed': {
 			type: 'button',
 			category: 'Time Elapsed',
@@ -785,7 +829,31 @@ module.exports = function (self) {
 				},
 			],
 			feedbacks: [
-				
+				{
+					feedbackId: 'AdjustingDown',
+					style: {
+						bgcolor: combineRgb(255,255,0),
+						color: combineRgb(0, 0, 0),
+						text : "$(timer:adjusting_delta) seconds\n(SLOWING)",
+						size: '7'
+					},
+					options: {
+						adjusting_downStatus: '1',
+					},
+				},
+
+				{
+					feedbackId: 'AdjustingUp',
+					style: {
+						bgcolor: combineRgb(0,255,255),
+						color: combineRgb(0, 0, 0),
+						text : "+$(timer:adjusting_delta) seconds\n(SPEEDING)",
+						size: '7'
+					},
+					options: {
+						adjusting_upStatus: '1',
+					},
+				},
 			],
 		},
 

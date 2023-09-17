@@ -255,6 +255,11 @@ custom_message.addEventListener('focus', function(){
       let tabCount = getTabCount(),timeNow =  Date.now() ;
       let controllerCount = getTabCount(true);
       let pausing = false;
+
+      let adjusting_down = false;
+      let adjusting_up = false;
+      let adjusting_delta = '0';
+      let remain_actual ;
       
       if (tabCount===1) {
           clearHtmlClass("twoplus");
@@ -294,7 +299,7 @@ custom_message.addEventListener('focus', function(){
           
          let actualRemain =  (seekEndsAt - timeNow) / oneSecond ;
          if (actualRemain>0) actualRemain++;
-         
+         remain_actual = secToStr(actualRemain);
          if (seekEndsAt < endsAt - 500) {
              
              if (seekEndsAt < endsAt - skip_granularity) {
@@ -302,25 +307,31 @@ custom_message.addEventListener('focus', function(){
              }
              
              endsAt -= 25;
-             setRemainClass("adjustingDown");
-             clearRemainClass("adjusting") ;
+             clearRemainClass("adjustingDown");
+             setRemainClass("adjusting") ;
+             adjusting_delta = Number ( (endsAt -seekEndsAt) / oneSecond).toFixed(1);
              
-             keyDisp.textContent = "speeding up to match actual time ("+secToStr(actualRemain)+")  "+Number ( (endsAt -seekEndsAt) / oneSecond).toFixed(1)+" seconds offset";
+             keyDisp.textContent = "speeding up to match actual time ("+remain_actual+")  "+adjusting_delta+" seconds offset";
              writeNumber("endsAt",endsAt);
+             adjusting_up = true;
+            
          } else {
               if (seekEndsAt > endsAt + 500) {
                   if (seekEndsAt > endsAt + skip_granularity) {
                       //endsAt += skip_granularity;
                   }
                   endsAt += 25;
-                  setRemainClass("adjusting");
-                  clearRemainClass("adjustingDown") ;
-                  keyDisp.textContent = "slowing down to match actual time ("+secToStr(actualRemain)+")  "+Number ( (endsAt -seekEndsAt) / oneSecond).toFixed(1)+" seconds offset";
+                  clearRemainClass("adjusting");
+                  setRemainClass("adjustingDown") ;
+                  adjusting_delta = Number ( (endsAt -seekEndsAt) / oneSecond).toFixed(1)
+                  keyDisp.textContent = "slowing down to match actual time ("+remain_actual+")  "+adjusting_delta+" seconds offset";
                   writeNumber("endsAt",endsAt);
+                  adjusting_down = true;
               }  else {
                   endsAt = seekEndsAt;
                   clearRemainClass("adjusting") ;
                   clearRemainClass("adjustingDown") ;
+                  remain_actual = undefined;
                   keyDisp.textContent = tabCount === 1  ? "" : controllerCount > 1 ? "MULTIPLE CONTROLLERS TABS ARE OPEN. CLOSE ONE!" : pausedMsec === 0 ? "remote display active" : "countdown was paused at "+ local24HourTime (new Date(pausedAt));
                   writeNumber("endsAt",endsAt);
               }
@@ -342,6 +353,10 @@ custom_message.addEventListener('focus', function(){
                 lastEndsAtText = endsDisp.textContent;
                 server_conn.send(JSON.stringify({
                     setVariableValues:{
+                        adjusting_up,
+                        adjusting_down,
+                        adjusting_delta,
+                        remain_actual: remain_actual,
                         endsAt:lastEndsAtText,
                         paused:pausedTimeStr,
                         pauses:accumTimeStr,
@@ -431,6 +446,10 @@ custom_message.addEventListener('focus', function(){
                      if (server_conn) {
                         server_conn.send(JSON.stringify({
                             setVariableValues:{
+                                adjusting_up,
+                                adjusting_down,
+                                adjusting_delta,
+                                remain_actual: remain_actual||timeText,
                                 expired,impending,pausing,
                                 remain:timeText,
                                 elapsed:elapsedText}}));
@@ -1038,6 +1057,7 @@ function onDocKeyDown(ev){
                       clearRemainClass("adjusting") ;
                       clearRemainClass("adjustingDown") ;
                       keyDisp.textContent = tabCount+" tabs open";
+                      lastTimeText="";
                       writeNumber("endsAt",endsAt);
                  } else {      
                     saveEditedTime();
@@ -1203,6 +1223,7 @@ function isSingleScreenMode() {
         startedAt += factor;   
         startedDisp.textContent = local24HourTime( new Date(startedAt) );
         writeNumber("startedAt",startedAt);
+        lastTimeText="";
         if (server_conn) {
             server_conn.send(JSON.stringify({setVariableValues:{startedAt:startedDisp.textContent}}));
         }
@@ -1216,6 +1237,7 @@ function isSingleScreenMode() {
     
        endsDisp.textContent    = local24HourTime( new Date(seekEndsAt) );
        writeNumber("seekEndsAt",seekEndsAt);
+       lastTimeText="";
        if (server_conn) {
         server_conn.send(JSON.stringify({setVariableValues:{endsAt:endsDisp.textContent}}));
        }

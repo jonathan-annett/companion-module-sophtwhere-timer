@@ -33,14 +33,15 @@ class ModuleInstance extends InstanceBase {
 				const vars2 = {};
 				Object.keys(vars).forEach(function(k){
 					const val = vars[k];
-					vars2[k]=val;
-					if (k==="remain" || k==="elapsed" ) {
-						const extra = splitHMS(val);
-						Object.keys(extra).forEach(function(kk){
-							vars2[`${k}_${kk}`] = extra[kk];
-						});
+					if (val!==undefined) { 
+						vars2[k]=val;
+						if (k==="remain" || k==="elapsed" ) {
+							const extra = splitHMS(val);
+							Object.keys(extra).forEach(function(kk){
+								vars2[`${k}_${kk}`] = extra[kk];
+							});
+						}
 					}
-
 				});
 				setVars(vars2);
 				checkFeedbacks();

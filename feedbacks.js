@@ -27,6 +27,23 @@ module.exports = async function (self) {
 			'pausing'
 		),
 
+		AdjustingDown:  booleanFeedback (
+			'adjusting_down',
+			combineRgb(255,255,0),
+			combineRgb(0, 0, 0),
+			'Timer is Running',
+			'Timer is Slowing down to match real time'
+		),
+
+		AdjustingUp:  booleanFeedback (
+			'adjusting_up',
+			combineRgb(0,255,255),
+			combineRgb(0, 0, 0),
+			'Timer is Running',
+			'Timer is Speeding Up to match real time'
+		),
+
+
 		PauseBackLog: {
 			name: 'pausebacklog',
 			type: 'boolean',

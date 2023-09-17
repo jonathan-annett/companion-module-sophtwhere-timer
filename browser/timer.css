@@ -17,8 +17,8 @@
     --color-remain-running-impending : orange;
     --color-remain-running-expired : red;
 
-    --color-remain-adjust-down : cyan;
-    --color-remain-adjust-up : yellow;
+    --color-remain-adjust-down : yellow;
+    --color-remain-adjust-up : cyan;
 
     --color-remain-future : #202020;
     --color-remain-future-paused : #202020;
