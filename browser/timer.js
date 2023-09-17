@@ -1471,7 +1471,7 @@ function processServerMessage(err,cmd,msg,code) {
                     pauses: secToStr((pausedMsec+pauseAcum) / 1000),
                 }}));
                 lastTimeText="";
-                togglePictureInPicture.lastContent = "";
+                togglePIPMode.lastContent = "";
                 getTimerColors();
             }
 
