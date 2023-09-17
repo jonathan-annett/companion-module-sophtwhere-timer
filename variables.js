@@ -4,6 +4,11 @@ module.exports = async function (self) {
 		{ variableId: 'expired', name: 'timer expired'  },
 		{ variableId: 'impending', name: 'timer impending'  },
 		{ variableId: 'pausing', name: 'timer is pausing'  },
+
+		{ variableId: 'adjusting_up', name: 'timer is speeding up to match target'  },
+		
+		{ variableId: 'adjusting_down', name: 'timer is slowing down to match target'  },
+		
 		
 		{ variableId: 'remain', name: 'remaining'  },
 		{ variableId: 'remain_h', name: 'remaining h'  },

@@ -62,7 +62,7 @@ let togglePIPMode = setupPip(
     '100px "Lucida", sans-serif',
     "#remain_disp_video_text",
     "overlay",
-    "#remain_info_message",
+    "#remain_disp_video_text",
     '40px "Lucida", sans-serif');
 
   if (window.location.search.startsWith("?presenter")) {
@@ -130,8 +130,8 @@ custom_message.addEventListener('focus', function(){
           endsAt = seekEndsAt;
           setHtmlClass("over");
       } 
-       startedDisp.textContent = new Date(startedAt).toLocaleTimeString();
-       endsDisp.textContent    = new Date(endsAt).toLocaleTimeString();
+       startedDisp.textContent =  local24HourTime (new Date(startedAt));
+       endsDisp.textContent    =  local24HourTime ( new Date(endsAt) );
        durationDisp.textContent = secToStr((endsAt-startedAt) / 1000);
        
        
@@ -321,7 +321,7 @@ custom_message.addEventListener('focus', function(){
                   endsAt = seekEndsAt;
                   clearRemainClass("adjusting") ;
                   clearRemainClass("adjustingDown") ;
-                  keyDisp.textContent = tabCount === 1  ? "" : controllerCount > 1 ? "MULTIPLE CONTROLLERS TABS ARE OPEN. CLOSE ONE!" : pausedMsec === 0 ? "remote display active" : "countdown was paused at "+new Date(pausedAt).toLocaleTimeString();
+                  keyDisp.textContent = tabCount === 1  ? "" : controllerCount > 1 ? "MULTIPLE CONTROLLERS TABS ARE OPEN. CLOSE ONE!" : pausedMsec === 0 ? "remote display active" : "countdown was paused at "+ local24HourTime (new Date(pausedAt));
                   writeNumber("endsAt",endsAt);
               }
          }
@@ -334,7 +334,7 @@ custom_message.addEventListener('focus', function(){
          if (pausedMsec!=0) {
              const pausedTimeStr = secToStr(pausedMsec / oneSecond);
              remainInfoDisp.textContent =  runMode === "presenter" ? "Paused" : pausedTimeStr;
-             endsDisp.textContent =  new Date(seekEndsAt+pausedMsec).toLocaleTimeString();
+             endsDisp.textContent =  local24HourTime ( new Date(seekEndsAt+pausedMsec) );
              const accumTimeStr = secToStr((pauseAcum+pausedMsec) / oneSecond);
              extraTimeDisp.textContent = "+ "+accumTimeStr+" pauses";
              pausing = true;
@@ -569,8 +569,8 @@ custom_message.addEventListener('focus', function(){
     pauseAcum=0;
     thisDuration = defaultDuration;
     seekEndsAt = endsAt;
-    startedDisp.textContent = new Date(startedAt).toLocaleTimeString();
-    endsDisp.textContent    = new Date(endsAt).toLocaleTimeString();
+    startedDisp.textContent = local24HourTime ( new Date(startedAt) ); 
+    endsDisp.textContent    =  local24HourTime ( new Date(endsAt) ); 
     durationDisp.textContent = secToStr(defaultDuration / 1000);
     extraTimeDisp.textContent = "";
     
@@ -841,7 +841,7 @@ function onDocKeyDown(ev){
                     extraTimeDisp.textContent = "+ "+pauseAccumText+" pauses";
              
                     endsAt = seekEndsAt;
-                    endsDisp.textContent =  new Date(seekEndsAt).toLocaleTimeString();
+                    endsDisp.textContent = local24HourTime ( new Date(seekEndsAt) );
                     if (server_conn) {
                       server_conn.send(JSON.stringify({
                         setVariableValues:{
@@ -870,7 +870,7 @@ function onDocKeyDown(ev){
                 
                 seekEndsAt = startedAt + thisDuration;
                 endsAt = seekEndsAt;
-                endsDisp.textContent =  new Date(seekEndsAt).toLocaleTimeString();
+                endsDisp.textContent = local24HourTime( new Date(seekEndsAt) ) ;
 
                 if (server_conn) {
                     server_conn.send(JSON.stringify({
@@ -1061,6 +1061,8 @@ function onDocKeyDown(ev){
             case "M":
                 html.classList.toggle("showmessages");
                 writeNumber("showmessages",html.classList.contains("showmessages") ? 1 : 0);
+                togglePIPMode.lastContent="";
+                lastTimeText = "";
                 break;
                 
             case "t":
@@ -1070,6 +1072,7 @@ function onDocKeyDown(ev){
                 writeNumber("showtimenow",toggledState);
                 break;
             }
+
             case "o":
             case "O":
 
@@ -1086,6 +1089,7 @@ function onDocKeyDown(ev){
                 }
                 html.classList[ html.classList.contains("reduced") ? "remove" : "add"]("showbuttons");
                 break;
+
             case "s":
             case "S":
                 
@@ -1133,16 +1137,16 @@ function onDocKeyDown(ev){
                 
                 break;
 
-	    case "R":
-        case "r":
+            case "R":
+            case "r":
 
-              if (!controlling) {
-                ev.preventDefault();
-                if (!isSingleScreenMode()) {
-                    openTimerWindow(tabCount>1);
+                if (!controlling) {
+                    ev.preventDefault();
+                    if (!isSingleScreenMode()) {
+                        openTimerWindow(tabCount>1);
+                    }
                 }
-              }
-              break;
+                break;
 
       
     }}
@@ -1197,7 +1201,7 @@ function isSingleScreenMode() {
 
     function bumpStart(factor){
         startedAt += factor;   
-        startedDisp.textContent = new Date(startedAt).toLocaleTimeString();
+        startedDisp.textContent = local24HourTime( new Date(startedAt) );
         writeNumber("startedAt",startedAt);
         if (server_conn) {
             server_conn.send(JSON.stringify({setVariableValues:{startedAt:startedDisp.textContent}}));
@@ -1210,7 +1214,7 @@ function isSingleScreenMode() {
        
        thisDuration = seekEndsAt-startedAt;
     
-       endsDisp.textContent    = new Date(seekEndsAt).toLocaleTimeString();
+       endsDisp.textContent    = local24HourTime( new Date(seekEndsAt) );
        writeNumber("seekEndsAt",seekEndsAt);
        if (server_conn) {
         server_conn.send(JSON.stringify({setVariableValues:{endsAt:endsDisp.textContent}}));
@@ -1248,7 +1252,7 @@ function isSingleScreenMode() {
       }
   }
 
-    function secToStr(sec) {
+  function secToStr(sec) {
       let prefix = sec < 0 ? "-" : "";
       if (sec<0) {
           sec=0-sec;
@@ -1266,11 +1270,18 @@ function isSingleScreenMode() {
       let min_ = (min < 10 ? "0" : "") + min.toString();
       let hr_  = hr.toString();
       return prefix+hr_+":"+min_+":"+sx_;
-  } 
+  }
+
+  function local24HourTime(dt) {
+     const parts = dt.toString().split(':');
+     parts[0] = parts[0].split(' ').pop();
+     parts[2] = parts[2].split(' ')[0];
+     return parts.join(':');
+  }
   
   function timeNowStr() {
       let when = new Date();
-      return  when.toLocaleTimeString();
+      return local24HourTime(when);
   }
   
   function setRemainClass(cls) {
@@ -1460,6 +1471,7 @@ function processServerMessage(err,cmd,msg,code) {
                     pauses: secToStr((pausedMsec+pauseAcum) / 1000),
                 }}));
                 lastTimeText="";
+                togglePictureInPicture.lastContent = "";
                 getTimerColors();
             }
 
@@ -1495,32 +1507,29 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQ
     const stream = source.captureStream();
     target.srcObject = stream;
     
-    
     togglePictureInPicture.enterPIP = enterPIP;
-    togglePictureInPicture.exitPIP = exitPIP;
+    togglePictureInPicture.exitPIP  = exitPIP;
 
-    
-  
     return togglePictureInPicture;
     
     function anim() {
-      const str = content.textContent;
-      if ( togglePictureInPicture.lastContent!==str) { 
-        ctx.fillStyle = bg;
-        ctx.fillRect( 0, 0, source.width, source.height );
-        ctx.fillStyle = getInheritedColor(fgEl);
-        ctx.font = font;
-        ctx.fillText( str, source.width / 2, source.height / 2 );
-        if (topLineEl) {            
-            ctx.font = toplinefont;
-            const text = window.getComputedStyle(topLineEl,':before')['content'];
-            if (text !== 'none') {            
-                ctx.fillText( text.replace(/^\"|\"$/g,''), source.width / 2,32,source.width);
+        const str = content.textContent;
+        if ( togglePictureInPicture.lastContent!==str) { 
+            ctx.fillStyle = bg;
+            ctx.fillRect( 0, 0, source.width, source.height );
+            ctx.fillStyle = getInheritedColor(fgEl);
+            ctx.font = font;
+            ctx.fillText( str, source.width / 2, source.height / 2 );
+            if (topLineEl) {            
+                ctx.font = toplinefont;
+                const text = window.getComputedStyle(topLineEl,':before')['content'];
+                if (text !== 'none') {            
+                    ctx.fillText( text.replace(/^\"|\"$/g,''), source.width / 2,32,source.width);
+                }
             }
+            togglePictureInPicture.lastContent = str;
         }
-        togglePictureInPicture.lastContent = str;
-      }
-      requestAnimationFrame( anim );
+        requestAnimationFrame( anim );
     }
   
     function togglePictureInPicture() {

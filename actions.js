@@ -11,7 +11,7 @@ module.exports = function (self) {
     const setTimerColorDef = {
         name: 'Set Timer Color',
         options: [
-            {
+            	{
                 type: 'dropdown',
                 label: 'Timer Color Name',
                 id: 'timerColorName',
@@ -440,7 +440,7 @@ module.exports = function (self) {
 					style: {
 						bgcolor: combineRgb(0,0,255),
 						color: combineRgb(255, 255, 255),
-						text : "Paused\n$(timer:paused)"
+						text : "$(timer:paused)\nResume\n"
 					},
 					options: {
 						pausedStatus: '1',
@@ -455,7 +455,7 @@ module.exports = function (self) {
 			category: 'Timer',
 			name: 'Undo Pause',
 			style: {
-				text: 'Undo Pause',
+				text: 'Remove Pauses',
 				size: '18',
 				color: combineRgb(255, 255, 255),
 			    bgcolor: combineRgb(0, 0, 0),
@@ -478,7 +478,7 @@ module.exports = function (self) {
 					style: {
 						bgcolor: combineRgb(0,128,128),
 						color: combineRgb(255, 255, 255),
-						text : "Undo Pause\n$(timer:pauses)",
+						text : "Remove Pauses\n$(timer:pauses)",
 						size: '14'
 					},
 					options: {

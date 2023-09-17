@@ -3,77 +3,29 @@ const { combineRgb } = require('@companion-module/base')
 module.exports = async function (self) {
 	 
 	self.setFeedbackDefinitions({
-		Expired: {
-			name: 'expired',
-			type: 'boolean',
-			defaultStyle: {
-				bgcolor: combineRgb(0, 0, 0),
-				color: combineRgb(255, 0, 0),
-			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Which Status?',
-					id: 'expiredStatus',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'Running' },
-						{ id: '1', label: 'Expired' },
-					],
-				},
-			],
-			callback: (feedback) => {
-				return (self.getVariableValue('expired') ? '1' : '0') === feedback.options.expiredStatus;				 		 
-			},
-		},
 
-		Impending: {
-			name: 'impending',
-			type: 'boolean',
-			defaultStyle: {
-				bgcolor: combineRgb(0, 0, 0),
-				color: combineRgb(255, 128, 0),
-			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Which Status?',
-					id: 'impendingStatus',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'Running' },
-						{ id: '1', label: 'Impending' },
-					],
-				},
-			],
-			callback: (feedback) => {
-				return (self.getVariableValue('impending') ? '1' : '0') === feedback.options.impendingStatus;				 
-			},
-		},
-
-		Paused: {
-			name: 'paused',
-			type: 'boolean',
-			defaultStyle: {
-				bgcolor: combineRgb(0,0,255),
-				color: combineRgb(0, 0, 0),
-			},
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Which Status?',
-					id: 'pausedStatus',
-					default: '1',
-					choices: [
-						{ id: '0', label: 'Running' },
-						{ id: '1', label: 'Paused' },
-					],
-				},
-			],
-			callback: (feedback) => {
-				return (self.getVariableValue('pausing') ? '1' : '0') === feedback.options.pausedStatus;				 		 
-			},
-		},
+		Expired: booleanFeedback (
+			'expired',
+			combineRgb(0, 0, 0),
+			combineRgb(255, 0, 0),
+			'Running',
+			'Expired'), 
+		
+		Impending:  booleanFeedback (
+			'impending',
+			combineRgb(0, 0, 0),
+			combineRgb(255, 128, 0),
+			'More than a minute remaining',
+			'Less than a minute remaining'),
+		
+		Paused:  booleanFeedback (
+			'paused',
+			combineRgb(0,0,255),
+			combineRgb(0, 0, 0),
+			'Timer is Running',
+			'Timer is Paused',
+			'pausing'
+		),
 
 		PauseBackLog: {
 			name: 'pausebacklog',
@@ -95,7 +47,7 @@ module.exports = async function (self) {
 				},
 			],
 			callback: (feedback) => {
-				const isPausing = self.getVariableValue('pausing');
+				const isPausing      = self.getVariableValue('pausing');
 				const pauseAccumText = self.getVariableValue('pauses') ;
 				return ( (pauseAccumText==='0:00' && !isPausing ) ? '0' : '1') === feedback.options.backlogStatus;				 		 
 			},
@@ -176,5 +128,44 @@ module.exports = async function (self) {
 
 
 	 	
-	})
+	});
+
+		
+	function booleanFeedback (name,bgcolor,color,offText,onText,varName,func) {
+		const def = {};
+		const nameLower = name.toLowerCase();
+		const FeedbackName = name.charAt(0).toUpperCase()+nameLower.substring(1); 
+		const optionStateName =  nameLower+'Status';
+		varName = varName || nameLower;
+
+		return {
+			name : nameLower,
+
+			type: 'boolean',
+
+			defaultStyle: {
+				bgcolor: bgcolor,
+				color: color
+			},
+
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Which Status?',
+					id:optionStateName,
+					default: '1',
+					choices: [
+						{ id: '0', label: offText },
+						{ id: '1', label: onText },
+					],
+				}
+			],
+			callback: func || function (feedback) {
+				return ( self.getVariableValue(varName) ? '1' : '0') === feedback.options[optionStateName];				 		 
+			},
+
+		};
+
+	}
 }
+

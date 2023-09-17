@@ -82,25 +82,6 @@
 }
 
  
-#remain_disp_video_text {
-    background-color: var(--color-pip-background);
-    color : var(--color-pip-running);
-}  
-html.impending  #remain_disp_video_text {
-    color : var(--color-pip-impending);
-}  
-html.over  #remain_disp_video_text {
-    color : var(--color-pip-expired);
-}  
-html.paused  #remain_disp_video_text {
-    color : var(--color-pip-paused);
-} 
- 
- 
-html.paused  #remain_disp_video_text {
-    color : var(--color-pip-paused);
-}  
-
 
 body {
     
@@ -336,7 +317,6 @@ html.impending #remain_disp {
     color: var(--color-remain-running-impending);
 }
 
-
 #remain_disp.adjusting {
     color:var(--color-remain-adjust-up);
 }
@@ -421,8 +401,48 @@ html.reduced.future.paused #remain_disp {
 html.editing #disp_next_mins {
     
     color: var(--color-next-default-editing);
+    display:none;
 
 }
+
+#remain_disp_video_text {
+    background-color: var(--color-pip-background);
+    color : var(--color-pip-running);
+    display:none;
+}  
+
+#remain_disp_video_text:before {
+    content : "";
+}  
+
+html.impending.showmessages  #remain_disp_video_text {
+    color : var(--color-pip-impending);
+}  
+
+html.impending.showmessages  #remain_disp_video_text:before {
+    content : "One Minute Left";
+}  
+
+html.over  #remain_disp_video_text {
+    color : var(--color-pip-expired);
+}  
+html.over.showmessages #remain_disp_video_text:before {
+    content : "Time is Up";
+}  
+
+
+html.paused  #remain_disp_video_text {
+    color : var(--color-pip-paused);
+} 
+html.paused.showmessages   #remain_disp_video_text:before {
+    content : "(Paused)";
+} 
+  
+ 
+html.paused  #remain_disp_video_text {
+    color : var(--color-pip-paused);
+}  
+
 
 
 html.impending.showmessages #remain_info_message:before {
@@ -432,6 +452,8 @@ html.impending.showmessages #remain_info_message:before {
 html.over.showmessages #remain_info_message:before {
     content : "Time is Up";
 }
+
+
 
 
 html.paused #remain_info_message {

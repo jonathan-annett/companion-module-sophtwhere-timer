@@ -36,8 +36,7 @@ content['/']=content['/timer.html'];
 
 
 function api_config(cfg,updated) {
-    console.log({cfg});
-
+    
     const HTTP_PORT=cfg.port;
 
     if (fs.existsSync(help_md_dest) && fs.existsSync(help_md_src) ) {
@@ -47,8 +46,7 @@ function api_config(cfg,updated) {
         if (fixedupHelp!==existingHelp) {
             fs.writeFileSync(help_md_dest,fixedupHelp);
             if (updated) {
-                console.log("updated",cfg);
-		        return;
+     	        return;
             }
         }
     }
@@ -79,8 +77,7 @@ function api_config(cfg,updated) {
 
     function defaultHTTPHandler(request, response) {
         const data = content [request.url.split('?')[0]];
-        console.log(request.socket.remoteAddress);
-        if (data) {
+         if (data) {
             ['content-type' ].forEach(function(hdr){
                 response.setHeader(hdr,data.headers[hdr]);
             });
@@ -89,13 +86,13 @@ function api_config(cfg,updated) {
             response.end();
             return;
         }
-        console.log((new Date()) + ' Received request for ' + request.url);
+        //console.log((new Date()) + ' Received request for ' + request.url);
         response.writeHead(404);
         response.end();
     }
 
     server.listen(HTTP_PORT, function() {
-        console.log((new Date()) + ' Server is listening on port ' + HTTP_PORT );      
+        //console.log((new Date()) + ' Server is listening on port ' + HTTP_PORT );      
         
     });
 
