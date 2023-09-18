@@ -1,6 +1,6 @@
 The server folder contains files that are related to the small http node.js server instance that is started to support the timer.
 
-Additionally, it contains the master HELP.md file, which is read and agumented with the current list of interface addresses, in order to provide links for the timer instance
+Additionally, it contains the master HELP.md file, which is read and augmented with the current list of interface addresses, in order to provide links for the timer instance
 
 This happens on module startup, or whenever the port is changed in the connection config page
 
