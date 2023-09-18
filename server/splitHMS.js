@@ -18,9 +18,6 @@ function splitHMS(hms) {
 	                    (Number(mm) * 60) +
 				   	    Number(ss) ).toFixed(0)  ;
 
-	const  msec = seconds * 1000;
-
-	 
 
 	let h = Number(hh).toString();
 	let m = Number(mm).toString();
@@ -43,8 +40,7 @@ function splitHMS(hms) {
 		
 		hours,
 		minutes,
-		seconds,
-		milliseconds : msec
+		seconds
 	};
 
 }
