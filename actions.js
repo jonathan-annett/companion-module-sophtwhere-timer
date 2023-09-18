@@ -97,7 +97,7 @@ module.exports = function (self) {
 
 		startNew : {
 			name: 'Start New Timer',
-			options: durationOptions,
+			options: JSON.parse(JSON.stringify(durationOptions)),
 			callback: async (event) => {
 				api.send({
 					cmd:"start",
@@ -111,7 +111,7 @@ module.exports = function (self) {
 
 		setDefault : {
 			name: 'Set Default Time',
-			options: durationOptions,
+			options: JSON.parse(JSON.stringify(durationOptions)),
 			callback: async (event) => {
 			
 				api.send({
@@ -326,7 +326,7 @@ module.exports = function (self) {
 	self.setActionDefinitions(actionDefs);
 
 	function getMsec (event) {
-		let tally = Number.parseInt(event.options.msecs.trim());
+		let tally = Number.parseInt((event.options.msecs||'').trim());
 		if (isNaN(tally)) {
 			tally = event.options.days;
 			tally = (tally * 24) + event.options.hours;
