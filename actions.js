@@ -204,6 +204,18 @@ module.exports = function (self) {
 			},
 		},
 
+		presenter : {
+			name: 'Toggle Presenter',
+			options: [
+				],
+			callback: async (event) => {0
+				api.send({
+					cmd:"presenter"
+				});
+			},
+
+		},
+
 	
 
 		minus1 : {
@@ -348,5 +360,5 @@ module.exports = function (self) {
 	self.api.updateTimerColors = updateTimerColors;
 
 	self.setActionDefinitions(actionDefs);
-	
+
 }

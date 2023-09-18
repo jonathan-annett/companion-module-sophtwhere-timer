@@ -614,6 +614,7 @@ custom_message.addEventListener('focus', function(){
                 pauses:'0:00',
                 pausing:false,
                 expired:false,
+                showpresenter: html.classList.contains("reduced") ? '1' : '0',
                 impending:defaultDuration<=60000}
             }));
       }
@@ -622,12 +623,17 @@ custom_message.addEventListener('focus', function(){
   function setPresenterMode() {
       runMode = "presenter";
       html.classList.add("reduced");
-      
+      if (server_conn) {
+        server_conn.send(JSON.stringify({setVariableValues:{showpresenter:  '1' }}));
+    }
   }
   
   function setControllerMode() {
       runMode = "controller";
       html.classList.remove("reduced");
+      if (server_conn) {
+        server_conn.send(JSON.stringify({setVariableValues:{showpresenter:  '0' }}));
+    }
   }
  
  
@@ -1104,7 +1110,16 @@ function onDocKeyDown(ev){
                 
                 if (window.location.search !== "?presenter" &&  tabCount === 1) {
                     html.classList.toggle("reduced");
-                    runMode = html.classList.contains("reduced") ? "presenter":"controller";
+                    const isPres = html.classList.contains("reduced");
+                    runMode = isPres ? "presenter":"controller";
+
+                    if (server_conn) {
+                        server_conn.send(JSON.stringify({setVariableValues:{showpresenter: isPres ? '1' : '0' }}));
+                    }
+
+                   
+                    
+        
             
                 }
                 html.classList[ html.classList.contains("reduced") ? "remove" : "add"]("showbuttons");
@@ -1135,6 +1150,10 @@ function onDocKeyDown(ev){
                         if (!fs_api.isFullscreen()) {
                           fs_api.enterFullscreen();  
                           }
+
+                        if (server_conn) {
+                            server_conn.send(JSON.stringify({setVariableValues:{showpresenter: '1' }}));
+                        }
                     }
                 }
                 break;
@@ -1162,7 +1181,7 @@ function onDocKeyDown(ev){
 
                 if (!controlling) {
                     ev.preventDefault();
-                    if (!isSingleScreenMode()) {
+                    if (!isSingleScreenMode() && !(runMode === "presenter" && tabCount===1)) {
                         openTimerWindow(tabCount>1);
                     }
                 }
@@ -1537,7 +1556,7 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQ
     function anim() {
         const str = content.textContent;
         if ( togglePictureInPicture.lastContent!==str) { 
-            ctx.fillStyle = bg;
+            ctx.fillStyle = getInheritedBackgroundColor(fgEl);
             ctx.fillRect( 0, 0, source.width, source.height );
             ctx.fillStyle = getInheritedColor(fgEl);
             ctx.font = font;

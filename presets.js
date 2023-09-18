@@ -616,6 +616,43 @@ module.exports = function (self) {
 			],
 		},
 
+		'presenter': {
+			type: 'button',
+			category: 'Display Modes',
+			name: 'Toggle Presenter Mode',
+			style: {
+				text: 'Presenter Mode',
+				size: '7',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'presenter',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'ShowPresenter',
+					style: {
+						bgcolor: combineRgb(0,255,128),
+						color: combineRgb(0, 0, 0),
+					},
+					options: {
+						displayStatus: '1',
+					},
+				},
+			],
+		},
+
+
 	};
 
 	hmsKeys.forEach(function(k){

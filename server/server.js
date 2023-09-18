@@ -122,6 +122,7 @@ function api_config(cfg,updated) {
                 let keys;
                 try {
 
+                    // encode simple commands as keystrokes
                     switch (data.cmd) {
 
                         case "start" : {
@@ -184,7 +185,12 @@ function api_config(cfg,updated) {
                             data = {  cmd : "keys",keys :[ 't' ] }
                             break;
                         }
-                        
+
+                        case "presenter" : {
+                            data = {  cmd : "keys",keys :[ 'p' ] }
+                            break;
+                        }
+                         
                         case "plus1Min" : {
                             data = {  cmd : "keys",keys :[ 'Control','ArrowUp','~Control' ] }
                             break;

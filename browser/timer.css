@@ -42,6 +42,7 @@
 
     --color-custom-message : white;
     --color-custom-message-editing : yellow;
+    --color-custom-message-editing-reduced : rgba(39, 37, 36, 0.637);
 
     --color-next-default-editing:lime;
 
@@ -313,6 +314,20 @@ html.edit_custom_message #custom_message {
     color: var(--color-custom-message-editing);
 }
 
+
+html.reduced.edit_custom_message #custom_message {
+    color: var(--color-custom-message-editing-reduced);
+    outline: 0px solid transparent;
+}
+
+
+html.reduced.edit_custom_message #custom_message::selection {
+    color: var(--color-custom-message-editing-reduced);
+    outline: 0px solid transparent;
+}
+
+
+
 html.impending #remain_disp {
     color: var(--color-remain-running-impending);
 }
@@ -401,8 +416,6 @@ html.reduced.future.paused #remain_disp {
 html.editing #disp_next_mins {
     
     color: var(--color-next-default-editing);
-    display:none;
-
 }
 
 #remain_disp_video_text {

@@ -140,6 +140,31 @@ module.exports = async function (self) {
 			callback: (feedback) => {
 				return self.getVariableValue('showmessages') === feedback.options.displayStatus;					 
 			},
+		},
+
+
+		ShowPresenter: {
+			name: 'Show Presenter Mode',
+			type: 'boolean',
+			defaultStyle: {
+				bgcolor: combineRgb(0,255, 0),
+				color: combineRgb(0, 0, 0),
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Which Status?',
+					id: 'displayStatus',
+					default: '1',
+					choices: [
+						{ id: '0', label:  "Don't Show Presenter Mode" },
+						{ id: '1', label: 'Show Presenter Mode' },
+					],
+				},
+			],
+			callback: (feedback) => {
+				return self.getVariableValue('showpresenter') === feedback.options.displayStatus;					 
+			},
 		}
 
 

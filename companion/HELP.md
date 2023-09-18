@@ -1,12 +1,41 @@
 ## sophtwhere-timer
 
+
 This connection enables a countdown timer on your computer, which you display using a web browser.
 
 **You don't need to install any additional software, the timer runs locally in your browser, and is automatically enabled when your add this connection**
 
 **TLDR** *Click a link below to open the timer page, once you are familiar with these instructions.*
 
-<!--other links-->
+  - <a href="http://192.168.16.1:8055" target="_blank" rel="noopener"><span>http://192.168.16.1:8055</span></a>
+  - <a href="http://192.168.110.1:8055" target="_blank" rel="noopener"><span>http://192.168.110.1:8055</span></a>
+  - <a href="http://192.168.15.86:8055" target="_blank" rel="noopener"><span>http://192.168.15.86:8055</span></a>
+  - <a href="http://127.0.0.1:8055" target="_blank" rel="noopener"><span>http://127.0.0.1:8055</span></a>
+
+
+
+Keys used in the browser
+---
+<kbd>P</kbd> Turns the controller window into a presenter's window.  <br>
+  - *the presenter's window is a cleaner display, without extra distractions*
+  - *pressing <kbd>P</kbd> again will restore the presenter's window to a controller window*
+  - *everything still works the same in presenter's view mode, but without the visual feedback you get while editing durations and custom text - however a better solution is to use a remote window for the presenter*
+
+<kbd>R</kbd> Toggle display of the remote window <br>
+   - *the remote window is a secondary window that you can drag to a second monitor, automatically configured to display the timer in presenter's mode*
+   - *this key only works from the controller view mode*
+   - *pressing <kbd>R</kbd> again closes the remote window*
+   - *the remote window will be closed when you close the controller window*
+
+<kbd>F</kbd> Make the current window full screen. <br>
+   - *pressing <kbd>F</kbd> again restores a window from fullscreen mode*
+   - *on some systems there are other keys that will also enable full screen, it's fine to use whatever method you like, however, in most cases, you need to use the same method to enter and exit. The <kbd>F</kbd> key is implemented to enter full screen, regardless of what browser or operating system, you are using*
+
+<kbd>O</kbd> Toggle the floating overlay window. <br>
+
+<kbd>S</kbd> This is a shortcut to immediately make turn a controller window into a full screen presenter window ("single screen mode"). 
+ - *it's not a toggle key, but pressing <kbd>F</kbd> WILL exit fullscreen, and pressing <kbd>P</kbd> will toggle between fullscreen presenter screen, and full screen controller mode, if that's your preference*
+
 
 About the Timer's Display Modes 
 ===
@@ -49,7 +78,7 @@ Activating Dual Display Mode
 *First, close any timer browser windows that might be open.*
 
 
-Click <a href="http://localhost:8088" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use for the operator:
+Click <a href="http://localhost:8055" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use for the operator:
 
 ![Screenshot1](Screenshot1.png)
 
@@ -66,7 +95,7 @@ Activating Single Display Mode
 
 *First, close any timer browser windows that might be open.*
 
-Click <a href="http://localhost:8088" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use as the stage display:
+Click <a href="http://localhost:8055" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use as the stage display:
 
 ![Screenshot1](Screenshot1.png)
 

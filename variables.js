@@ -54,6 +54,7 @@ module.exports = async function (self) {
 		{ variableId: 'showtimenow',   name: 'Show Time Now'  },
 		{ variableId: 'showmessages',  name: 'Show Messages'  },	
 		{ variableId: 'showbar',       name: 'Show Bar'  },	
+		{ variableId: 'showpresenter',	   name: 'Show Presenter Mode'  },	
 
 		{ variableId: 'paused', name: 'paused'  },
 		{ variableId: 'pauses', name: 'Accumulated pause time'  },
