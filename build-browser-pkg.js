@@ -1,39 +1,39 @@
 
 
-function getBrowserFiles() {
+function writeBrowserFilesPacked(subdir,filenames) {
     const fs = require('fs'),path=require('path'),zlib=require('zlib');
     const zlibOpts = {level:9};
-    const filenames =  [
-        // these files are cached for the browser
-        'timer.html',
-        'timer.js',
-        'timer.css',
-        'fsapi.js',
-        'longPollPoster.js'
-    ];
-    const basepath = path.resolve(__dirname,'browser');
+    const basepath  = path.resolve(__dirname,subdir);
+    filenames =  filenames || fs.readdirSync(basepath);
+    const output_path = path.resolve(__dirname,'server',subdir+'-pkg-fs.js');
     const filepaths = filenames.map(function(fn){ return path.join(basepath,fn)});
     const filedata  = filepaths.map(function(pth){ return zlib.deflateSync(fs.readFileSync(pth),zlibOpts).toString('base64');});
     const db={};
 
-    return `
-        
+    const src = `
         const zlib=require('zlib'),db = ${JSON.stringify({files:filenames,data:filedata})};
 
-        ${fs_readSync.toString()}
+        const fs = {
+            readFileSync :  ${fs_readSync.toString()},
+            readdirSync  :  function(){ return ${JSON.stringify(filenames) };}
+        };
 
-        console.log(fs_readSync('timer.html','utf8'));
+        module.exports = fs;
     `;
 
+    console.log('writing to:',output_path,' >>> ');
+    fs.writeFileSync(output_path,src);
+
     function fs_readSync(path,encoding) {
-        const index = db.files.indexOf( path.split('/').pop() );
-        console.log(index);
+        const index = db.files.indexOf( path.replace(/\\/g,'/').split('/').pop() );
         if (index<0) return;
 
         let buf,b64 = (buf=db.data[index]); 
         if (typeof b64 === 'string') {
             try {
-                buf = (db.data[index] = zlib.inflateSync(Buffer.from(b64,'base64')));
+                const deflated_buffer = Buffer.from(b64,'base64');
+                const inflated_buffer = zlib.inflateSync(deflated_buffer);
+                buf = (db.data[index] = inflated_buffer);     
             } catch (e) {
                 console.log(e);
                 buf = (db.data[index] = null);
@@ -46,6 +46,9 @@ function getBrowserFiles() {
         }
         return buf;
     }
+
+ 
 }
 
-console.log( getBrowserFiles())
+writeBrowserFilesPacked('browser');
+writeBrowserFilesPacked('server',['HELP.md']);

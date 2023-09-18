@@ -5,7 +5,7 @@ const UpdatePresets   = require('./presets');
 const UpdateFeedbacks = require('./feedbacks');
 const UpdateVariableDefinitions = require('./variables');
 const { splitHMS }    = require('./server/splitHMS');
-const { api }        = require('./server/server');
+const { api }         = require('./server/server');
 
 class ModuleInstance extends InstanceBase {
 	constructor(internal) {
@@ -24,9 +24,11 @@ class ModuleInstance extends InstanceBase {
 
 		const setVars = this.setVariableValues.bind(this);
 		const checkFeedbacks = this.checkFeedbacks.bind(this);
-			
-		this.parseVariablesInString('$(internal:all_ip)').then(function(ips){
-			api.ip_list = ips.replace(/\\n/g,'\n').trim().split('\n');
+		const parseVariablesInString = this.parseVariablesInString.bind(this);
+
+		getIpsList(function(ips){
+
+			api.ip_list = ips;
 			api.config(config);
 
 			api.setVariableValues = function (vars) {
@@ -47,11 +49,36 @@ class ModuleInstance extends InstanceBase {
 				checkFeedbacks();
 			};
 
-		}).catch(function(err){
-			console.log("err",err);
+
+		
+
 		});
+
+
+			
+		function getIpsList(cb,n) {
+			n =  n || 1;
+			console.log("getting ips from all interfaces...attempt #",n)
+			parseVariablesInString('$(internal:all_ip)').then(function(ips){
+
+				if (ips.indexOf("$NA") < 0) {
+					return cb ( ips.replace(/\\n/g,'\n').trim().split('\n') );
+				}
+				if (n>=5) {
+					return console.log("tried 5 times to get ip list and gave up");
+				}
+				console.log("retrying getIpsList ()");
+				setTimeout(getIpsList,2500,cb,n+1);
+
+			}).catch(function(err){
+				console.log("err",err);
+			});
+		}
+
+		
 		
 	}
+
 		
 	
 	// When module gets deleted

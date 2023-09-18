@@ -6,10 +6,10 @@ This connection enables a countdown timer on your computer, which you display us
 
 **TLDR** *Click a link below to open the timer page, once you are familiar with these instructions.*
 
-  - <a href="http://192.168.16.1:8089" target="_blank" rel="noopener"><span>http://192.168.16.1:8089</span></a>
-  - <a href="http://192.168.110.1:8089" target="_blank" rel="noopener"><span>http://192.168.110.1:8089</span></a>
-  - <a href="http://192.168.149.26:8089" target="_blank" rel="noopener"><span>http://192.168.149.26:8089</span></a>
-  - <a href="http://127.0.0.1:8089" target="_blank" rel="noopener"><span>http://127.0.0.1:8089</span></a>
+  - <a href="http://192.168.16.1:8055" target="_blank" rel="noopener"><span>http://192.168.16.1:8055</span></a>
+  - <a href="http://192.168.110.1:8055" target="_blank" rel="noopener"><span>http://192.168.110.1:8055</span></a>
+  - <a href="http://192.168.149.26:8055" target="_blank" rel="noopener"><span>http://192.168.149.26:8055</span></a>
+  - <a href="http://127.0.0.1:8055" target="_blank" rel="noopener"><span>http://127.0.0.1:8055</span></a>
 
 
 About the Timer's Display Modes 
@@ -53,7 +53,7 @@ Activating Dual Display Mode
 *First, close any timer browser windows that might be open.*
 
 
-Click <a href="http://localhost:8089" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use for the operator:
+Click <a href="http://localhost:8055" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use for the operator:
 
 ![Screenshot1](Screenshot1.png)
 
@@ -70,7 +70,7 @@ Activating Single Display Mode
 
 *First, close any timer browser windows that might be open.*
 
-Click <a href="http://localhost:8089" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use as the stage display:
+Click <a href="http://localhost:8055" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use as the stage display:
 
 ![Screenshot1](Screenshot1.png)
 

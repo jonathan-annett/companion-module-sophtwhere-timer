@@ -1,13 +1,11 @@
-module.exports = 
-function getBrowserFiles() {
-    const fs = require('fs');
-    const path      = require('path');
-    const browser_path = path.resolve(__dirname,'..','browser');
+module.exports = getBrowserFiles;
 
-    const files = fs.readdirSync(browser_path).filter(function(fn){return !fn.startsWith('.');});
+function getBrowserFiles(fs) {
+    const path      = require('path');
+    const files = fs.readdirSync('./browser').filter(function(fn){return !fn.startsWith('.');});
     const content = {};
     files.forEach(function(fn){
-        const body =  fs.readFileSync(path.join(__dirname,'..','browser',fn),'utf8');   
+        const body =  fs.readFileSync(fn,'utf8');   
         content['/'+fn]= {
             body: body,
             headers : {
@@ -21,3 +19,4 @@ function getBrowserFiles() {
     content['/']=content['/timer.html'];
     return content;
 }
+

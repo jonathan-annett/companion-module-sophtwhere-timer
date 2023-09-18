@@ -32,13 +32,23 @@ function startLongPollPoster(reqHandler) {
     return {
         handler : handler,
         on      : addCallback,
-        send    : sendMessage
+        send    : sendMessage,
+        cleanup : cleanup
     };
 
     function addCallback(x,fn) {
         if (x==="message" && typeof fn==="function") {
             callbacks.push(fn);
         }
+    }
+
+    function cleanup() {
+        callbacks.splice(0,callbacks.length);
+        messages.splice(0,messages.length);
+        const reply = [{id:Date.now(),msg:{error:"server restarting"}}];
+        connections.splice(0,connections.length).forEach(function(conn){
+            sendReply(conn.response,reply) ;
+        });
     }
 
     function sendMessage(msg) {
