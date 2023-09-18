@@ -1,38 +1,14 @@
 const fs        = require('fs');
-const path  =require('path');
+const path      = require('path');
 const http      = require('http');
 const startLongPollPoster = require('./longPollPoster.js');
 
-const files = [
-    // these files are cached for the browser
-    'timer.html',
-    'timer.js',
-    'timer.css',
-    'fsapi.js',
-    'longPollPoster.js'
-];
+const getBrowserFiles = require('./getBrowserFiles.js');
 
-const content = {};
-files.forEach(function(fn){
-    const body =  fs.readFileSync(path.join(__dirname,'..','browser',fn),'utf8');   
-    content['/'+fn]= {
-        body: body,
-        headers : {
-            'content-type': 'text/'+fn.split('.').pop(),
-            'content-length' : content.length
-        }
-    };
-});
+const content = getBrowserFiles();
 
 const help_md_src = path.join(__dirname,'HELP.md');
 const help_md_dest = path.join(__dirname,'..','companion','HELP.md');
-
-
-
-
-
-content['/index.html']=content['/timer.html'];
-content['/']=content['/timer.html'];
 
 
 function ipLink(port,ip) {
@@ -67,12 +43,10 @@ function api_config(cfg,updated) {
         }
     }
 
-
     const connections = startLongPollPoster(defaultHTTPHandler);
 
     const server = http.createServer(connections.handler);
 
- 
     connections.on('message',function(msg){
 
           // msg is parsed json object as sent by client(s)

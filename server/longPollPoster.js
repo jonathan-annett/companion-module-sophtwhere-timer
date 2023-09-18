@@ -18,7 +18,9 @@
 
 
 */
-module.exports = function startLongPollPoster(reqHandler) {
+module.exports = startLongPollPoster;
+
+function startLongPollPoster(reqHandler) {
 
     const msg_poll_url = "/msg-poll";
 
@@ -121,5 +123,5 @@ module.exports = function startLongPollPoster(reqHandler) {
             }
         }
     }
-};
+}
 

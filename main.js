@@ -1,10 +1,11 @@
 const { InstanceBase, Regex, runEntrypoint, InstanceStatus } = require('@companion-module/base')
-const UpgradeScripts = require('./upgrades')
-const UpdateActions = require('./actions')
-const UpdateFeedbacks = require('./feedbacks')
-const UpdateVariableDefinitions = require('./variables')
-const { splitHMS } = require('./server/splitHMS')
-
+const UpgradeScripts  = require('./upgrades');
+const UpdateActions   = require('./actions');
+const UpdatePresets   = require('./presets');
+const UpdateFeedbacks = require('./feedbacks');
+const UpdateVariableDefinitions = require('./variables');
+const { splitHMS }    = require('./server/splitHMS');
+const { api }        = require('./server/server');
 
 class ModuleInstance extends InstanceBase {
 	constructor(internal) {
@@ -12,15 +13,14 @@ class ModuleInstance extends InstanceBase {
 	}
 
 	async init(config) {
-		this.config = config
-
-		this.api = require('./server/server.js').api;
-		const api = this.api;
-
-		this.updateStatus(InstanceStatus.Ok)
-		this.updateActions() // export actions
-		this.updateFeedbacks() // export feedbacks
-		this.updateVariableDefinitions() // export variable definitions
+		this.config = config;
+		this.api = api;
+		
+		this.updateStatus(InstanceStatus.Ok);
+		this.updateActions(); // export actions
+		this.updatePresets();// export presets
+		this.updateFeedbacks(); // export feedbacks
+		this.updateVariableDefinitions(); // export variable definitions
 
 		const setVars = this.setVariableValues.bind(this);
 		const checkFeedbacks = this.checkFeedbacks.bind(this);
@@ -61,7 +61,7 @@ class ModuleInstance extends InstanceBase {
 
 	async configUpdated(config) {
 		this.config = config
-		this.api.config(config,true);
+		api.config(config,true);
 	}
 
 	// Return config fields for web config
@@ -89,16 +89,20 @@ class ModuleInstance extends InstanceBase {
 	}
 
 	updateActions() {
-		UpdateActions(this)
+		UpdateActions(this);
+	}
+
+	updatePresets() {
+		UpdatePresets(this);
 	}
 
 	updateFeedbacks() {
-		UpdateFeedbacks(this)
+		UpdateFeedbacks(this);
 	}
 
 	updateVariableDefinitions() {
-		UpdateVariableDefinitions(this)
+		UpdateVariableDefinitions(this);
 	}
 }
 
-runEntrypoint(ModuleInstance, UpgradeScripts)
+runEntrypoint(ModuleInstance, UpgradeScripts);
