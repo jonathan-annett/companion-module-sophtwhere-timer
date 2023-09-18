@@ -4,7 +4,9 @@ const fs = require('fs'),path=require('path'),zlib=require('zlib');
 function writeBrowserFilesPacked(subdir,filenames) {
     const zlibOpts = {level:9};
     const basepath  = path.resolve(__dirname,subdir);
-    filenames =  filenames || fs.readdirSync(basepath);
+    filenames =  filenames || fs.readdirSync(basepath).filter(function(fn){
+        return !fn.startsWith(".") && !fn.startsWith(".txt"); 
+    });
     const output_path = path.resolve(__dirname,'server',subdir+'-pkg-fs.js');
     const filepaths = filenames.map(function(fn){ return path.join(basepath,fn)});
     const filedata  = filepaths.map(function(pth){ return zlib.deflateSync(fs.readFileSync(pth),zlibOpts).toString('base64');});
@@ -21,7 +23,7 @@ function writeBrowserFilesPacked(subdir,filenames) {
         module.exports = fs;
     `;
 
-    console.log('writing to:',output_path,' >>> ');
+    console.log('writing to:',output_path,' <<< ',JSON.stringify(filenames));
     fs.writeFileSync(output_path,src);
 
     function fs_readSync(path,encoding) {
