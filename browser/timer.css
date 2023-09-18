@@ -285,7 +285,10 @@ html.showmessages.reduced.over #remain_info_message,
 html.showmessages.over #remain_info_message {
     display:block;
 }
-
+html.show_custom_message.reduced.paused #remain_info_message,
+html.show_custom_message.paused #remain_info_message {
+    display:none;
+}
  
 html.reduced #messages_enabled {
     display:none;

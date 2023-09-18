@@ -838,7 +838,7 @@ function onDocKeyDown(ev){
                 
                 html.classList.toggle("paused");
                 lastTimeText="";
-                togglePIPMode.lastContent="";
+                if (togglePIPMode) togglePIPMode.lastContent="";
                 if (html.classList.contains("paused")) {
                     pausedAt = Date.now();
                     writeNumber("pausedAt",pausedAt);
@@ -1087,7 +1087,7 @@ function onDocKeyDown(ev){
             case "M":
                 html.classList.toggle("showmessages");
                 writeNumber("showmessages",html.classList.contains("showmessages") ? 1 : 0);
-                togglePIPMode.lastContent="";
+                if (togglePIPMode) togglePIPMode.lastContent="";
                 lastTimeText = "";
                 break;
                 
@@ -1102,7 +1102,7 @@ function onDocKeyDown(ev){
             case "o":
             case "O":
 
-                togglePIPMode();
+                if (togglePIPMode) togglePIPMode();
                 break;
 
             case "p":
@@ -1512,7 +1512,7 @@ function processServerMessage(err,cmd,msg,code) {
                     pauses: secToStr((pausedMsec+pauseAcum) / 1000),
                 }}));
                 lastTimeText="";
-                togglePIPMode.lastContent = "";
+                if (togglePIPMode) togglePIPMode.lastContent = "";
                 getTimerColors();
             }
 

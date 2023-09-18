@@ -1,0 +1,117 @@
+<html>
+
+<head>
+    <style>
+
+                
+        textarea,
+                td,
+                th,
+                pre
+         {
+            width: 45vw;
+        }
+
+        pre ,
+        td,
+        th {
+            text-align: left;
+        }
+
+        table,
+        tbody {
+            width: 90vw;
+        }
+
+        #out,textarea {
+            height : 30vh;
+        }
+
+        #out {
+            position: relative;
+            top : 20px;
+        }
+
+        
+    </style>
+    <script src="FileSaver.min.js"></script>
+    <script src="event-edit.js" defer></script>
+</head>
+
+<body>
+    <h1>events</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    Specify start times, we calculate the durations
+                </th>
+                <th>
+                    Specify each duration, or use the last duration
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <pre>
+
+20:00 John Smith
+20:25 Jane Smith
+21:00 Q & A
+21:05 Coffee Break
+21:10 Bill Jones
+22:00
+
+
+                </pre>
+                </td>
+                <td>
+                    <pre>
+20:00
+
+John Smith    25
+Jane Smith    35
+Q & A         5
+Coffee Break
+Bill Jones    50
+
+                    </pre>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    Edit The Schedule
+                </th>
+                <th>
+                    Rendered Schedule
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <textarea >
+
+                    20:00 John Smith
+                    20:25 Jane Smith
+                    21:00
+
+                            </textarea>
+                </td>
+                <td>
+                <pre id="out">
+
+        </pre>
+                </td>
+            </tr>
+        
+        </tbody>
+    </table>
+
+    <button>Download Companion File</button>
+
+   
+
+    
+</body>
+
+</html>

@@ -5,7 +5,7 @@ function getBrowserFiles(fs) {
     const files = fs.readdirSync('./browser').filter(function(fn){return !fn.startsWith('.');});
     const content = {};
     files.forEach(function(fn){
-        const body =  fs.readFileSync(fn,'utf8');   
+        const body =  fs.readFileSync(path.join('./browser',fn),'utf8');   
         content['/'+fn]= {
             body: body,
             headers : {

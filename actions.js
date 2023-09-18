@@ -40,6 +40,47 @@ module.exports = function (self) {
         }
     };   
 
+	const durationOptions = [
+		{
+			id: 'days',
+			type: 'number',
+			label: 'Days',
+			default: 0,
+			min: 0,
+			max: 365,
+		},
+		{
+			id: 'hours',
+			type: 'number',
+			label: 'Hours',
+			default: 0,
+			min: 0,
+			max: 23,
+		},
+		{
+			id: 'mins',
+			type: 'number',
+			label: 'Minutes',
+			default: 10,
+			min: 0,
+			max: 59,
+		},
+		{
+			id: 'secs',
+			type: 'number',
+			label: 'Seconds',
+			default: 0,
+			min: 0,
+			max: 59,
+		}, 
+		{
+			id: 'msecs',
+			type: 'textinput',
+			label: 'Custom',
+			default: ''
+		}
+	];
+
 	const actionDefs = {
 
 	
@@ -47,7 +88,7 @@ module.exports = function (self) {
 			name: 'Restart',
 			options: [
 			],
-			callback: async (event) => {0
+			callback: async (event) => {
 				api.send({
 					cmd:"start"
 				});
@@ -56,50 +97,11 @@ module.exports = function (self) {
 
 		startNew : {
 			name: 'Start New Timer',
-			options: [
-				{
-					id: 'days',
-					type: 'number',
-					label: 'Days',
-					default: 0,
-					min: 0,
-					max: 365,
-				},
-				{
-					id: 'hours',
-					type: 'number',
-					label: 'Hours',
-					default: 0,
-					min: 0,
-					max: 23,
-				},
-				{
-					id: 'mins',
-					type: 'number',
-					label: 'Minutes',
-					default: 10,
-					min: 0,
-					max: 59,
-				},
-				{
-					id: 'secs',
-					type: 'number',
-					label: 'Seconds',
-					default: 0,
-					min: 0,
-					max: 59,
-				}, 
-			],
-			callback: async (event) => {0
-				let tally = event.options.days;
-				tally = (tally * 24) + event.options.hours;
-				tally = (tally * 60) + event.options.mins;
-				tally = (tally * 60) + event.options.secs;
-
-
+			options: durationOptions,
+			callback: async (event) => {
 				api.send({
 					cmd:"start",
-					msecs:tally * 1000
+					msecs:getMsec (event)
 				});
 
 
@@ -109,50 +111,12 @@ module.exports = function (self) {
 
 		setDefault : {
 			name: 'Set Default Time',
-			options: [
-				{
-					id: 'days',
-					type: 'number',
-					label: 'Days',
-					default: 0,
-					min: 0,
-					max: 365,
-				},
-				{
-					id: 'hours',
-					type: 'number',
-					label: 'Hours',
-					default: 0,
-					min: 0,
-					max: 23,
-				},
-				{
-					id: 'mins',
-					type: 'number',
-					label: 'Minutes',
-					default: 10,
-					min: 0,
-					max: 59,
-				},
-				{
-					id: 'secs',
-					type: 'number',
-					label: 'Seconds',
-					default: 0,
-					min: 0,
-					max: 59,
-				}, 
-			],
-			callback: async (event) => {0
-				let tally = event.options.days;
-				tally = (tally * 24) + event.options.hours;
-				tally = (tally * 60) + event.options.mins;
-				tally = (tally * 60) + event.options.secs;
-
-
+			options: durationOptions,
+			callback: async (event) => {
+			
 				api.send({
 					cmd:"default",
-					msecs:tally * 1000
+					msecs:getMsec (event)
 				});
 
 
@@ -175,7 +139,7 @@ module.exports = function (self) {
 			name: 'Undo Pause',
 			options: [
 				],
-			callback: async (event) => {0
+			callback: async (event) => {
 				api.send({
 					cmd:"undopause"
 				});
@@ -197,7 +161,7 @@ module.exports = function (self) {
 			name: 'Toggle Time Of Day Display',
 			options: [
 				],
-			callback: async (event) => {0
+			callback: async (event) => {
 				api.send({
 					cmd:"time"
 				});
@@ -208,7 +172,7 @@ module.exports = function (self) {
 			name: 'Toggle Presenter',
 			options: [
 				],
-			callback: async (event) => {0
+			callback: async (event) => {
 				api.send({
 					cmd:"presenter"
 				});
@@ -222,7 +186,7 @@ module.exports = function (self) {
 			name: 'subtract 1 second from current timer',
 			options: [
 				],
-			callback: async (event) => {0
+			callback: async (event) => {
 				api.send({
 					cmd:"minus1"
 				});
@@ -246,7 +210,7 @@ module.exports = function (self) {
 			name: 'subtract 1 minute from current timer',
 			options: [
 				],
-			callback: async (event) => {0
+			callback: async (event) => {
 				api.send({
 					cmd:"minus1Min"
 				});
@@ -258,7 +222,7 @@ module.exports = function (self) {
 			name: 'add 1 minute to current timer',
 			options: [
 				],
-			callback: async (event) => {0
+			callback: async (event) => {
 				api.send({
 					cmd:"plus1Min"
 				});
@@ -269,7 +233,7 @@ module.exports = function (self) {
 			name: 'Catchup to realtime',
 			options: [
 				],
-			callback: async (event) => {0
+			callback: async (event) => {
 				api.send({
 					cmd:"catchup"
 				});
@@ -280,7 +244,7 @@ module.exports = function (self) {
 			name: 'Toggle Messages Display',
 			options: [
 				],
-			callback: async (event) => {0
+			callback: async (event) => {
 				api.send({
 					cmd:"messages"
 				});
@@ -297,7 +261,7 @@ module.exports = function (self) {
 					default: ""
 				}, 
 				],
-			callback: async (event) => {0
+			callback: async (event) => {
 				api.send({
 					cmd:"customMessage",
 					text:event.options.text
@@ -360,5 +324,17 @@ module.exports = function (self) {
 	self.api.updateTimerColors = updateTimerColors;
 
 	self.setActionDefinitions(actionDefs);
+
+	function getMsec (event) {
+		let tally = Number.parseInt(event.options.msecs.trim());
+		if (isNaN(tally)) {
+			tally = event.options.days;
+			tally = (tally * 24) + event.options.hours;
+			tally = (tally * 60) + event.options.mins;
+			tally = (tally * 60) + event.options.secs;
+			return  tally * 1000;
+		}
+		return tally;
+	}
 
 }
