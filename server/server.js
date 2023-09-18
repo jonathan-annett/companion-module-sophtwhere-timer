@@ -7,7 +7,7 @@ const serverFS =  require('./server-pkg-fs.js');
 
 const getBrowserFiles = require('./getBrowserFiles.js');
 
-const content =   getBrowserFiles(fs);//require('./browser-pkg-fs.js'));
+const content =   getBrowserFiles( __filename.endsWith('main.js') ? require('./browser-pkg-fs.js'):fs);
 const help_md_src  = 'HELP.md';
 const help_md_dest = path.join( getTruePath('companion'),'HELP.md');
 
