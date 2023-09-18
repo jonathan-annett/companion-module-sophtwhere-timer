@@ -1,7 +1,7 @@
-
+const fs = require('fs'),path=require('path'),zlib=require('zlib');
+  
 
 function writeBrowserFilesPacked(subdir,filenames) {
-    const fs = require('fs'),path=require('path'),zlib=require('zlib');
     const zlibOpts = {level:9};
     const basepath  = path.resolve(__dirname,subdir);
     filenames =  filenames || fs.readdirSync(basepath);
@@ -49,6 +49,12 @@ function writeBrowserFilesPacked(subdir,filenames) {
 
  
 }
+
+// make sure the HELP.md in the companion folder is the latest, clean version.
+fs.writeFileSync ( 
+    path.resolve(__dirname,'companion','HELP.md'),
+    fs.readFileSync ( path.resolve(__dirname,'server','HELP.md'))
+);
 
 writeBrowserFilesPacked('browser');
 writeBrowserFilesPacked('server',['HELP.md']);
