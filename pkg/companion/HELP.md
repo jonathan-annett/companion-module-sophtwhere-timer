@@ -5,9 +5,7 @@ This connection enables a countdown timer on your computer, which you display us
 
 **You don't need to install any additional software, the timer runs locally in your browser, and is automatically enabled when your add this connection**
 
-**TLDR** *Click a link below to open the timer page, once you are familiar with these instructions.*
-
-<!--other links-->
+Open the timer controller screen using a link from the "<a href="/connections" target="_blank" rel="noopener">Edit Connection</a>" page for the timer instance
 
 
 Keys used in the browser
@@ -74,7 +72,9 @@ Activating Dual Display Mode
 *First, close any timer browser windows that might be open.*
 
 
-Click <a href="http://localhost:8088" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use for the operator:
+Open the timer controller screen using a link from the "<a href="/connections" target="_blank" rel="noopener">Edit Connection</a>" page for the timer instance
+
+You can then drag the window to the display you intend to use for the operator:
 
 ![Screenshot1](Screenshot1.png)
 
@@ -91,7 +91,10 @@ Activating Single Display Mode
 
 *First, close any timer browser windows that might be open.*
 
-Click <a href="http://localhost:8088" target="_blank" rel="noopener"><span>here</span> </a> to open the timer controller screen, which you can reposition to the display you intend to use as the stage display:
+
+Open the timer controller screen using a link from the "<a href="/connections" target="_blank" rel="noopener">Edit Connection</a>" page for the timer instance
+
+You can then drag the window to the display you intend to use as the stage display:
 
 ![Screenshot1](Screenshot1.png)
 

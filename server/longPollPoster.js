@@ -20,7 +20,9 @@
 */
 module.exports = startLongPollPoster;
 
-function startLongPollPoster(reqHandler) {
+function startLongPollPoster(reqHandler,requestPermitted) {
+
+    requestPermitted = requestPermitted || function () {return true};
 
     const msg_poll_url = "/msg-poll";
 
@@ -82,6 +84,11 @@ function startLongPollPoster(reqHandler) {
     }
 
     function handler (request,response) {
+
+        if (!requestPermitted(request, response)) {
+            return;
+        }
+
         const body = [];
         if (request.url === msg_poll_url && request.method==="POST") {
             request.on('data', function(chunk ) {

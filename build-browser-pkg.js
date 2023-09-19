@@ -52,11 +52,6 @@ function writeBrowserFilesPacked(subdir,filenames) {
  
 }
 
-// make sure the HELP.md in the companion folder is the latest, clean version.
-fs.writeFileSync ( 
-    path.resolve(__dirname,'companion','HELP.md'),
-    fs.readFileSync ( path.resolve(__dirname,'server','HELP.md'))
-);
-
+ 
 writeBrowserFilesPacked('browser');
-writeBrowserFilesPacked('server',['HELP.md']);
+//writeBrowserFilesPacked('server',['HELP.md']);

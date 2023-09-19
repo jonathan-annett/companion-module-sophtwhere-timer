@@ -254,7 +254,7 @@ function getLinesData(str, defaultMins, defaultStartTime) {
         }).filter(function (el) {
             return el !== null && el.displayText.length > 0;
         });
-
+        document.body.className = 'rules1';
         return {
             data: data,
             json : makePagesExport(data,HTTP_PORT,itst_label),
@@ -282,6 +282,7 @@ function getLinesData(str, defaultMins, defaultStartTime) {
 
     const data = lines.map(parseLineMode2).filter(notNull);
 
+    document.body.className = data.length===0 ? '' : 'rules2';
     return {
         data: data,
         json : makePagesExport(data,HTTP_PORT,itst_label),
@@ -398,10 +399,10 @@ function getLinesData(str, defaultMins, defaultStartTime) {
 }
 
 
+const textarea = document.querySelector('textarea');
 
-
-document.querySelector('textarea').oninput = function (ev) {
-    const payload = getLinesData(ev.target.value, 30);
+textarea.oninput = function () {
+    const payload = getLinesData(textarea.value, 30);
 
     document.querySelector('#out').innerHTML = payload.info.join('\n');
     
@@ -416,6 +417,8 @@ document.querySelector('textarea').oninput = function (ev) {
             when.getHours(),
             when.getMinutes()
         ];
+
+      
      
 
         saveAs(
@@ -426,10 +429,18 @@ document.querySelector('textarea').oninput = function (ev) {
             `timer-custom-config_${yyyy}${mm}${dd}-${HH}${MM}.companionconfig`
         );
     }
+/*
+    textarea.onblur  = function(ev) {
+        textarea.value = payload.parsed.join('\n');
+        textarea.onblur = null; 
+    };*/
+
     
-}
+};
 
-
+textarea.oninput();
+//textarea.onblur();
+ 
 
 function secToStr(sec) {
     let prefix = sec < 0 ? "-" : "";

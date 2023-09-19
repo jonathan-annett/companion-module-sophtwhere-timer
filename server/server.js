@@ -3,7 +3,6 @@ const path      = require('path');
 const http      = require('http');
 const startLongPollPoster = require('./longPollPoster.js');
 const { getTruePath } = require('./getTruePath');
-const serverFS =  require('./server-pkg-fs.js');
 
 const getBrowserFiles = require('./getBrowserFiles.js');
 
@@ -14,41 +13,32 @@ const help_md_dest = path.join( getTruePath('companion'),'HELP.md');
 
 let server,connections;
 
-function updateHelpMD(HTTP_PORT,help_md_src,help_md_dest) {
+function api_config(config,enabledIps) {
     
-    if (fs.existsSync(help_md_dest) ) {
-        
-        const help_md = serverFS.readFileSync(help_md_src,'utf8');  
-        const ipsArrayHtml=ipLinksArray(HTTP_PORT,module.exports.api.ip_list);
-        
-        const fixedupHelp = help_md
-           .replace(/localhost\:8088/g,`localhost:${HTTP_PORT}`)
-           .replace('<!--other links-->',ipsArrayHtml);
-           
-        const existingHelp = fs.readFileSync(help_md_dest,'utf8');  
-        if (fixedupHelp!==existingHelp) {
-            fs.writeFileSync(help_md_dest,fixedupHelp);
-     	    return true;
+    const HTTP_PORT=config.port;
+    let redirect_host;
+    const hosts = Object.keys(enabledIps).map(function(x){
+        const this_ip = x.split(':')[0]
+        if (enabledIps[x]) {
+            if (!redirect_host && this_ip !== '127.0.0.1') {
+                redirect_host = x;
+            }
         }
+        return this_ip;
+    });
+
+
+
+    if (!redirect_host) {
+        console.log("can't redirect as no suitable address exists");
+
+    } else {
+        if (config.redirect_disabled) {
+            console.log("will redirect disabled interfaces to",redirect_host);
+        }
+           
     }
-    return false;
-}
-
-
-function ipLink(port,ip) {
-    return `<a href="http://${ip}:${port}" target="_blank" rel="noopener"><span>http://${ip}:${port}</span></a>`;
-}
-
-function ipLinksArray(port,ips){
-    const fn = ipLink.bind(null,port);
-    return '  - '+ips.map(fn).join('\n  - ')+'\n';
-}
-
-function api_config(cfg,updated) {
-    
-    const HTTP_PORT=cfg.port;
-
-    updateHelpMD(HTTP_PORT,help_md_src,help_md_dest);
+  
 
     if (connections) {
         try {
@@ -73,9 +63,27 @@ function api_config(cfg,updated) {
         restartServer();
     }
 
+
+    function requestPermitted(request, response) {
+        if (!enabledIps[request.headers && request.headers.host ]) {
+
+            if (redirect_host && config.redirect_disabled) {
+                response.writeHead(302,{
+                    'Location': `http://${redirect_host}/${request.url.replace(/^\//,'')}`
+                  });
+            } else {
+                response.writeHead(403);
+                response.write("Forbidden");
+            }
+            response.end();
+            return false;
+        }
+        return true;
+    }
+
     function restartServer() {
         
-            connections = startLongPollPoster(defaultHTTPHandler);
+            connections = startLongPollPoster(defaultHTTPHandler,requestPermitted);
 
             server = http.createServer(connections.handler);
 
@@ -98,6 +106,11 @@ function api_config(cfg,updated) {
             });
 
             function defaultHTTPHandler(request, response) {
+
+                if (!requestPermitted(request, response)) {
+                    return;
+                }
+
                 const data = content [request.url.split('?')[0]];
                 if (data) {
                     ['content-type' ].forEach(function(hdr){
@@ -112,10 +125,15 @@ function api_config(cfg,updated) {
                 response.writeHead(404);
                 response.end();
             }
+            const listen_args = [HTTP_PORT];
 
-            server.listen(HTTP_PORT, function() {
+           // if (listen_address) listen_args.push(listen_address);
+
+            listen_args.push(function() {
                 console.log('Server is listening on port ' + HTTP_PORT );                      
             });
+
+            server.listen.apply(server, listen_args );
 
             module.exports.api.send = api_send;
                 

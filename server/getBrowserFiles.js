@@ -1,5 +1,12 @@
 module.exports = getBrowserFiles;
 
+const aliases = {
+    '/'           : '/timer.html',
+    '/edit'       : '/event-edit.html',
+    '/timer'      : '/timer.html',
+    '/index.html' : '/timer.html',
+};
+
 function getBrowserFiles(fs) {
     const path      = require('path');
     const files = fs.readdirSync('./browser').filter(function(fn){return !fn.startsWith('.');});
@@ -15,8 +22,12 @@ function getBrowserFiles(fs) {
         };
     });
 
-    content['/index.html']=content['/timer.html'];
-    content['/']=content['/timer.html'];
+    Object.keys(aliases).forEach(function(aliased_uri){
+        const uri = aliases[aliased_uri];
+        content[aliased_uri]=content[uri];
+        console.log(`${aliased_uri} ---> ${uri}`)
+    });
+ 
     return content;
 }
 
