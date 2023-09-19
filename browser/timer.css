@@ -93,6 +93,7 @@
 body {
     
     background-color:var(--color-main-background);
+    background:var(--color-main-background);
     color:var(--color-main-font);
     font-size:2.5vh;
     font-family: 'Lucida', sans-serif;
@@ -100,7 +101,13 @@ body {
     user-select: none;                
 }
 
-
+ :backdrop { background-color:var(--color-main-background); background:var(--color-main-background);} 
+ ::backdrop { background-color:var(--color-main-background); background:var(--color-main-background);} 
+ :-ms-fullscreen { background-color:var(--color-main-background); background:var(--color-main-background);} 
+ :-moz-full-screen { background-color:var(--color-main-background); background:var(--color-main-background);} 
+ :-webkit-full-screen { background-color:var(--color-main-background); background:var(--color-main-background);} 
+ ::fullscreen { background-color:var(--color-main-background); background:var(--color-main-background);} 
+ :fullscreen { background-color:var(--color-main-background); background:var(--color-main-background);} 
 
 
     .blink {

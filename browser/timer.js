@@ -1393,7 +1393,21 @@ function restartLongPoll() {
 
     // processServerMessage(undefined,'opened');    
 }
-
+function getHexColor(colorStr) {
+    if (getHexColor.cache) {
+        if (getHexColor.cache[colorStr]!==undefined) {
+            return getHexColor.cache[colorStr];
+        }
+    } else {
+        getHexColor.cache={};
+    }
+    var a = document.createElement('div');
+    a.style.color = colorStr;
+    var colors = window.getComputedStyle( document.body.appendChild(a) ).color.match(/\d+/g).map(function(a){ return parseInt(a,10); });
+    document.body.removeChild(a);
+    getHexColor.cache[colorStr] = (colors.length >= 3) ? '#' + (((1 << 24) + (colors[0] << 16) + (colors[1] << 8) + colors[2]).toString(16).substr(1)) : false;
+    return getHexColor.cache[colorStr];
+}
 function getTimerColors(){
     if (server_conn) {
         const msg =  {
@@ -1404,8 +1418,10 @@ function getTimerColors(){
         let shouldSend=false;
         (msg.names||getCustomColorNames()).forEach(function(n){
             const color = getCustomColor(n);
+            const hexColor = getHexColor(color);
+            const colorName = w3color(color).toName();
             if (color) {
-                msg.setTimerColors[n]=color;
+                msg.setTimerColors[n]={color,hexColor,colorName};
                 shouldSend=true;
             }
         });

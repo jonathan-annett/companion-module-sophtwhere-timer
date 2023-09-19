@@ -52,12 +52,19 @@ module.exports = function (self) {
 		customMessage : acts.customMessage.customMessage,
 
 		setTimerColor : acts.setTimerColor.setTimerColor,
+		BeginColorTheme : acts.setTimerColor.BeginColorTheme,
+		EndColorTheme : acts.setTimerColor.EndColorTheme,
+
+
+		
 		
 	};
     
 	
 	api.updateTimerColors = acts.setTimerColor.updateTimerColors;
 	api.actions = acts;
+	api.actionDefs = actionDefs;
+
 	api.presets = {};
 	Object.keys(api.actions).forEach(function(libName){
 		const lib = api.actions[libName];

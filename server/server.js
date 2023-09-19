@@ -79,7 +79,7 @@ function api_config(config,enabledIps) {
                             module.exports.api.setVariableValues( msg.setVariableValues );
                     } else {
                         if (msg.setTimerColors) {
-
+                           
                             module.exports.api.updateTimerColors (msg.setTimerColors);
 
                         } else {
