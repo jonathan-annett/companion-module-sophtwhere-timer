@@ -1,3 +1,9 @@
+/*!
+ * companion-module-sophtwhere-timer/main.js
+ * Copyright(c) 2023 Jonathan Annett
+ * MIT Licensed
+ */
+
 const { InstanceBase, Regex, runEntrypoint, InstanceStatus } = require('@companion-module/base')
 const UpgradeScripts  = require('./upgrades');
 const UpdateActions   = require('./actions');
@@ -12,70 +18,84 @@ class ModuleInstance extends InstanceBase {
 		super(internal)
 	}
 
-	async init(config) {
-		this.config = config;
-		this.api = api;
-		api.ip_list = await this.ipsList();
+	async init(config,isFirstInit) {
+		const self=this;
+		console.log({config,isFirstInit});
 
+		self.config = config;
 		config.port = config.port || '8088';
+		self.api = api;
+		api.ip_list = [ '127.0.0.1' ];
 		const HTTP_PORT = config.port;
+		
 
-		 
+		self.ipsList().then(processIpList).catch(logErrorsAndExit);
 
-		api.ip_list.forEach(function(ip,ix){
-			const current = config[`iface_${ix}`];
-			config[`iface_${ip.replace(/\./g,'_')}`] = typeof current==='undefined'? ip ==='127.0.0.1' : current;
-		});
+		function logErrorsAndExit(err) {
+			console.log("error in timer init",err);
+		}
 
-		Object.keys(config).forEach(function(key){
-			if (key.startsWith('iface_')) {
-				const ip =  key.replace(/^iface_/,'').replace(/\_/g,'.');
-				if (api.ip_list.indexOf(ip)<0) {
-					delete config[key];
-				}
-			} 
-		});
-
-		this.updateStatus(InstanceStatus.Ok);
-
-		this.updateVariableDefinitions(); // export variable definitions
-		['resetVariable', 'resetVariables', 'getVariable', 'setVariable', 'vars'].forEach(function(method){
-			const fn = UpdateVariableDefinitions[method];
-			api[method]= fn;
-		});
+		function processIpList(ip_list) {
+			const api = self.api;
+			api.ip_list = ip_list;
 	
-		this.updateActions(); // export actions
-		this.updatePresets();// export presets
-		this.updateFeedbacks(); // export feedbacks
-	
-		const setVars = this.setVariableValues.bind(this);
-		const checkFeedbacks = this.checkFeedbacks.bind(this);
-		const parseVariablesInString = this.parseVariablesInString.bind(this);
-
-
-		api.config(config,this.get_ips_enabled (true));
-
-		api.setVariableValues = function (vars) {
-			const vars2 = {};
-			Object.keys(vars).forEach(function(k){
-				const val = vars[k];
-				if (val!==undefined) { 
-					vars2[k]=val;
-					if (k==="remain" || k==="elapsed" ) {
-						const extra = splitHMS(val);
-						Object.keys(extra).forEach(function(kk){
-							vars2[`${k}_${kk}`] = extra[kk];
-						});
-					}
-				}
+			api.ip_list.forEach(function(ip,ix){
+				const current = config[`iface_${ix}`];
+				config[`iface_${ip.replace(/\./g,'_')}`] = typeof current==='undefined'? ip ==='127.0.0.1' : current;
 			});
-			setVars(vars2);
-			checkFeedbacks();
-		};
-
 	
+			Object.keys(config).forEach(function(key){
+				if (key.startsWith('iface_')) {
+					const ip =  key.replace(/^iface_/,'').replace(/\_/g,'.');
+					if (api.ip_list.indexOf(ip)<0) {
+						delete config[key];
+					}
+				} 
+			});
+	
+			self.updateStatus(InstanceStatus.Ok);
+	
+			self.updateVariableDefinitions(); // export variable definitions
+			['resetVariable', 'resetVariables', 'getVariable', 'setVariable', 'vars'].forEach(function(method){
+				const fn = UpdateVariableDefinitions[method];
+				api[method]= fn;
+			});
+		
+			self.updateActions(); // export actions
+			self.updatePresets();// export presets
+			self.updateFeedbacks(); // export feedbacks
+		
+			api.setVariableValues = function (vars) {
+				const vars2 = {};
+				Object.keys(vars).forEach(function(k){
+					const val = vars[k];
+					if (val!==undefined) { 
+						vars2[k]=val;
+						if (k==="remain" || k==="elapsed" ) {
+							const extra = splitHMS(val);
+							Object.keys(extra).forEach(function(kk){
+								vars2[`${k}_${kk}`] = extra[kk];
+							});
+						}
+					}
+				});
+				self.setVariableValues(vars2);
+				self.checkFeedbacks();
+			};
+	
+	
+			api.config(config,self.get_ips_enabled (true)).then(function(res){
+				console.log("api.config has returned:",res);
+			}).catch(function(err){
+				console.log("caught in api.config :",err);
+			});
+	
+		}
+
 		
 	}
+
+	
 
 	ipsList() {
 		const parseVariablesInString = this.parseVariablesInString.bind(this);
@@ -112,12 +132,16 @@ class ModuleInstance extends InstanceBase {
 	
 	// When module gets deleted
 	async destroy() {
-		this.log('debug', 'destroy')
+		
+		this.log('debug', 'destroy');
+		if (api) {
+			await api.shutdownServer();
+		}
 	}
 
 	async configUpdated(config) {
 		this.config = config
-		api.config(config,this.get_ips_enabled (true));
+		return await api.config(config,this.get_ips_enabled (true));
 	}
 
 

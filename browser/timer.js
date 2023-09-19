@@ -1,4 +1,8 @@
-
+/*!
+ * timer.js
+ * Copyright(c) 2023 Jonathan Annett
+ * MIT Licensed
+ */
 
 /*jshint maxerr: 10000 */
 
@@ -1010,7 +1014,7 @@ function onDocKeyDown(ev){
             
             break; 
             case "ArrowRight": 
-                bumpStart(factor);setHtmlClass
+                bumpStart(factor); 
                 bumpEnd(seekEndDelta,endDelta);
                 
                 durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
@@ -1414,6 +1418,8 @@ function getTimerColors(){
 function processServerMessage(err,cmd,msg,code) {
     console.log(err,cmd,msg,code);
     switch (cmd) {
+
+
         case "keys": {
             msg.keys.forEach(function(key) {
                 if (key.startsWith('~')) {
@@ -1426,9 +1432,29 @@ function processServerMessage(err,cmd,msg,code) {
             break;
         }
 
+        case "adjust" : {
+            if (msg.addtime) {
+                bumpEnd(msg.msecs,msg.msecs);
+            } else { 
+                bumpEnd(0-msg.msecs,0-msg.msecs);
+            }
+            durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
+            displayUpdate();
+            break;
+        }
+
+        case "nudge" : {
+            if (msg.addtime) {
+               bumpEnd(msg.msecs,0); 
+            } else { 
+               bumpEnd(0-msg.msecs,0);
+            }
+            durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
+            displayUpdate();
+            break;
+        }
+
         case "customMessage" : {
-
-
                    
             html.classList.remove("edit_custom_message");
             html.classList.remove("show_custom_message");

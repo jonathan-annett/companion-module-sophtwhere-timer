@@ -17,9 +17,9 @@ module.exports = async function (self) {
 	variable_defs.splice(
 		0,variable_defs.length,
 
-		{ variableId: 'expired', name: 'timer expired',      default : false},
+		{ variableId: 'expired',   name: 'timer expired',      default : false},
 		{ variableId: 'impending', name: 'timer impending',  default : false  },
-		{ variableId: 'pausing', name: 'timer is pausing',   default : false  },
+		{ variableId: 'pausing',   name: 'timer is pausing',   default : false  },
 
 		{ variableId: 'adjusting_up', name: 'timer is speeding up to match target' , default : false },
 		
@@ -27,8 +27,6 @@ module.exports = async function (self) {
 
 		{ variableId: 'adjusting_delta', name: 'timer adjustment delta' , default : 0 },
 		{ variableId: 'remain_actual', name: 'actual time remaining' , default : '0:00'  },
-
-		
 		
 		{ variableId: 'remain',          name: 'remaining'  ,           default : '0:00' },
 		{ variableId: 'remain_h',        name: 'remaining h'  ,         default : '' },

@@ -1,11 +1,12 @@
 const { combineRgb } = require('@companion-module/base');
-const { splitHMS } = require('./server/splitHMS')
+const { splitHMS } = require('../server/splitHMS')
 const hmsKeys = Object.keys(splitHMS('0:0'));
 
 module.exports = function (self) {
+	const api = self.api;
 
-	const presets = {
-
+	const variable_presets = {
+/*
 		'restart': {
 			type: 'button',
 			category: 'Timer',
@@ -33,7 +34,6 @@ module.exports = function (self) {
 			],
 		},
 
-		
 		'default': {
 			type: 'button',
 			category: 'Timer',
@@ -60,7 +60,6 @@ module.exports = function (self) {
 				
 			],
 		},
-
 
 		'pause': {
 			type: 'button',
@@ -98,7 +97,6 @@ module.exports = function (self) {
 				},
 			],
 		},
-
 		
 		'undopause': {
 			type: 'button',
@@ -137,7 +135,7 @@ module.exports = function (self) {
 				},
 			],
 		},
-
+*/
 		'remaining': {
 			type: 'button',
 			category: 'Time Remaining',
@@ -224,7 +222,6 @@ module.exports = function (self) {
 			],
 		},
 
-
 		'elapsed': {
 			type: 'button',
 			category: 'Time Elapsed',
@@ -297,7 +294,6 @@ module.exports = function (self) {
 			],
 		},
 
-
 		'endsAt': {
 			type: 'button',
 			category: 'Timer',
@@ -344,316 +340,16 @@ module.exports = function (self) {
 			feedbacks: [
 				
 			],
-		},		
-		
-		'minus1': {
-			type: 'button',
-			category: 'Adjust Timer',
-			name: 'Minus1',
-			style: {
-				text: '- 1 sec',
-				size: '18',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'minus1',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
-
-		'minus1min': {
-			type: 'button',
-			category: 'Adjust Timer',
-			name: 'Minus1Min',
-			style: {
-				text: '- 1 min',
-				size: '18',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'minus1Min',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
-
-		
-		'plus1min': {
-			type: 'button',
-			category: 'Adjust Timer',
-			name: 'Plus1Min',
-			style: {
-				text: '+ 1 min',
-				size: '18',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'plus1Min',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
-
-		'plus1': {
-			type: 'button',
-			category: 'Adjust Timer',
-			name: 'Plus1',
-			style: {
-				text: '+ 1 sec',
-				size: '18',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'plus1',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				
-			],
-		},
-
-
-		'catchup': {
-			type: 'button',
-			category: 'Adjust Timer',
-			name: 'Catchup to Real Time',
-			style: {
-				text: 'Realtime',
-				size: '14',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'catchup',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'AdjustingDown',
-					style: {
-						bgcolor: combineRgb(255,255,0),
-						color: combineRgb(0, 0, 0),
-						text : "$(timer:adjusting_delta) seconds\n(SLOWING)",
-						size: '7'
-					},
-					options: {
-						adjusting_downStatus: '1',
-					},
-				},
-
-				{
-					feedbackId: 'AdjustingUp',
-					style: {
-						bgcolor: combineRgb(0,255,255),
-						color: combineRgb(0, 0, 0),
-						text : "+$(timer:adjusting_delta) seconds\n(SPEEDING)",
-						size: '7'
-					},
-					options: {
-						adjusting_upStatus: '1',
-					},
-				},
-			],
-		},
-
-		
-		'bar': {
-			type: 'button',
-			category: 'Display Modes',
-			name: 'Toggle Progress Bar Display',
-			style: {
-				text: 'Progress\nBar',
-				size: '14',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'bar',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'ShowBarDisplay',
-					style: {
-						bgcolor: combineRgb(0,255, 0),
-						color: combineRgb(0, 0, 0),
-					},
-					options: {
-						displayStatus: '1',
-					},
-				},
-			],
-		},
-
-		'time': {
-			type: 'button',
-			category: 'Display Modes',
-			name: 'Toggle Time Of Day Display',
-			style: {
-				text: 'Time Of Day',
-				size: '14',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'time',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'ShowTimeNow',
-					style: {
-						bgcolor: combineRgb(0,255, 0),
-						color: combineRgb(0, 0, 0),
-					},
-					options: {
-						displayStatus: '1',
-					},
-				},
-			],
-		},
-
-		'messages': {
-			type: 'button',
-			category: 'Display Modes',
-			name: 'Toggle Last Minute & Time is Up Messages',
-			style: {
-				text: 'Last Minute\n\nTime is Up',
-				size: '7',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'messages',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'ShowMessages',
-					style: {
-						bgcolor: combineRgb(0,255, 0),
-						color: combineRgb(0, 0, 0),
-					},
-					options: {
-						displayStatus: '1',
-					},
-				},
-			],
-		},
-
-		'presenter': {
-			type: 'button',
-			category: 'Display Modes',
-			name: 'Toggle Presenter Mode',
-			style: {
-				text: 'Presenter Mode',
-				size: '7',
-				color: combineRgb(255, 255, 255),
-			    bgcolor: combineRgb(0, 0, 0),
-	
-			},
-			steps: [
-				{
-					down: [
-						{
-							actionId: 'presenter',
-							options: {},
-						},
-					],
-					up: [],
-				},
-			],
-			feedbacks: [
-				{
-					feedbackId: 'ShowPresenter',
-					style: {
-						bgcolor: combineRgb(0,255,128),
-						color: combineRgb(0, 0, 0),
-					},
-					options: {
-						displayStatus: '1',
-					},
-				},
-			],
-		},
-
+		} 
 
 	};
+
+	const presets = {
+
+		...api.presets,
+		...variable_presets
+	};
+
 
 	hmsKeys.forEach(function(k){
 		presets[`Remaining ${k}`]={
@@ -878,3 +574,337 @@ module.exports = function (self) {
 
 
 }
+
+
+		
+/* 'minus1': {
+			type: 'button',
+			category: 'Adjust Timer',
+			name: 'Minus1',
+			style: {
+				text: '- 1 sec',
+				size: '18',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'nudge',
+							options: {
+								hours : 0,
+								mins  : 0,
+								secs  : 0,
+								msecs : '1000',
+								addtime : '0'
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+		'minus1min': {
+			type: 'button',
+			category: 'Adjust Timer',
+			name: 'Minus1Min',
+			style: {
+				text: '- 1 min',
+				size: '18',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'adjust',
+							options: {
+								hours : 0,
+								mins  : 0,
+								secs  : 0,
+								msecs : '60000',
+								addtime : '0'
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+		
+		'plus1min': {
+			type: 'button',
+			category: 'Adjust Timer',
+			name: 'Plus1Min',
+			style: {
+				text: '+ 1 min',
+				size: '18',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'adjust',
+							options: {
+								hours : 0,
+								mins  : 0,
+								secs  : 0,
+								msecs : '60000',
+								addtime : '1'
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+		'plus1': {
+			type: 'button',
+			category: 'Adjust Timer',
+			name: 'Plus1',
+			style: {
+				text: '+ 1 sec',
+				size: '18',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'nudge',
+							options: {
+								hours : 0,
+								mins  : 0,
+								secs  : 0,
+								msecs : '1000',
+								addtime : '1'
+							},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				
+			],
+		},
+
+
+
+		'catchup': {
+			type: 'button',
+			category: 'Adjust Timer',
+			name: 'Catchup to Real Time',
+			style: {
+				text: 'Realtime',
+				size: '14',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'catchup',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'AdjustingDown',
+					style: {
+						bgcolor: combineRgb(255,255,0),
+						color: combineRgb(0, 0, 0),
+						text : "$(timer:adjusting_delta) seconds\n(SLOWING)",
+						size: '7'
+					},
+					options: {
+						adjusting_downStatus: '1',
+					},
+				},
+
+				{
+					feedbackId: 'AdjustingUp',
+					style: {
+						bgcolor: combineRgb(0,255,255),
+						color: combineRgb(0, 0, 0),
+						text : "+$(timer:adjusting_delta) seconds\n(SPEEDING)",
+						size: '7'
+					},
+					options: {
+						adjusting_upStatus: '1',
+					},
+				},
+			],
+		},
+
+		
+		bar : {
+			type: 'button',
+			category: 'Display Modes',
+			name: 'Toggle Progress Bar Display',
+			style: {
+				text: 'Progress\nBar',
+				size: '14',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'bar',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'ShowBarDisplay',
+					style: {
+						bgcolor: combineRgb(0,255, 0),
+						color: combineRgb(0, 0, 0),
+					},
+					options: {
+						displayStatus: '1',
+					},
+				},
+			],
+		},
+
+		'time': {
+			type: 'button',
+			category: 'Display Modes',
+			name: 'Toggle Time Of Day Display',
+			style: {
+				text: 'Time Of Day',
+				size: '14',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'time',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'ShowTimeNow',
+					style: {
+						bgcolor: combineRgb(0,255, 0),
+						color: combineRgb(0, 0, 0),
+					},
+					options: {
+						displayStatus: '1',
+					},
+				},
+			],
+		},
+
+		'messages': {
+			type: 'button',
+			category: 'Display Modes',
+			name: 'Toggle Last Minute & Time is Up Messages',
+			style: {
+				text: 'Last Minute\n\nTime is Up',
+				size: '7',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'messages',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'ShowMessages',
+					style: {
+						bgcolor: combineRgb(0,255, 0),
+						color: combineRgb(0, 0, 0),
+					},
+					options: {
+						displayStatus: '1',
+					},
+				},
+			],
+		},
+
+		'presenter': {
+			type: 'button',
+			category: 'Display Modes',
+			name: 'Toggle Presenter Mode',
+			style: {
+				text: 'Presenter Mode',
+				size: '7',
+				color: combineRgb(255, 255, 255),
+			    bgcolor: combineRgb(0, 0, 0),
+	
+			},
+			steps: [
+				{
+					down: [
+						{
+							actionId: 'presenter',
+							options: {},
+						},
+					],
+					up: [],
+				},
+			],
+			feedbacks: [
+				{
+					feedbackId: 'ShowPresenter',
+					style: {
+						bgcolor: combineRgb(0,255,128),
+						color: combineRgb(0, 0, 0),
+					},
+					options: {
+						displayStatus: '1',
+					},
+				},
+			],
+		},
+
+*/
