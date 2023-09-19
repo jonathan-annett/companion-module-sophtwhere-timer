@@ -22,9 +22,9 @@ function splitHMS(hms) {
 	let h = Number(hh).toString();
 	let m = Number(mm).toString();
 	let s = Number(ss).toString();
-	hh = ('0' + h).substr(-2);
-	mm = ('0' + m).substr(-2);
-	ss = ('0' + s).substr(-2);
+	hh = h.padStart(2,'0');//  ('0' + h).substr(-2);
+	mm = m.padStart(2,'0');//('0' + m).substr(-2);
+	ss = s.padStart(2,'0');//('0' + s).substr(-2);
 
 	return {
 		hh, 
@@ -35,8 +35,8 @@ function splitHMS(hms) {
 		s : s === '0' ? '' : s, 
 		mm_ss: mm + ':' + ss,
 		hh_mm_ss: h + ':' + mm + ':'+ss,
-		m_ss: m + ':' + ss,
-		h_mm_ss: h + ':' + mm + ':'+ss,
+		m_ss:     m + ':' + ss,
+		h_mm_ss:  h + ':' + mm + ':'+ss,
 		
 		hours,
 		minutes,
