@@ -48,9 +48,77 @@ const actionDef = {
 
 	}
 };
+ 
+ stdTimes.forEach(function(mins){
+	actionDef.presets[`${mins} Minutes Default`] =  {
+		 type: 'button',
+		 category: 'Default Durations',
+		 name: `default${mins}`,
+		 style: {
+			 text: `${mins} mins`,
+			 size: '18',
+			 color: combineRgb(255, 255, 255),
+			 bgcolor: combineRgb(0, 0, 0),
+		 },
+		 steps: [
+			 {
+				 down: [
+					 {
+						 actionId: 'setDefault',
+						 options: {days:0,hours:0,mins:mins,secs:0},
+					 },
+				 ],
+				 up: [],
+			 },
+		 ]
+    };
+ });
 
+ actionDef.presets['1 Hour Default'] =  {
+	 type: 'button',
+	 category: 'Default Durations',
+	 name: `default60`,
+	 style: {
+		 text: `1 hour`,
+		 size: '18',
+		 color: combineRgb(255, 255, 255),
+		 bgcolor: combineRgb(0, 0, 0),
+	 },
+	 steps: [
+		 {
+			 down: [
+				 {
+					 actionId: 'setDefault',
+					 options: {days:0,hours:1,mins:0,secs:0},
+				 },
+			 ],
+			 up: [],
+		 },
+	 ]
+ };
 
-
+ actionDef.presets['2 Hours Default'] =  {
+	 type: 'button',
+	 category: 'Default Durations',
+	 name: `default120`,
+	 style: {
+		 text: `2 hours`,
+		 size: '18',
+		 color: combineRgb(255, 255, 255),
+		 bgcolor: combineRgb(0, 0, 0),
+	 },
+	 steps: [
+		 {
+			 down: [
+				 {
+					 actionId: 'startNew',
+					 options: {days:0,hours:2,mins:0,secs:0},
+				 },
+			 ],
+			 up: [],
+		 },
+	 ]
+ };
 
 module.exports = function (self) {
 	actionDef.api = self.api;
