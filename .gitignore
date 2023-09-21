@@ -4,4 +4,4 @@ package-lock.json
 /pkg
 /dist/readme.md
 /dist/default-tests.companionconfig
-/dist/bundled-modules/*
+/dist/bundled-modules
