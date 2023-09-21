@@ -2,6 +2,4 @@ node_modules/
 package-lock.json
 /pkg.tgz
 /pkg
-/dist/readme.md
-/dist/default-tests.companionconfig
-/dist/bundled-modules
+/dist-src
