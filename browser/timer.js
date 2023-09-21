@@ -8,6 +8,7 @@
 
 /* global fs_api,ace*/
 
+
 const oneSecond        = 1000;
 const oneMinute        = 60 * oneSecond;
 const skip_granularity = 15 * oneSecond;
@@ -1384,14 +1385,18 @@ if (
 
 function restartLongPoll() {
 
-
-     server_conn = openLongPollPoster( readNumber('lastLongPollId',0),function(message,lastId){    
-       const {error,cmd,code} = message;
-       processServerMessage(error,cmd,message,code);    
-       writeNumber('lastLongPollId',server_conn.lastId);
-     });
-
-    // processServerMessage(undefined,'opened');    
+    getLongPollPosterMode().then(function(useWs){
+        console.log({useWs});
+        if (useWs === 'error' ) {
+            return location.replace(location.href);
+        }
+        html.classList[useWs?'add':'remove']('ws');
+        server_conn = openLongPollPoster( readNumber('lastLongPollId',0),function(message){    
+            const {error,cmd,code} = message;
+            processServerMessage(error,cmd,message,code);    
+            writeNumber('lastLongPollId',server_conn.lastId);
+        },useWs);
+    }); 
 }
 function getHexColor(colorStr) {
     if (getHexColor.cache) {
@@ -1522,7 +1527,28 @@ function processServerMessage(err,cmd,msg,code) {
             break;
         }
 
-     
+        case "redirect" : {
+            if (typeof msg.url ==='number') {
+                const url = new URL(location.href);
+                url.port =  msg.url.toString();
+                msg.url=url.toString();
+            }
+            if (    msg.url && 
+                     ( msg.url.startsWith('/')|| 
+                       msg.url.startsWith(location.origin.replace(/\:.*$/,''))
+                     ) && msg.url !== location.href
+                      
+                    ) {
+                if (msg.delay) {
+                    setTimeout(function(){
+                        location.replace (msg.url);
+                    },msg.delay)
+                } else {
+                    location.replace (msg.url);
+                }
+            }
+            break;
+        }
 
         case "presenter" : {
             if (runMode !== "presenter") {

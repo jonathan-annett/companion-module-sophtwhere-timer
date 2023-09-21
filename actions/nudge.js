@@ -17,7 +17,7 @@ const actionDef =  {
 				]
 			}
 		].concat(
-			JSON.parse(JSON.stringify(durationOptions)).slice(1)
+			durationOptions.slice(1)
 		),
 		callback: async (event) => {
 			actionDef.api.send({

@@ -6,6 +6,8 @@ const durationOptions = [
         default: 0,
         min: 0,
         max: 365,
+        isVisible: isDurDropVisible,
+        isVisibleData : 'test'
     },
     {
         id: 'hours',
@@ -14,6 +16,8 @@ const durationOptions = [
         default: 0,
         min: 0,
         max: 23,
+        isVisible: isDurDropVisible,
+        isVisibleData : 'test'
     },
     {
         id: 'mins',
@@ -22,6 +26,8 @@ const durationOptions = [
         default: 10,
         min: 0,
         max: 59,
+        isVisible: isDurDropVisible,
+        isVisibleData : 'test'
     },
     {
         id: 'secs',
@@ -30,6 +36,8 @@ const durationOptions = [
         default: 0,
         min: 0,
         max: 59,
+        isVisible: isDurDropVisible,
+        isVisibleData : 'test'
     }, 
     {
         id: 'msecs',
@@ -38,6 +46,9 @@ const durationOptions = [
         default: ''
     }
 ];
+function  isDurDropVisible (options, data) {
+    return (options.msecs||'').trim()==='';
+}
 
 function getMsec (event) {
     let tally = Number.parseInt((event.options.msecs||'').trim());

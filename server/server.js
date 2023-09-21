@@ -1,23 +1,31 @@
 const fs        = require('fs');
 const path      = require('path');
-const http      = require('http');
 const startLongPollPoster = require('./longPollPoster.js');
 const { getTruePath } = require('./getTruePath');
 
 const getBrowserFiles = require('./getBrowserFiles.js');
 
-const content =   getBrowserFiles( __filename.endsWith('main.js') ? require('./browser-pkg-fs.js'):fs);
+const b_fs = __filename.endsWith('main.js') ? require('./browser-pkg-fs.js') : fs;
+const content =  getBrowserFiles( b_fs );
+
 const help_md_src  = 'HELP.md';
 const help_md_dest = path.join( getTruePath('companion'),'HELP.md');
 
+
+//const open = require('open');
 
 let server,connections;
 
 function api_config(config,enabledIps) {
 
     return new Promise(function(resolve,reject){
-                
+            const use_ws = !!config.allow_ws;
+
+     
             const HTTP_PORT=config.port;
+            const restartURL = server && server.last_port === HTTP_PORT ? "/" : Number(HTTP_PORT); 
+            console.log({HTTP_PORT,restartURL,last: server ? server.last_port : '?'});
+
             let redirect_host;
             const hosts = Object.keys(enabledIps).map(function(x){
                 const this_ip = x.split(':')[0]
@@ -28,8 +36,6 @@ function api_config(config,enabledIps) {
                 }
                 return this_ip;
             });
-
-
 
             if (config.redirect_disabled && !redirect_host) {
                 console.log("can't redirect as no suitable address exists");
@@ -44,7 +50,9 @@ function api_config(config,enabledIps) {
                 
             }
 
-            return shutdownServer().then(restartServer).catch(reject);
+
+
+            return shutdownServer(restartURL).then(restartServer).catch(reject);
     
   
 
@@ -57,7 +65,7 @@ function api_config(config,enabledIps) {
                     });
                 } else {
                     response.writeHead(403);
-                    response.write("Forbidden");
+                    response.write("this service is not enabled for this ip address");
                 }
                 response.end();
                 return false;
@@ -67,9 +75,11 @@ function api_config(config,enabledIps) {
 
         function restartServer() {
             
-                connections = startLongPollPoster(defaultHTTPHandler,requestPermitted);
+                connections = startLongPollPoster(defaultHTTPHandler,requestPermitted,use_ws);
 
-                server = http.createServer(connections.handler);
+                server = connections.server;
+
+                server.last_port = HTTP_PORT;
 
                 connections.on('message',function(msg){
 
@@ -117,6 +127,7 @@ function api_config(config,enabledIps) {
                     resolve('Server is listening on port ' + HTTP_PORT );                     
                 });
 
+            
                 server.listen.apply(server, listen_args );
 
                 module.exports.api.send = api_send;
@@ -226,7 +237,11 @@ function api_config(config,enabledIps) {
 
                         }
 
-                        connections.send(data);
+                        connections.send(data,function(err){
+                              if (err ) {
+                                console.log(err);
+                            }
+                        });
 
                     } catch (x) {
                         console.log((new Date()) , x);
@@ -238,44 +253,57 @@ function api_config(config,enabledIps) {
     });
 }
 
-function shutdownServer() {
+function shutdownServer(redirectToUrl) {
     return new Promise(function(resolve,reject){
 
         if (connections) {
-            try {
-                console.log('cleaning up connections...');
-                connections.cleanup();
-            } catch(e) {
-    
-            } finally {
-                connections=undefined;
+
+                const doshutdown = function () {
+                    console.log('cleaning up connections...');
+                    connections.cleanup().then(continueClosingDownServer);
+                    connections=undefined;
+                }
+        
+                if (redirectToUrl) {
+                    console.log('redirecting connections to ',redirectToUrl);
+                    connections.send({cmd:'redirect','url':redirectToUrl,delay:1500},doshutdown,1000);
+                } else {
+                    doshutdown();
+                }
+
+               
+        } else {
+            return continueClosingDownServer();
+        }
+
+        function continueClosingDownServer() {
+            if (server) {
+                let tmr = setTimeout(function(){
+                    if (tmr) {
+                        tmr = undefined;
+                        resolve(false);
+                    }
+                },1500);
+                console.log('shutting down server...');
+                server.on('close',function(){
+                    server = undefined;      
+                    if (tmr) {
+                        clearTimeout(tmr);
+                        tmr = undefined;
+                        resolve(true);
+                    }               
+                });
+                return server.close();
+            } else {
+                resolve(false);
             }
         }
-    
-        if (server) {
-            let tmr = setTimeout(function(){
-                if (tmr) {
-                    tmr = undefined;
-                    reject(new Error("timeout shutting down server"));
-                }
-            },1500);
-            console.log('shutting down server...');
-            server.on('close',function(){
-                server = undefined;      
-                if (tmr) {
-                    clearTimeout(tmr);
-                    tmr = undefined;
-                    resolve(true);
-                }               
-            });
-            return server.close();
-        } else {
-            resolve(false);
-        }
+
     });
 }
 
 
+ 
 module.exports = {
 
    api : {

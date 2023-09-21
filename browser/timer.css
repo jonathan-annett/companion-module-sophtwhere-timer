@@ -140,7 +140,11 @@ body {
     
 }
 
- 
+ html.ws #link:after {
+    content : "  WS";
+    color : lime;
+    display: inline;
+ }
 /*
  the time of day (now) - activated by keystroke "T"
 */

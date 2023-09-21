@@ -1,0 +1,1333 @@
+{
+    "version": 3,
+    "type": "page",
+    "controls": {
+        "bank:1-1": {
+            "type": "pageup"
+        },
+        "bank:1-2": {
+            "type": "button",
+            "style": {
+                "text": "Restart\n$(timer:default)",
+                "size": "18",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "restart",
+                                "options": {},
+                                "delay": 0,
+                                "id": "fc9VvuQc7ag4YaV6KZa5H",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-3": {
+            "type": "button",
+            "style": {
+                "text": "Pause",
+                "size": "18",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [
+                {
+                    "type": "Paused",
+                    "options": {
+                        "pausedStatus": "1"
+                    },
+                    "style": {
+                        "bgcolor": 255,
+                        "color": 16777215,
+                        "text": "$(timer:paused)\nResume\n"
+                    },
+                    "id": "XoEGMP3v67KpiBfpxS2Vo",
+                    "instance_id": "t3UhKe-ZFnA-jk_ZZnhbH"
+                }
+            ],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "pause",
+                                "options": {},
+                                "delay": 0,
+                                "id": "qr3EFVXJHv9PfxvXDgq-n",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-4": {
+            "type": "button",
+            "style": {
+                "text": "Remove Pauses",
+                "size": "18",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [
+                {
+                    "type": "PauseBackLog",
+                    "options": {
+                        "backlogStatus": "1"
+                    },
+                    "style": {
+                        "bgcolor": 32896,
+                        "color": 16777215,
+                        "text": "Remove Pauses\n$(timer:pauses)",
+                        "size": "14"
+                    },
+                    "id": "idWO66AzOyPTmS95HuxjE",
+                    "instance_id": "t3UhKe-ZFnA-jk_ZZnhbH"
+                }
+            ],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "undopause",
+                                "options": {},
+                                "delay": 0,
+                                "id": "kwAfFGF4FLme4xJxfHExP",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-5": {
+            "type": "button",
+            "style": {
+                "text": "$(timer:remain)",
+                "size": "24",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [
+                {
+                    "type": "Expired",
+                    "options": {
+                        "expiredStatus": "1"
+                    },
+                    "style": {
+                        "bgcolor": 0,
+                        "color": 16711680
+                    },
+                    "id": "bHgAXAO6jllVodSsmRPJw",
+                    "instance_id": "t3UhKe-ZFnA-jk_ZZnhbH"
+                },
+                {
+                    "type": "Impending",
+                    "options": {
+                        "impendingStatus": "1"
+                    },
+                    "style": {
+                        "bgcolor": 0,
+                        "color": 16744448
+                    },
+                    "id": "FfcbEUnUXQuBP2dOz5xSM",
+                    "instance_id": "t3UhKe-ZFnA-jk_ZZnhbH"
+                }
+            ],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-6": {
+            "type": "button",
+            "style": {
+                "text": "$(timer:remain_actual)",
+                "size": "24",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [
+                {
+                    "type": "Expired",
+                    "options": {
+                        "expiredStatus": "1"
+                    },
+                    "style": {
+                        "bgcolor": 0,
+                        "color": 16711680
+                    },
+                    "id": "Thwi8lQG4PScBbERDhyOq",
+                    "instance_id": "t3UhKe-ZFnA-jk_ZZnhbH"
+                },
+                {
+                    "type": "Impending",
+                    "options": {
+                        "impendingStatus": "1"
+                    },
+                    "style": {
+                        "bgcolor": 0,
+                        "color": 16744448
+                    },
+                    "id": "Pn1kCkGxIKPbLX5qrlmbW",
+                    "instance_id": "t3UhKe-ZFnA-jk_ZZnhbH"
+                }
+            ],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-7": {
+            "type": "button",
+            "style": {
+                "text": "White On Black",
+                "size": "14",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "BeginColorTheme",
+                                "options": {
+                                    "theme": "whiteonblack"
+                                },
+                                "delay": 0,
+                                "id": "PFRyt5mT8Sia3RVgejPxe",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "setTimerColor-main-background",
+                                "options": {
+                                    "htmlColor-main-background": 0
+                                },
+                                "delay": 0,
+                                "id": "2Tlpxt2WGDNedyGg7CGJv",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "setTimerColor-remain-running",
+                                "options": {
+                                    "htmlColor-remain-running": 16777215
+                                },
+                                "delay": 0,
+                                "id": "DQ0aopVHTUl_7vAkHH-Ff",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "setTimerColor-remain-running-expired",
+                                "options": {
+                                    "htmlColor-remain-running-expired": 16711680
+                                },
+                                "delay": 0,
+                                "id": "nVcLF4_li8JgTP1woe-bl",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "setTimerColor-remain-running-impending",
+                                "options": {
+                                    "htmlColor-remain-running-impending": 16776960
+                                },
+                                "delay": 0,
+                                "id": "1k-7qp7UeF_5M5iJ4cybu",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "setTimerColor-progress-bar",
+                                "options": {
+                                    "htmlColor-progress-bar": 16776960
+                                },
+                                "delay": 0,
+                                "id": "WP4D_TEKg1oR-rYwfhpCx",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "setTimerColor-progress-bar-background",
+                                "options": {
+                                    "htmlColor-progress-bar-background": 16776960
+                                },
+                                "delay": 0,
+                                "id": "HVft6yu6Oq9Jlq1Wt12qC",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "EndColorTheme",
+                                "options": {},
+                                "delay": 0,
+                                "id": "pOTmTo56M7J7cI2LIQQUD",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-8": {
+            "type": "button",
+            "style": {
+                "text": "Black On White",
+                "size": "14",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "BeginColorTheme",
+                                "options": {
+                                    "theme": "blackonwhite"
+                                },
+                                "delay": 0,
+                                "id": "ZKRSiVSQPZM8WTTqezvkn",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "setTimerColor-main-background",
+                                "options": {
+                                    "htmlColor-main-background": 16777215
+                                },
+                                "delay": 0,
+                                "id": "HF9wNylRpEMiFinrzrZFL",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "setTimerColor-remain-running",
+                                "options": {
+                                    "htmlColor-remain-running": 0
+                                },
+                                "delay": 0,
+                                "id": "l785q3ip1MSDtFyygJec9",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "setTimerColor-remain-running-expired",
+                                "options": {
+                                    "htmlColor-remain-running-expired": 16711680
+                                },
+                                "delay": 0,
+                                "id": "hlFg5G2aP5eg4Uk6Td6vC",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "setTimerColor-remain-running-impending",
+                                "options": {
+                                    "htmlColor-remain-running-impending": 16776960
+                                },
+                                "delay": 0,
+                                "id": "0Rg8d_wJSzs5vQ4uQwLyN",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "setTimerColor-progress-bar",
+                                "options": {
+                                    "htmlColor-progress-bar": 16776960
+                                },
+                                "delay": 0,
+                                "id": "AIpuHGYJJJtW0Tylbvgkv",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "setTimerColor-progress-bar-background",
+                                "options": {
+                                    "htmlColor-progress-bar-background": 16776960
+                                },
+                                "delay": 0,
+                                "id": "eMKgpRsL2mL6E_YHd9Gtt",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            },
+                            {
+                                "action": "EndColorTheme",
+                                "options": {},
+                                "delay": 0,
+                                "id": "hRYeaY2jsoICWaSO6mc8K",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-9": {
+            "type": "pagenum"
+        },
+        "bank:1-10": {
+            "type": "button",
+            "style": {
+                "text": "Progress\nBar",
+                "size": "14",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [
+                {
+                    "type": "ShowBarDisplay",
+                    "options": {
+                        "displayStatus": "1"
+                    },
+                    "style": {
+                        "bgcolor": 65280,
+                        "color": 0
+                    },
+                    "id": "j7zVcNZHUsmJZHBl_UYC4",
+                    "instance_id": "t3UhKe-ZFnA-jk_ZZnhbH"
+                }
+            ],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "bar",
+                                "options": {},
+                                "delay": 0,
+                                "id": "2mHHCS_bzcQ-30Ugl0fZ7",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-11": {
+            "type": "button",
+            "style": {
+                "text": "Time Of Day",
+                "size": "14",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [
+                {
+                    "type": "ShowTimeNow",
+                    "options": {
+                        "displayStatus": "1"
+                    },
+                    "style": {
+                        "bgcolor": 65280,
+                        "color": 0
+                    },
+                    "id": "muej70aeTJYUy0ypftPBu",
+                    "instance_id": "t3UhKe-ZFnA-jk_ZZnhbH"
+                }
+            ],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "time",
+                                "options": {},
+                                "delay": 0,
+                                "id": "-T81xqZq1hVz_RL-by01p",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-12": {
+            "type": "button",
+            "style": {
+                "text": "Presenter Mode",
+                "size": "7",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [
+                {
+                    "type": "ShowPresenter",
+                    "options": {
+                        "displayStatus": "1"
+                    },
+                    "style": {
+                        "bgcolor": 65408,
+                        "color": 0
+                    },
+                    "id": "Z7WpwKBcBziJupQEhTmAD",
+                    "instance_id": "t3UhKe-ZFnA-jk_ZZnhbH"
+                }
+            ],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "presenter",
+                                "options": {},
+                                "delay": 0,
+                                "id": "mv3CgZAbHDiljKVnKt7IN",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-13": {
+            "type": "button",
+            "style": {
+                "text": "Last Minute\n\nTime is Up",
+                "size": "7",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [
+                {
+                    "type": "ShowMessages",
+                    "options": {
+                        "displayStatus": "1"
+                    },
+                    "style": {
+                        "bgcolor": 65280,
+                        "color": 0
+                    },
+                    "id": "hobMlN9twoIqTDd5fZwjG",
+                    "instance_id": "t3UhKe-ZFnA-jk_ZZnhbH"
+                }
+            ],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "messages",
+                                "options": {},
+                                "delay": 0,
+                                "id": "i0hvNkdM_JpkiTs-HEsYX",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-14": {
+            "type": "button",
+            "style": {
+                "text": "$(timer:paused)",
+                "size": "24",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-15": {
+            "type": "button",
+            "style": {
+                "text": "5 mins",
+                "size": "18",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 16711680,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "startNew",
+                                "options": {
+                                    "days": 0,
+                                    "hours": 0,
+                                    "mins": 5,
+                                    "secs": 0
+                                },
+                                "delay": 0,
+                                "id": "JcaQdWx8Z2bHCM6Z2YAKQ",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-16": {
+            "type": "button",
+            "style": {
+                "text": "10 mins",
+                "size": "18",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 16711680,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "startNew",
+                                "options": {
+                                    "days": 0,
+                                    "hours": 0,
+                                    "mins": 10,
+                                    "secs": 0
+                                },
+                                "delay": 0,
+                                "id": "x0ymQPszre77LmNxVYCNz",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-17": {
+            "type": "pagedown"
+        },
+        "bank:1-18": {
+            "type": "button",
+            "style": {
+                "text": "Started\n$(timer:startedAt)",
+                "size": "18",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-19": {
+            "type": "button",
+            "style": {
+                "text": "Ends At\n$(timer:endsAt)",
+                "size": "18",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-20": {
+            "type": "button",
+            "style": {
+                "text": "- 1 min",
+                "size": "18",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "adjust",
+                                "options": {
+                                    "hours": 0,
+                                    "mins": 0,
+                                    "secs": 0,
+                                    "msecs": "60000",
+                                    "addtime": "0"
+                                },
+                                "delay": 0,
+                                "id": "XKh0g8B9fAH2pjKVMiO7H",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-21": {
+            "type": "button",
+            "style": {
+                "text": "+ 1 min",
+                "size": "18",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "adjust",
+                                "options": {
+                                    "hours": 0,
+                                    "mins": 0,
+                                    "secs": 0,
+                                    "msecs": "60000",
+                                    "addtime": "1"
+                                },
+                                "delay": 0,
+                                "id": "E4aZrIte0lqLU00g6yu_c",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-22": {
+            "type": "button",
+            "style": {
+                "text": "- 1 sec",
+                "size": "18",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "nudge",
+                                "options": {
+                                    "hours": 0,
+                                    "mins": 0,
+                                    "secs": 0,
+                                    "msecs": "1000",
+                                    "addtime": "0"
+                                },
+                                "delay": 0,
+                                "id": "LoalxghP_pp41_wmHMIoT",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-23": {
+            "type": "button",
+            "style": {
+                "text": "+ 1 sec",
+                "size": "18",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "nudge",
+                                "options": {
+                                    "hours": 0,
+                                    "mins": 0,
+                                    "secs": 0,
+                                    "msecs": "1000",
+                                    "addtime": "1"
+                                },
+                                "delay": 0,
+                                "id": "ktWoElo7dBETAIHFnpJGX",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-24": {
+            "type": "button",
+            "style": {
+                "text": "Realtime",
+                "size": "14",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [
+                {
+                    "type": "AdjustingDown",
+                    "options": {
+                        "adjusting_downStatus": "1"
+                    },
+                    "style": {
+                        "bgcolor": 16776960,
+                        "color": 0,
+                        "text": "$(timer:adjusting_delta) seconds\n(SLOWING)",
+                        "size": "7"
+                    },
+                    "id": "93nOXswFGajEmIH0AAKSJ",
+                    "instance_id": "t3UhKe-ZFnA-jk_ZZnhbH"
+                },
+                {
+                    "type": "AdjustingUp",
+                    "options": {
+                        "adjusting_upStatus": "1"
+                    },
+                    "style": {
+                        "bgcolor": 65535,
+                        "color": 0,
+                        "text": "+$(timer:adjusting_delta) seconds\n(SPEEDING)",
+                        "size": "7"
+                    },
+                    "id": "CIVNkLycmrE2LkiBXkGn-",
+                    "instance_id": "t3UhKe-ZFnA-jk_ZZnhbH"
+                }
+            ],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "catchup",
+                                "options": {},
+                                "delay": 0,
+                                "id": "RjpCAS4D_Xa4jjDhtlTBv",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-25": {
+            "type": "button",
+            "style": {
+                "text": "Clear\n(Remove Message)",
+                "size": "14",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "customMessage",
+                                "options": {
+                                    "text": ""
+                                },
+                                "delay": 0,
+                                "id": "OseeT3JywiR5zrt_xyTLz",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-26": {
+            "type": "button",
+            "style": {
+                "text": "Stand By",
+                "size": "14",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "customMessage",
+                                "options": {
+                                    "text": "Stand By"
+                                },
+                                "delay": 0,
+                                "id": "XXmHum1_NdXZfytF23VMv",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-27": {
+            "type": "button",
+            "style": {
+                "text": "Speaker is Delayed",
+                "size": "14",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "customMessage",
+                                "options": {
+                                    "text": "Speaker is Delayed"
+                                },
+                                "delay": 0,
+                                "id": "6hCEm8w8cI3I98LGXJHYh",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-28": {
+            "type": "button",
+            "style": {
+                "text": "Ready To Start?",
+                "size": "14",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "customMessage",
+                                "options": {
+                                    "text": "Ready to Start?"
+                                },
+                                "delay": 0,
+                                "id": "O6Rcu9ljnKuGa88lf0ELW",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-31": {
+            "type": "button",
+            "style": {
+                "text": "15 mins",
+                "size": "18",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "setDefault",
+                                "options": {
+                                    "days": 0,
+                                    "hours": 0,
+                                    "mins": 15,
+                                    "secs": 0
+                                },
+                                "delay": 0,
+                                "id": "Lvb6-v7qUdVbWTzosPG1x",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        },
+        "bank:1-32": {
+            "type": "button",
+            "style": {
+                "text": "20 mins",
+                "size": "18",
+                "png": null,
+                "alignment": "center:center",
+                "pngalignment": "center:center",
+                "color": 16777215,
+                "bgcolor": 0,
+                "show_topbar": "default"
+            },
+            "options": {
+                "relativeDelay": false,
+                "stepAutoProgress": true
+            },
+            "feedbacks": [],
+            "steps": {
+                "0": {
+                    "action_sets": {
+                        "down": [
+                            {
+                                "action": "setDefault",
+                                "options": {
+                                    "days": 0,
+                                    "hours": 0,
+                                    "mins": 20,
+                                    "secs": 0
+                                },
+                                "delay": 0,
+                                "id": "1DfLcKeUdaEjme-OJ4LZO",
+                                "instance": "t3UhKe-ZFnA-jk_ZZnhbH"
+                            }
+                        ],
+                        "up": []
+                    },
+                    "options": {
+                        "runWhileHeld": []
+                    }
+                }
+            }
+        }
+    },
+    "page": {
+        "name": "PAGE"
+    },
+    "instances": {
+        "t3UhKe-ZFnA-jk_ZZnhbH": {
+            "instance_type": "companion-module-sophtwhere-timer",
+            "label": "timer",
+            "isFirstInit": false,
+            "config": {
+                "redirect_disabled": false,
+                "port": "8088",
+                "allow_ws": true,
+                "iface_192_168_16_1": false,
+                "iface_192_168_110_1": false,
+                "iface_192_168_13_71": false,
+                "iface_127_0_0_1": true
+            },
+            "lastUpgradeIndex": -1
+        }
+    },
+    "oldPageNumber": 1
+}
