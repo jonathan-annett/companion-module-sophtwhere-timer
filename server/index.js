@@ -1,7 +1,13 @@
+/*!
+ * companion-module-sophtwhere-timer/server/index.js
+ * Copyright(c) 2023 Jonathan Annett
+ * MIT Licensed
+ */
+
 const fs        = require('fs');
 const path      = require('path');
 const startLongPollPoster = require('./longPollPoster.js');
-const { getTruePath } = require('./getTruePath');
+const { getTruePath } = require('./getTruePath.js');
 
 const getBrowserFiles = require('./getBrowserFiles.js');
 

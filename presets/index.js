@@ -1,3 +1,8 @@
+/*!
+ * companion-module-sophtwhere-timer/presets/index.js
+ * Copyright(c) 2023 Jonathan Annett
+ * MIT Licensed
+ */
 const { combineRgb } = require('@companion-module/base');
 const { splitHMS } = require('../server/splitHMS')
 const hmsKeys = Object.keys(splitHMS('0:0'));

@@ -11,7 +11,7 @@ const UpdatePresets = require('./presets');
 const UpdateFeedbacks = require('./feedbacks');
 const UpdateVariableDefinitions = require('./variables');
 const { splitHMS } = require('./server/splitHMS');
-const { api } = require('./server/server');
+const { api } = require('./server');
 
 class ModuleInstance extends InstanceBase {
 	constructor(internal) {

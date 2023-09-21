@@ -11,6 +11,18 @@
  */
 
 /*!
+ * companion-module-sophtwhere-timer/presets/index.js
+ * Copyright(c) 2023 Jonathan Annett
+ * MIT Licensed
+ */
+
+/*!
+ * companion-module-sophtwhere-timer/server/index.js
+ * Copyright(c) 2023 Jonathan Annett
+ * MIT Licensed
+ */
+
+/*!
  * cookie
  * Copyright(c) 2012-2014 Roman Shtylman
  * Copyright(c) 2015 Douglas Christopher Wilson
