@@ -2,15 +2,15 @@ const fs = require('fs');
 const path = require('path');
 const package_name = require (path.join (__dirname,'..','package.json')).name;
 const src = path.join (__dirname,'..','pkg');
-const zipfile_src =  path.join (__dirname,'..','dist','bundled-modules');
+const zipfile_src =  path.join (__dirname,'..','dist');
 
-const dest = path.join (zipfile_src,package_name);
+const dest = path.join (zipfile_src,'bundled-modules',package_name);
 
 const test_config_src  = path.join (__dirname,'default-tests.companionconfig');
 const test_config_dest = path.join (zipfile_src,'default-tests.companionconfig');
 
 
-const zipfile_out =  path.join (__dirname,'..','dist',package_name+'.zip');
+const zipfile_out =  path.join (zipfile_src,package_name+'.zip');
 
 const readme_path = path.join (zipfile_src,'readme.md');
 const readme_text = `${package_name} beta test installation procedure
@@ -65,6 +65,8 @@ if (fs.existsSync(src) && fs.statSync(src).isDirectory()) {
 
     fs.writeFileSync(readme_path,readme_text);
 
-    createZipFile (zipfile_src, zipfile_out );
+    createZipFile (zipfile_src, zipfile_out, true, function(fn){
+        return !fn.endsWith('.zip');
+    } );
 }
 

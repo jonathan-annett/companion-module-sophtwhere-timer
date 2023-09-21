@@ -12,7 +12,7 @@ module.exports = {
   createZipFile
 };
 
-function addFilesToZip (jsZip, directoryPath, filesToInclude) {
+function addFilesToZip (jsZip, directoryPath, filesToInclude, excludeFilter) {
 
   return  filesToInclude ?  gatherFiles(filesToInclude) : new Promise(function(resolve){
 
@@ -26,6 +26,8 @@ function addFilesToZip (jsZip, directoryPath, filesToInclude) {
   });
 
   function gatherFiles(filesToInclude){
+
+    filesToInclude = excludeFilter ? filesToInclude.filter(excludeFilter) : filesToInclude;
 
     const promiseArr = filesToInclude.map(async file => {
       const filePath = path.join(directoryPath, file)
@@ -49,21 +51,21 @@ function addFilesToZip (jsZip, directoryPath, filesToInclude) {
   };
 }
 
-async function createZipFromFiles (directoryPaths, filesToInclude, dontCreateTopLevelFolder = false) {
+async function createZipFromFiles (directoryPaths, filesToInclude, dontCreateTopLevelFolder = false, excludeFilter=undefined) {
   const jsZip = new JSZip()
   await Promise.all(
     directoryPaths.map(directoryPath => {
       const parsed = path.parse(directoryPath)
       const folder = dontCreateTopLevelFolder ? jsZip : jsZip.folder(parsed.base)
-      return addFilesToZip(folder, directoryPath, filesToInclude)
+      return addFilesToZip(folder, directoryPath, filesToInclude,excludeFilter)
     })
   )
   return jsZip
 }
 
-function generateZipFromFiles (directoryPaths, filesToInclude, outputPath, dontCreateTopLevelFolder = true) {
+function generateZipFromFiles (directoryPaths, filesToInclude, outputPath, dontCreateTopLevelFolder = true, excludeFilter = undefined) {
   return new Promise(async (resolve, reject) => {
-    const jsZip = await createZipFromFiles(directoryPaths, filesToInclude, dontCreateTopLevelFolder)
+    const jsZip = await createZipFromFiles(directoryPaths, filesToInclude, dontCreateTopLevelFolder,excludeFilter)
     jsZip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
       .pipe(fs.createWriteStream(outputPath))
       .on('finish', () => {
@@ -73,6 +75,6 @@ function generateZipFromFiles (directoryPaths, filesToInclude, outputPath, dontC
   })
 }
 
-function createZipFile(sourceDir,destZipFilePath,dontCreateTopLevelFolder=false) {
-  return  generateZipFromFiles ([sourceDir], undefined, destZipFilePath,dontCreateTopLevelFolder);
+function createZipFile(sourceDir,destZipFilePath,dontCreateTopLevelFolder=false, excludeFilter=undefined) {
+  return  generateZipFromFiles ([sourceDir], undefined, destZipFilePath,dontCreateTopLevelFolder,excludeFilter);
 }
