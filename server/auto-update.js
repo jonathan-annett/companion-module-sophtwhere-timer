@@ -8,6 +8,9 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const JSZip = require('jszip');
+const ostmp = require('os').tmpdir();
+
+const console = {log : ()=>{}, warn  : ()=>{}};
 
 let module_relative_path = path.join.apply(path, __filename.endsWith('main.js') ? [__dirname] : [__dirname, '..']);
 
@@ -28,6 +31,96 @@ if (manifest_exists && ! __filename.endsWith('main.js') ) {
     manifest.json =  JSON.parse(fs.readFileSync(manifest_relative_path,'utf8'));
 }
 
+const cache_zip = path.join(ostmp, `${manifest.json.name}-${ manifest.json.version}-updates.zip`);
+const cache_zip_etag = path.join(ostmp, `${manifest.json.name}-${ manifest.json.version}-updates.json`);
+console.log({cache_zip,cache_zip_etag});
+const last_zip = {
+
+};
+Object.defineProperties(last_zip,{
+    cache : {
+        get : function(){
+           if ( fs.existsSync(cache_zip) ) {
+                delete last_zip.cache;
+                last_zip.cache_ = fs.readFileSync(cache_zip);
+                Object.defineProperties(last_zip,{
+                    cache : {
+                        get : function(){
+                            return last_zip.cache_;
+                        },
+                        set : function doSet(arrayBuffer) {
+                            last_zip.cache_ =  Buffer.from(arrayBuffer);
+                            delete last_zip.cache;
+                            fs.writeFileSync(cache_zip,last_zip.cache_);
+                        },
+                        enumerable:true,
+                        configurable:true
+                    }
+                });
+                console.log('swizzled after get --> file read')
+           } else {
+               console.log('get ---> undefined');
+           }
+        },
+        set : function doSet(arrayBuffer) {
+            last_zip.cache_ =  Buffer.from(arrayBuffer);
+            fs.writeFileSync(cache_zip,last_zip.cache_);
+            delete last_zip.cache;
+            Object.defineProperties(last_zip,{
+                cache : {
+                    get : function(){
+                        return last_zip.cache_;
+                    },
+                    set : function doSet(arrayBuffer) {
+                        last_zip.cache_ =  Buffer.from(arrayBuffer);
+                        delete last_zip.cache;
+                        fs.writeFileSync(cache_zip,last_zip.cache_);
+                    },
+                    enumerable:true,
+                    configurable:true
+                }
+            });
+            console.log('swizzled after inital set')
+        },
+        enumerable:true,
+        configurable:true
+    },
+
+    etag  : {
+        get : function() {
+
+            if ( fs.existsSync(cache_zip) && fs.existsSync(cache_zip_etag) ) {
+                  const value =  fs.readFileSync(cache_zip_etag,'utf8');
+                  console.log('reading etag from file:',cache_zip_etag," = ",value);
+                  return value ;
+             }  else {
+                 console.log('no etag file:',cache_zip_etag);
+             }
+        },
+        set : function (value) {
+
+            if (value) {
+                console.log("saving etag",value);
+                fs.writeFileSync(cache_zip_etag,value);
+            } else {
+                console.log("removing etag & cached zip");
+                if ( fs.existsSync(cache_zip_etag) ) {
+                    fs.unlinkSync(cache_zip_etag);
+                }
+                if ( fs.existsSync(cache_zip) ) {
+                    fs.unlinkSync(cache_zip);
+                }
+                delete last_zip.cache_;
+            }
+            
+        },
+        enumerable:true,
+        configurable:true
+    }
+   
+ });
+
+
 const installedVersionString =  manifest.json.version ;
 const installedVersion = installedVersionString ? versionToInt(installedVersionString) : 0;
 
@@ -43,8 +136,21 @@ if (require.main===module) {
 }
 
 
+let inCheckForUpdate = false;
+
 function checkForUpdate() {
 
+    if (inCheckForUpdate) {
+        return Promise.resolve({
+            changed:false,
+            version : {
+                installed : installedVersionString,
+             },
+            updateNeeded: false
+        });
+    }
+
+    inCheckForUpdate = true;
   
     let onlineVersionString = installedVersionString;
     let onlineVersion = installedVersion;// assume it has not changed
@@ -66,22 +172,53 @@ function checkForUpdate() {
 
 
         console.log("fetching:",zip_downloadurl);
+        const opts = {
+            method : 'GET'
+        };
 
-        fetch(zip_downloadurl).then(processDownloadResponse).catch(downloadError);
+        const cached_etag = last_zip.etag;
+        const cached_zip = last_zip.cache;
+
+        if (cached_etag && cached_zip)  {
+            opts.headers = {
+                'if-none-match' : cached_etag
+            };
+        }
+
+        console.log({opts});
+
+        fetch(zip_downloadurl,opts).then(processDownloadResponse).catch(downloadError);
 
         function processDownloadResponse(response) {
-            //console.log(response.headers);
+            const etag =  response.headers.get('etag');
+            const status = response.status;
+           
+
+            if (etag && status===304 && cached_etag === etag && cached_zip && (cached_zip.byteLength || cached_zip.length)) {
+                console.log("using cached",zip_downloadurl,response.status);
+                return  processDownloadedZip( cached_zip );
+            }
+
+            console.log("fetched",zip_downloadurl,response.status,etag);
             response.arrayBuffer().then(processDownloadedZip).catch(downloadError);
+
+            function processDownloadedZip(zipAsArrayBuffer) {
+                if (etag && status===200) {
+                    last_zip.etag = etag;
+                    last_zip.cache = zipAsArrayBuffer;
+                }
+                console.log("unzipping",zipAsArrayBuffer.byteLength || zipAsArrayBuffer.length,"bytes of compressed data");
+                JSZip.loadAsync(zipAsArrayBuffer).then(processZipObject).catch(downloadError);
+            }
         }
 
         function downloadError(error) {
             console.log(error);
+            inCheckForUpdate = false;
             reject(error);
         }
 
-        function processDownloadedZip(zipAsArrayBuffer) {
-            JSZip.loadAsync(zipAsArrayBuffer).then(processZipObject).catch(downloadError);
-        }
+
 
         function compareBuffers(a, b) {
             if (a === b) return true;
@@ -93,6 +230,7 @@ function checkForUpdate() {
         }
 
         function processZipObject(zip) {
+            console.log("analysing zip");
 
             const files = {};
             const folders = [];
@@ -161,7 +299,7 @@ function checkForUpdate() {
                 }
             });
 
-            Promise.all(tasks).then(tasksComplete);
+            Promise.all(tasks).then(tasksComplete).catch(downloadError);
 
 
 
@@ -169,6 +307,7 @@ function checkForUpdate() {
                 processExtractedFiles({
                     files, folders, updateNeeded
                 });
+                
             }
         }
 
@@ -197,6 +336,8 @@ function checkForUpdate() {
                     updateNeeded: false
                 });
             }
+
+            inCheckForUpdate = false;
 
             function doUpdate() {
                 Object.keys(info.files).forEach(function(fn){
@@ -231,3 +372,6 @@ function versionToInt(versionString,maxnodes) {
         return (n << bits_per_node) + d;
     },0)
 }
+
+
+ 

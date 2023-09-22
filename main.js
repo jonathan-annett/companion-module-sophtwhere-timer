@@ -30,26 +30,16 @@ class ModuleInstance extends InstanceBase {
 		api.ip_list = [];
 		const HTTP_PORT = config.port;
 
+	
+		config.updateChecks = config.updateChecks === "once" ?  "never" : config.updateChecks;
+
 		self.updateStatus(InstanceStatus.Ok);
 
 		self.ipsList().then(processIpList).catch(function(err){
 			console.log("silently ignoring",err);
 		});
 
-		/*
 
-		try {
-
-			return processIpList(await self.ipsList());
-		} catch (err) {
-			logErrorsAndExit(err);
-		}
-
-		function logErrorsAndExit(err) {
-			console.log("error in timer init", err);
-		}
-
-		*/
 
 		function processIpList(ip_list) {
 
@@ -106,7 +96,7 @@ class ModuleInstance extends InstanceBase {
 				};
 
 
-				api.config(config, self.get_ips_enabled(true), firstRunSinceBoot).then(function (res) {
+				api.config(self,config, self.get_ips_enabled(true), firstRunSinceBoot).then(function (res) {
 					console.log("api.config has returned:", res);
 					self.saveConfig();
 				}).catch(function (err) {
@@ -166,7 +156,7 @@ class ModuleInstance extends InstanceBase {
 
 	async configUpdated(config) {
 		this.config = config
-		return await api.config(config, this.get_ips_enabled(true), false);
+		return await api.config(this,config, this.get_ips_enabled(true), false);
 	}
 
 
@@ -308,7 +298,7 @@ class ModuleInstance extends InstanceBase {
 						} installed${api.updateInfo.changed ? 
 							  `, v ${api.updateInfo.version.online} ${api.updateInfo.updateNeeded?'':'- a downgrade'}` : 
 							  
-							  'no updates available'})` 
+							  ', no updates available'})` 
 							  
 							 
 							  	  : ''

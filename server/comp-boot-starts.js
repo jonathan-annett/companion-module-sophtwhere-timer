@@ -9,6 +9,7 @@ const COMPANION_CONFIG_BASEDIR_FULL = process.env.COMPANION_CONFIG_BASEDIR_FULL;
 const fs = require('fs');
 const { file, files } = require('jszip');
 const path = require('path');
+const ostmp = require('os').tmpdir();
 
 const bootLineTest = /Application\:\ Companion\ process\ started$/;
 const bootLineTest2 = /\n.*Application\:\ Companion\ process\ started\n/;
@@ -18,7 +19,7 @@ const bufferScanSize = 4 * 1024;
 
 const console = {log : ()=>{}, warn  : ()=>{}};
 
-const data_file = path.join(__dirname,'lastboot.json');
+const data_file = path.join(ostmp,`sophtwhere-companion-lastboot.json`);
 let last_known_boot = fs.existsSync(data_file) ? new Date(JSON.parse(fs.readFileSync(data_file))) : undefined;
 console.log("last_known_boot data file:",data_file,fs.existsSync(data_file)  ? "exists" :"does not exist","value = ",last_known_boot ? last_known_boot :"???");
 let callbacks = [];

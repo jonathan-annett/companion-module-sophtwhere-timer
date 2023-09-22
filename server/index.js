@@ -25,7 +25,7 @@ const  autoUpdate = require('./auto-update');
 
 let server,connections;
 
-function api_config(config,enabledIps,firstRunSinceBoot) {
+function api_config(self,config,enabledIps,firstRunSinceBoot) {
 
     return new Promise(function(resolve,reject){
 
@@ -289,16 +289,19 @@ function api_config(config,enabledIps,firstRunSinceBoot) {
             case "always" : return firstRunSinceBoot ? checkForUpdateNow() :  Promise.resolve();
             case "once": {
                 config.updateChecks="never";
+                self.saveConfig();
                 checkForUpdateNow();
             }
             case "alwaysAuto" : return updateIfNeededNow()
             case "onceAuto": {
-                config.updateChecks="never";
+                config.updateChecks="always";
+                self.saveConfig();
                 updateIfNeededNow();
             }
             case "doUpdateNow_always":
             case "doUpdateNow_once" : {
                 config.updateChecks = config.updateChecks === "doUpdateNow_always" ? "always" : "never";
+                self.saveConfig();
                 if (module.exports.api.updateInfo && typeof module.exports.api.updateInfo.doUpdate === 'function') {
 
                     if (module.exports.api.shutdownServer) {
@@ -343,6 +346,7 @@ function api_config(config,enabledIps,firstRunSinceBoot) {
                 autoUpdate.checkForUpdate().then(updateIfNeeded).catch(reject);
 
                 function updateIfNeeded (info){
+                  
                     if (info.updateNeeded) {
                         
                         if (module.exports.api.shutdownServer) {
