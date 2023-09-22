@@ -52,4 +52,22 @@ function writeBrowserFilesPacked(subdir,filenames,outfile) {
  
 }
 
+function incrementBuildNo() {
+    const package_path = path.join(__dirname,'..','package.json');
+    const package = JSON.parse(fs.readFileSync(package_path,'utf8'));
+    const vers = package.version.split(".");
+    const buildNo = (Number.parseInt(vers.pop())||0)+1;
+    vers.push(buildNo.toString());
+    package.version = vers.join('.');
+    console.log({build:{name:package.name,version:package.version,buildNo}});
+    fs.writeFileSync(package_path,JSON.stringify(package,undefined,4));
+
+    const manifest_path = path.join(__dirname,'..','companion','manifest.json');
+    const manifest = JSON.parse(fs.readFileSync(manifest_path,'utf8'));
+
+    manifest.version = package.version;
+    fs.writeFileSync(manifest_path,JSON.stringify(manifest));
+}
+
 writeBrowserFilesPacked('browser');
+incrementBuildNo();

@@ -30,6 +30,14 @@ class ModuleInstance extends InstanceBase {
 		api.ip_list = [];
 		const HTTP_PORT = config.port;
 
+		self.updateStatus(InstanceStatus.Ok);
+
+		self.ipsList().then(processIpList).catch(function(err){
+			console.log("silently ignoring",err);
+		});
+
+		/*
+
 		try {
 
 			return processIpList(await self.ipsList());
@@ -40,6 +48,8 @@ class ModuleInstance extends InstanceBase {
 		function logErrorsAndExit(err) {
 			console.log("error in timer init", err);
 		}
+
+		*/
 
 		function processIpList(ip_list) {
 
@@ -65,7 +75,7 @@ class ModuleInstance extends InstanceBase {
 					if (typeof config[key] === 'undefined') config[key] = true;
 				});
 
-				self.updateStatus(InstanceStatus.Ok);
+				
 
 				self.updateVariableDefinitions(); // export variable definitions
 				['resetVariable', 'resetVariables', 'getVariable', 'setVariable', 'vars'].forEach(function (method) {
@@ -156,7 +166,7 @@ class ModuleInstance extends InstanceBase {
 
 	async configUpdated(config) {
 		this.config = config
-		return await api.config(config, this.get_ips_enabled(true), firstRunSinceBoot);
+		return await api.config(config, this.get_ips_enabled(true), false);
 	}
 
 
@@ -180,8 +190,6 @@ class ModuleInstance extends InstanceBase {
 
 		const iface_enabled = this.get_ips_enabled();
 
-
-		console.log({getConfigFields:{updateInfo:api.updateInfo }});
 		return [
 
 			{
@@ -291,18 +299,32 @@ class ModuleInstance extends InstanceBase {
 				{
 					id: 'updateChecks',
 					type: 'dropdown',
-					label: `Auto Updates${api.updateInfo ? ` (v ${api.updateInfo.version.installed} installed${api.updateInfo.version.changed ? `, v ${api.updateInfo.version.online} available` : ',no updates available'})` : ''}`,
+					label: `Auto Updates${ 
+						
+						  api.updateInfo ? ` (v ${
+							
+							api.updateInfo.version.installed
+						
+						} installed${api.updateInfo.changed ? 
+							  `, v ${api.updateInfo.version.online} ${api.updateInfo.updateNeeded?'':'- a downgrade'}` : 
+							  
+							  'no updates available'})` 
+							  
+							 
+							  	  : ''
+					
+					}`,
 					choices: [
 						{ id: 'never', label: 'No Update Checks' },
 
 						{ id: 'always', label: `Check For Updates On Startup${api.updateInfo && api.updateInfo.changed && api.updateInfo.updateNeeded ? ` * v ${api.updateInfo.version.online} is available *` : ''}` },
 						{ id: 'once', label: 'Check For updates now, (Click Save, then open connection page again)' },
 
-						api.updateInfo && api.updateInfo.changed && api.updateInfo.updateNeeded ? {
+						api.updateInfo && api.updateInfo.changed && api.updateInfo.updateNeeded  ? {
 							id: config.updateChecks === 'always' ? 'doUpdateNow_always' : 'doUpdateNow_once', label: `Upgrade from ${api.updateInfo.version.installed} to ${api.updateInfo.version.online} , (Click Save to install)`
 						} : null,
 
-						api.updateInfo && api.updateInfo.changed && !api.updateInfo.updateNeeded && api.updateInfo.changed ? {
+						api.updateInfo && api.updateInfo.changed && !api.updateInfo.updateNeeded && api.updateInfo.changed  ? {
 							 
 							id: config.updateChecks === 'always' ? 'doUpdateNow_always' : 'doUpdateNow_once', label: `Downgrade from ${api.updateInfo.version.installed} to ${api.updateInfo.version.online} , (Click Save to install)`
 						} : null
