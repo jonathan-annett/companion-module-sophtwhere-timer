@@ -50,7 +50,7 @@ Object.defineProperties(last_zip,{
                         },
                         set : function doSet(arrayBuffer) {
                             last_zip.cache_ =  Buffer.from(arrayBuffer);
-                            delete last_zip.cache;
+                            //delete last_zip.cache;
                             fs.writeFileSync(cache_zip,last_zip.cache_);
                         },
                         enumerable:true,
