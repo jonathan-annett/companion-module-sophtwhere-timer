@@ -7,7 +7,7 @@
 const APPDATA = process.env.APPDATA ;
 const COMPANION_CONFIG_BASEDIR_FULL = process.env.COMPANION_CONFIG_BASEDIR_FULL;
 const fs = require('fs');
-const { file, files } = require('jszip');
+//const { file, files } = require('jszip');
 const path = require('path');
 const ostmp = require('os').tmpdir();
 
