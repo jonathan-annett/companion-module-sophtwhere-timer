@@ -17,6 +17,20 @@
  */
 
 /*!
+ * companion-module-sophtwhere-timer/server/auto-update.js
+ * Utility to Check for updates, for beta testers
+ * Copyright(c) 2023 Jonathan Annett
+ * MIT Licensed
+ */
+
+/*!
+ * companion-module-sophtwhere-timer/server/comp-boot-start.js
+ * Utility to generate callback when the main Companion app is restarted (reads the log file)
+ * Copyright(c) 2023 Jonathan Annett
+ * MIT Licensed
+ */
+
+/*!
  * companion-module-sophtwhere-timer/server/index.js
  * Copyright(c) 2023 Jonathan Annett
  * MIT Licensed

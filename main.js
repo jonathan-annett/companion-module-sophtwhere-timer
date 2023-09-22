@@ -12,6 +12,7 @@ const UpdateFeedbacks = require('./feedbacks');
 const UpdateVariableDefinitions = require('./variables');
 const { splitHMS } = require('./server/splitHMS');
 const { api } = require('./server');
+const bootTimes = require('./server/comp-boot-starts');
 
 class ModuleInstance extends InstanceBase {
 	constructor(internal) {
@@ -20,8 +21,9 @@ class ModuleInstance extends InstanceBase {
 
 	async init(config, isFirstInit) {
 		const self = this;
-		console.log({ config, isFirstInit });
 
+		//console.log({init:{isFirstInit,config}});
+		
 		self.config = config;
 		config.port = config.port || '8088';
 		self.api = api;
@@ -40,63 +42,70 @@ class ModuleInstance extends InstanceBase {
 		}
 
 		function processIpList(ip_list) {
-			const api = self.api;
-			api.ip_list = ip_list;
 
-			Object.keys(config).forEach(function (key) {
-				if (key.startsWith('iface_')) {
-					const ip = key.replace(/^iface_/, '').replace(/\_/g, '.');
-					console.log(key, "decodes to ip", ip);
-					if (api.ip_list.indexOf(ip) < 0) {
-						delete config[key];
-						console.log("deleting", key);
-					}
-				}
-			});
+			bootTimes.on('change', function (firstRunSinceBoot, lastBoot) {
 
-			ip_list.forEach(function (ip) {
-				const key = `iface_${ip.replace(/\./g, '_')}`;
-				if (typeof config[key] === 'undefined') config[key] = true;
-			});
+				console.log({init:{firstRunSinceBoot, lastBoot}});
+				const api = self.api;
+				api.ip_list = ip_list;
 
-			self.updateStatus(InstanceStatus.Ok);
-
-			self.updateVariableDefinitions(); // export variable definitions
-			['resetVariable', 'resetVariables', 'getVariable', 'setVariable', 'vars'].forEach(function (method) {
-				const fn = UpdateVariableDefinitions[method];
-				api[method] = fn;
-			});
-
-			self.updateActions(); // export actions
-			self.updatePresets();// export presets
-			self.updateFeedbacks(); // export feedbacks
-
-			api.setVariableValues = function (vars) {
-				const vars2 = {};
-				Object.keys(vars).forEach(function (k) {
-					const val = vars[k];
-					if (val !== undefined) {
-						vars2[k] = val;
-						if (k === "remain" || k === "elapsed") {
-							const extra = splitHMS(val);
-							Object.keys(extra).forEach(function (kk) {
-								vars2[`${k}_${kk}`] = extra[kk];
-							});
+				Object.keys(config).forEach(function (key) {
+					if (key.startsWith('iface_')) {
+						const ip = key.replace(/^iface_/, '').replace(/\_/g, '.');
+						console.log(key, "decodes to ip", ip);
+						if (api.ip_list.indexOf(ip) < 0) {
+							delete config[key];
+							console.log("deleting", key);
 						}
 					}
 				});
-				self.setVariableValues(vars2);
-				self.checkFeedbacks();
-			};
+
+				ip_list.forEach(function (ip) {
+					const key = `iface_${ip.replace(/\./g, '_')}`;
+					if (typeof config[key] === 'undefined') config[key] = true;
+				});
+
+				self.updateStatus(InstanceStatus.Ok);
+
+				self.updateVariableDefinitions(); // export variable definitions
+				['resetVariable', 'resetVariables', 'getVariable', 'setVariable', 'vars'].forEach(function (method) {
+					const fn = UpdateVariableDefinitions[method];
+					api[method] = fn;
+				});
+
+				self.updateActions(); // export actions
+				self.updatePresets();// export presets
+				self.updateFeedbacks(); // export feedbacks
+
+				api.setVariableValues = function (vars) {
+					const vars2 = {};
+					Object.keys(vars).forEach(function (k) {
+						const val = vars[k];
+						if (val !== undefined) {
+							vars2[k] = val;
+							if (k === "remain" || k === "elapsed") {
+								const extra = splitHMS(val);
+								Object.keys(extra).forEach(function (kk) {
+									vars2[`${k}_${kk}`] = extra[kk];
+								});
+							}
+						}
+					});
+					self.setVariableValues(vars2);
+					self.checkFeedbacks();
+				};
 
 
-			api.config(config, self.get_ips_enabled(true)).then(function (res) {
-				console.log("api.config has returned:", res);
-			}).catch(function (err) {
-				console.log("caught in api.config :", err);
+				api.config(config, self.get_ips_enabled(true), firstRunSinceBoot).then(function (res) {
+					console.log("api.config has returned:", res);
+					self.saveConfig();
+				}).catch(function (err) {
+					console.log("caught in api.config :", err);
+				});
 			});
-
 		}
+
+
 
 
 	}
@@ -147,7 +156,7 @@ class ModuleInstance extends InstanceBase {
 
 	async configUpdated(config) {
 		this.config = config
-		return await api.config(config, this.get_ips_enabled(true));
+		return await api.config(config, this.get_ips_enabled(true), firstRunSinceBoot);
 	}
 
 
@@ -172,7 +181,7 @@ class ModuleInstance extends InstanceBase {
 		const iface_enabled = this.get_ips_enabled();
 
 
-
+		console.log({getConfigFields:{updateInfo:api.updateInfo }});
 		return [
 
 			{
@@ -234,13 +243,13 @@ class ModuleInstance extends InstanceBase {
 					label: 'Use Websocket',
 					default: false,
 					tooltip: 'turn this off to used long polling instead of Websocket',
-					isVisible: (options)=>{ 
-						 options.allow_ws = false; 
-						 return  false;
-					
+					isVisible: (options) => {
+						options.allow_ws = false;
+						return false;
+
 					},
 					isVisibleData: {
-						 
+
 					}
 				},
 
@@ -273,7 +282,45 @@ class ModuleInstance extends InstanceBase {
 				};
 				return cfg;
 
-			})
+			}),
+
+
+
+			[
+
+				{
+					id: 'updateChecks',
+					type: 'dropdown',
+					label: `Auto Updates${api.updateInfo ? ` (v ${api.updateInfo.version.installed} installed${api.updateInfo.version.changed ? `, v ${api.updateInfo.version.online} available` : ',no updates available'})` : ''}`,
+					choices: [
+						{ id: 'never', label: 'No Update Checks' },
+
+						{ id: 'always', label: `Check For Updates On Startup${api.updateInfo && api.updateInfo.changed && api.updateInfo.updateNeeded ? ` * v ${api.updateInfo.version.online} is available *` : ''}` },
+						{ id: 'once', label: 'Check For updates now, (Click Save, then open connection page again)' },
+
+						api.updateInfo && api.updateInfo.changed && api.updateInfo.updateNeeded ? {
+							id: config.updateChecks === 'always' ? 'doUpdateNow_always' : 'doUpdateNow_once', label: `Upgrade from ${api.updateInfo.version.installed} to ${api.updateInfo.version.online} , (Click Save to install)`
+						} : null,
+
+						api.updateInfo && api.updateInfo.changed && !api.updateInfo.updateNeeded && api.updateInfo.changed ? {
+							 
+							id: config.updateChecks === 'always' ? 'doUpdateNow_always' : 'doUpdateNow_once', label: `Downgrade from ${api.updateInfo.version.installed} to ${api.updateInfo.version.online} , (Click Save to install)`
+						} : null
+
+
+					].filter(function (x) { return x !== null; }),
+					default: 'never',
+					isVisible: function (options, data) {
+						if ([
+							'never', 'always', 'once', 'doUpdateNow_always', 'doUpdateNow_once'
+
+						].indexOf(options.updateChecks) < 0) {
+							options.updateChecks = 'never';
+						}
+						return true;
+					}
+				}
+			]
 
 		)
 	}
