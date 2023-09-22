@@ -5,7 +5,7 @@ function writeBrowserFilesPacked(subdir,filenames,outfile) {
     const zlibOpts = {level:9};
     const basepath  = path.resolve(__dirname,'..',subdir);
     filenames =  filenames || fs.readdirSync(basepath).filter(function(fn){
-        return !fn.startsWith(".") && !fn.startsWith(".txt"); 
+        return !fn.startsWith(".") && !fn.endsWith(".txt"); 
     });
     const output_path = path.resolve(__dirname,'..','server', (outfile|| subdir)+'-pkg-fs.js');
     const filepaths = filenames.map(function(fn){ return path.join(basepath,fn)});
