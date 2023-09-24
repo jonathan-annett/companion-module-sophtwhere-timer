@@ -13,6 +13,7 @@ const UpdateVariableDefinitions = require('./variables');
 const { splitHMS } = require('./server/splitHMS');
 const { api } = require('./server');
 const bootTimes = require('./server/comp-boot-starts');
+const os = require('os');
 
 class ModuleInstance extends InstanceBase {
 	constructor(internal) {
@@ -42,6 +43,10 @@ class ModuleInstance extends InstanceBase {
 
 
 		function processIpList(ip_list) {
+			
+			if (os.platform()==="linux"&& os.hostname()==="CompanionPi") {				
+				ip_list = ip_list.filter(function(ip){ return ip != "127.0.0.1"});
+			}
 
 			bootTimes.on('change', function (firstRunSinceBoot, lastBoot) {
 
