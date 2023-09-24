@@ -1,10 +1,11 @@
 {
     "name": "sophtwhere-timer",
-    "version": "0.1.20",
+    "version": "0.1.31",
     "main": "main.js",
     "scripts": {
         "format": "prettier -w .",
-        "build": "yarn install && node ./scripts/before-build.js && yarn companion-module-build && node ./scripts/copy-dist-bundle.js"
+        "build": "yarn install && node ./scripts/before-build.js && yarn companion-module-build && node ./scripts/copy-dist-bundle.js",
+        "devbuild": "yarn install && node ./scripts/before-build.js && yarn companion-module-build --dev && node ./scripts/copy-dist-bundle.js"
     },
     "license": "MIT",
     "repository": {
@@ -14,8 +15,9 @@
     "dependencies": {
         "@companion-module/base": "~1.4.0",
         "bufferutil": "^4.0.7",
-        "open": "^9.1.0",
         "jszip": "^3.10.1",
+        "open": "^9.1.0",
+        "simple-peer": "^9.11.1",
         "utf-8-validate": "^6.0.3",
         "ws": "^8.14.2"
     },

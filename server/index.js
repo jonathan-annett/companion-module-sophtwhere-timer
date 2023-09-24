@@ -7,6 +7,8 @@
 const fs        = require('fs');
 const path      = require('path');
 const startLongPollPoster = require('./longPollPoster.js');
+
+//const {startMessagesAPI} = require('./messages.js');
 const { getTruePath } = require('./getTruePath.js');
 
 const getBrowserFiles = require('./getBrowserFiles.js');
