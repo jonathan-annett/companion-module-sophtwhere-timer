@@ -13,7 +13,7 @@ module.exports = function(){
             if (ev==='change' &&typeof cb==='function' && callbacks.indexOf(cb)<0) {
                 
                 if (os.hostname()==="CompanionPi") {
-                    const pkgName  = JSON.parse("./package.json").name;
+                    const pkgName  = JSON.parse(fs.readFileSync("./package.json","utf8")).name;
                     const filename = `/dev/shm/comp-boot-${pkgName}`;
                     const firstBoot = !fs.existsSync(filename);
                     fs.writeFileSync(filename,"1");
