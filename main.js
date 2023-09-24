@@ -43,10 +43,12 @@ class ModuleInstance extends InstanceBase {
 
 
 		function processIpList(ip_list) {
-			
+
 			if (os.platform()==="linux"&& os.hostname()==="CompanionPi") {				
 				ip_list = ip_list.filter(function(ip){ return ip != "127.0.0.1"});
 			}
+
+			console.log({ip_list,platform:os.platform(),hostname: os.hostname()});
 
 			bootTimes.on('change', function (firstRunSinceBoot, lastBoot) {
 
