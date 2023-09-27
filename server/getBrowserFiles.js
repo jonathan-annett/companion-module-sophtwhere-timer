@@ -9,7 +9,7 @@ const aliases_ = {
 };
 
 function getBrowserFiles(filenames,srcpath,aliases) {
-    const ctype = {js : 'javascript',css:'css',html:'html' };
+    const ctype = {js : 'text/javascript',css:'text/css',html:'text/html',ico:'image/vnd.microsoft.icon',png:'image/png'  };
     const path      = require('path');
     srcpath = srcpath ? srcpath : './browser/';
     const filtered = srcpath.endsWith ('-') ? path.basename(srcpath) : null;
@@ -20,7 +20,7 @@ function getBrowserFiles(filenames,srcpath,aliases) {
     const content = {};
     files.forEach(function(fn){
         const fn_read_path = browser_dir_path+fn;
-        const contentType = 'text/'+ctype[fn.split('.').pop()];
+        const contentType =  ctype[fn.split('.').pop()];
         const uri = filtered ? '/' + fn.substring(filtered.length) : '/' + fn ; 
         content[uri] = function(request,response) {
             fs.readFile(fn_read_path,function(err,content){
