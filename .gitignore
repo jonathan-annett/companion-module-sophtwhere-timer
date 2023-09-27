@@ -1,5 +1,7 @@
 node_modules/
 package-lock.json
+yarn-error.log
+yarn.lock
 /pkg.tgz
 /dist-src
 /server/messages.js
