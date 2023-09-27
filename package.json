@@ -1,6 +1,6 @@
 {
     "name": "sophtwhere-timer",
-    "version": "0.1.63",
+    "version": "0.1.66",
     "main": "main.js",
     "scripts": {
         "format": "prettier -w .",
