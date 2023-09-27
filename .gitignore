@@ -3,3 +3,4 @@ package-lock.json
 /pkg.tgz
 /dist-src
 /server/messages.js
+/browser-pkg/

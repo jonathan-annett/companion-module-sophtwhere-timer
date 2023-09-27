@@ -1,57 +1,23 @@
 const fs = require('fs'),path=require('path'),zlib=require('zlib');
-  
+const package_name = require (path.join (__dirname,'..','package.json')).name;
+const src = path.join (__dirname,'..','browser');
+const dest =  path.join (__dirname,'..','browser-pkg');
 
-function writeBrowserFilesPacked(subdir,filenames,outfile) {
-    const zlibOpts = {level:9};
+function copyBrowserFilesAsExtra(subdir,filenames,output_path) {
     const basepath  = path.resolve(__dirname,'..',subdir);
     filenames =  filenames || fs.readdirSync(basepath).filter(function(fn){
         return !fn.startsWith(".") && !fn.endsWith(".txt"); 
     });
-    const output_path = path.resolve(__dirname,'..','server', (outfile|| subdir)+'-pkg-fs.js');
     const filepaths = filenames.map(function(fn){ return path.join(basepath,fn)});
-    const filedata  = filepaths.map(function(pth){ return zlib.deflateSync(fs.readFileSync(pth),zlibOpts).toString('base64');});
-    const db={};
-
-    const src = `
-        const zlib=require('zlib'),db = ${JSON.stringify({files:filenames,data:filedata})};
-
-        const fs = {
-            readFileSync :  ${fs_readSync.toString()},
-            readdirSync  :  function(){ return ${JSON.stringify(filenames) };}
-        };
-
-        module.exports = fs;
-    `;
-
-    console.log('writing to:',output_path,' <<< ',JSON.stringify(filenames));
-    fs.writeFileSync(output_path,src);
-
-    function fs_readSync(path,encoding) {
-        const index = db.files.indexOf( path.replace(/\\/g,'/').split('/').pop() );
-        if (index<0) return;
-
-        let buf,b64 = (buf=db.data[index]); 
-        if (typeof b64 === 'string') {
-            try {
-                const deflated_buffer = Buffer.from(b64,'base64');
-                const inflated_buffer = zlib.inflateSync(deflated_buffer);
-                buf = (db.data[index] = inflated_buffer);     
-            } catch (e) {
-                console.log(e);
-                buf = (db.data[index] = null);
-            }
-        }
-        if (buf && typeof buf === 'object' && buf.constructor===Buffer) {
-            if (encoding==='utf8') {
-                return buf.toString('utf8');
-            }
-        }
-        return buf;
-    }
-
+    filepaths.forEach(function(pth,ix){ 
+        const file_data = fs.readFileSync(pth);
+        const file_path = path.join(output_path,subdir+'-' + filenames[ix]);
+        fs.writeFileSync(file_path,file_data);
+    });
  
 }
 
+ 
 function incrementBuildNo() {
     const package_path = path.join(__dirname,'..','package.json');
     const package = JSON.parse(fs.readFileSync(package_path,'utf8'));
@@ -68,6 +34,18 @@ function incrementBuildNo() {
     manifest.version = package.version;
     fs.writeFileSync(manifest_path,JSON.stringify(manifest));
 }
+if (fs.existsSync(src) && fs.statSync(src).isDirectory()) {
 
-writeBrowserFilesPacked('browser');
+    if (fs.existsSync(dest)) {
+        if (fs.statSync(dest).isDirectory()) {
+            fs.rmSync(dest,{ recursive: true, force: true });
+        } else {
+            fs.unlinkSync(dest,{  force: true });
+        }
+    } 
+
+    fs.mkdirSync(dest,{recursive:true});
+    copyBrowserFilesAsExtra('browser',undefined,dest)
+}
+
 incrementBuildNo();

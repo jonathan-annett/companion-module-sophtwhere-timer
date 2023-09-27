@@ -12,9 +12,9 @@ const startLongPollPoster = require('./longPollPoster.js');
 const { getTruePath } = require('./getTruePath.js');
 
 const getBrowserFiles = require('./getBrowserFiles.js');
-
-const b_fs = __filename.endsWith('main.js') ? require('./browser-pkg-fs.js') : fs;
-const content =  getBrowserFiles( b_fs );
+const deployed = __filename.endsWith('main.js');
+const browser_root =  deployed ?  path.join(__dirname,'browser') +'-' : './browser/';
+const content =  getBrowserFiles( b_fs,undefined,browser_root );
 
 const help_md_src  = 'HELP.md';
 const help_md_dest = path.join( getTruePath('companion'),'HELP.md');
@@ -22,8 +22,6 @@ const help_md_dest = path.join( getTruePath('companion'),'HELP.md');
 const  autoUpdate = require('./auto-update');
 
 
-
-//const open = require('open');
 
 let server,connections;
 
@@ -134,17 +132,10 @@ function api_config(self,config,enabledIps,firstRunSinceBoot) {
                             return;
                         }
 
-                        const data = content [request.url.split('?')[0]];
-                        if (data) {
-                            ['content-type' ].forEach(function(hdr){
-                                response.setHeader(hdr,data.headers[hdr]);
-                            });
-                            response.writeHead(200);
-                            response.write(data.body);
-                            response.end();
-                            return;
+                        const handler = content [request.url.split('?')[0]];
+                        if (handler) {
+                            return handler(request,response);
                         }
-                        //console.log((new Date()) + ' Received request for ' + request.url);
                         response.writeHead(404);
                         response.end();
                     }
