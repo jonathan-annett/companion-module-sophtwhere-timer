@@ -1,4 +1,5 @@
 module.exports = getBrowserFiles;
+const fs = require('fs');
 
 const aliases_ = {
     '/'           : '/timer.html',
@@ -7,7 +8,7 @@ const aliases_ = {
     '/index.html' : '/timer.html',
 };
 
-function getBrowserFiles(fs,filenames,srcpath,aliases) {
+function getBrowserFiles(filenames,srcpath,aliases) {
     const ctype = {js : 'javascript',css:'css',html:'html' };
     const path      = require('path');
     srcpath = srcpath ? srcpath : './browser/';
