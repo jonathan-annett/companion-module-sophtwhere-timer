@@ -1590,6 +1590,8 @@ function processServerMessage(err,cmd,msg,code) {
 } 
 
 function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQry,toplinefont) {
+
+    const waitNextFrame =  window.safari ? waitNextFrameSafari : waitNextFrameChrome;
     const target = document.getElementById(targetId);
     if (!target.requestPictureInPicture) return null;
     
@@ -1611,7 +1613,7 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQ
     ctx.font = font;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    anim();
+    refreshPIPFrame();
   
     const stream = source.captureStream();
     target.srcObject = stream;
@@ -1619,11 +1621,13 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQ
     togglePictureInPicture.enterPIP = enterPIP;
     togglePictureInPicture.exitPIP  = exitPIP;
 
+    
+
     return togglePictureInPicture;
     
-    function anim() {
+    function refreshPIPFrame() {
         const str = content.textContent;
-        if ( togglePictureInPicture.lastContent!==str) { 
+        if ( togglePictureInPicture.lastContent!==str ) { 
             ctx.fillStyle = getInheritedBackgroundColor(fgEl);
             ctx.fillRect( 0, 0, source.width, source.height );
             ctx.fillStyle = getInheritedColor(fgEl);
@@ -1638,7 +1642,7 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQ
             }
             togglePictureInPicture.lastContent = str;
         }
-        requestAnimationFrame( anim );
+        waitNextFrame(  );
     }
   
     function togglePictureInPicture() {
@@ -1674,7 +1678,13 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQ
     }
 
 
-
+    function waitNextFrameChrome () {
+        requestAnimationFrame(refreshPIPFrame);
+    }
+    
+    function waitNextFrameSafari () {
+        setTimeout(refreshPIPFrame,33);// 30fps
+    }
   }
 
 
