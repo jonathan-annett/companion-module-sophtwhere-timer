@@ -114,6 +114,16 @@ var fs_api = (function() {
           fn(element, isFs);
         });
       },
+
+      debounce = null,
+      fs_cb = function(isFs) {
+          if (isFs===debounce) return;
+          debounce=isFs;
+          notify(isFs ? fs_api.__events.enter : fs_api.__events.exit, isFs);
+          notify(fs_api.__events.toggle, isFs);
+      } ,     
+        
+      
       fs_api = {
         isFullscreen: function() {
           return false;
@@ -151,15 +161,7 @@ var fs_api = (function() {
           return is_fs();
         };
 
-        let debounce = null;
-        const fs_cb = function(isFs) {
-          if (isFs===debounce) return;
-          debounce=isFs;
-          notify(isFs ? fs_api.__events.enter : fs_api.__events.exit, isFs);
-          notify(fs_api.__events.toggle, isFs);
-        };
-        
-        
+ 
         document.addEventListener(
           ev,
           function() {
@@ -168,7 +170,7 @@ var fs_api = (function() {
           false
         );
 
-        fs_add_notifier(fs_cb);
+      
         
       };
 
@@ -187,6 +189,9 @@ var fs_api = (function() {
         tryit();
       };
       setNotifiers("fullscreenchange", "fullscreen");
+
+     fs_add_notifier(fs_cb);
+      
     } else if (element.msRequestFullscreen) {
       fs_api.enterFullscreen = function() {
         return element.msRequestFullscreen();
