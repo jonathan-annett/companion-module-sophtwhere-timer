@@ -1,6 +1,6 @@
 {
     "name": "sophtwhere-timer",
-    "version": "0.1.95",
+    "version": "0.1.109",
     "main": "main.js",
     "scripts": {
         "format": "prettier -w .",
@@ -14,6 +14,7 @@
     },
     "dependencies": {
         "@companion-module/base": "~1.4.0",
+        "@rwh/keystrokes": "^1.2.3",
         "bufferutil": "^4.0.7",
         "jszip": "^3.10.1",
         "open": "^9.1.0",

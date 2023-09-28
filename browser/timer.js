@@ -17,6 +17,7 @@ var timerWin;
 
 window.addEventListener ("unload",onControlUnload);
 
+ 
 let server_conn;
 
 let doc = document;
@@ -769,6 +770,14 @@ function getTabCount(cont) {
 let custom_msg_timeout;
 
 function onDocKeyDown(ev){
+
+    const checkModifiers = function(){
+        controlling = ev.ctrlKey;
+        html.classList[controlling?"add":"remove"]("controlling");
+        shifting = ev.shiftKey;
+        html.classList[shifting?"add":"remove"]("shifting");
+         
+    };
    
    if (html.classList.contains("edit_custom_message")) {
        
@@ -787,7 +796,7 @@ function onDocKeyDown(ev){
                    },500);
                }
         }
-       return;
+       return checkModifiers();
    } else {
        if (html.classList.contains("show_custom_message")) {
 
@@ -799,8 +808,7 @@ function onDocKeyDown(ev){
                    custom_msg_timeout = undefined;
                }
                localStorage.setItem("custom_message","");
-                  return;
-           
+               return checkModifiers();           
                
             }
 
@@ -818,7 +826,7 @@ function onDocKeyDown(ev){
             }
        }
        
-       return;
+       return checkModifiers();
        
    }
    
@@ -1230,6 +1238,11 @@ function isSingleScreenMode() {
     }
         
     function onDocKeyUp(ev){
+        controlling = ev.ctrlKey;
+        html.classList[controlling?"add":"remove"]("controlling");
+        shifting = ev.shiftKey;
+        html.classList[shifting?"add":"remove"]("shifting");        
+        /*
           switch ( ev.key ) {
             case "Shift"   : 
                 shifting = false; 
@@ -1239,7 +1252,7 @@ function isSingleScreenMode() {
                 controlling = false; 
                 clearHtmlClass("controlling");
                 break ;
-          }
+          }*/
     }
 
 

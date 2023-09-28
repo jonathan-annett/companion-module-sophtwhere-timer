@@ -8,13 +8,15 @@ const fs        = require('fs');
 const path      = require('path');
 const startLongPollPoster = require('./longPollPoster.js');
 
+  
+
 //const {startMessagesAPI} = require('./messages.js');
 const { getTruePath } = require('./getTruePath.js');
 
 const getBrowserFiles = require('./getBrowserFiles.js');
 const deployed = __filename.endsWith('main.js');
 const browser_root =  deployed ?  path.join(__dirname,'browser') +'-' : './browser/';
-const content =  getBrowserFiles( undefined,browser_root );
+const content =  getBrowserFiles( browser_root );
 
 const help_md_src  = 'HELP.md';
 const help_md_dest = path.join( getTruePath('companion'),'HELP.md');
