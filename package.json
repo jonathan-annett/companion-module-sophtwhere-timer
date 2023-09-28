@@ -1,6 +1,6 @@
 {
     "name": "sophtwhere-timer",
-    "version": "0.1.68",
+    "version": "0.1.95",
     "main": "main.js",
     "scripts": {
         "format": "prettier -w .",
@@ -23,6 +23,9 @@
     },
     "devDependencies": {
         "@companion-module/tools": "^1.2.0",
+        "clean-css": "^5.3.2",
+        "html-minifier": "^4.0.0",
+        "uglify-js": "^3.17.4",
         "webpack": "^5.88.2"
     },
     "prettier": "@companion-module/tools/.prettierrc.json"
