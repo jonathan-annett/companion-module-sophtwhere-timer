@@ -261,8 +261,7 @@ function startTimerApi() {
         }
         html.classList[useWs?'add':'remove']('ws');
         server_conn = openLongPollPoster( readNumber('lastLongPollId',0),function(message){    
-            const {error,cmd,code} = message;
-            processTimerApiMessage(error,cmd,message,code);    
+            processTimerApiMessage(message);    
             writeNumber('lastLongPollId',server_conn.lastId);
         },useWs);
     }); 

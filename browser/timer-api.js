@@ -1,127 +1,128 @@
 /* global timerAPI*/
 
-function processTimerApiMessage(err,cmd,msg,code) {
-    console.log(err,cmd,msg,code);
+function processTimerApiMessage(msg) {
+    const { error,cmd, code } = msg ;
+    //console.log(err, cmd, msg, code);
     switch (cmd) {
 
 
         case "keys": {
-            msg.keys.forEach(function(key) {
+            msg.keys.forEach(function (key) {
                 if (key.startsWith('~')) {
-                    onDocKeyUp({key:key.substring(1),preventDefault: function (){}});
+                    onDocKeyUp({ key: key.substring(1), preventDefault: function () { } });
                 } else {
-                    onDocKeyDown({key:key,preventDefault: function (){}});
+                    onDocKeyDown({ key: key, preventDefault: function () { } });
                 }
-               
+
             });
             break;
         }
 
-        case "adjust" : {
+        case "adjust": {
             if (msg.addtime) {
-                bumpEnd(msg.msecs,msg.msecs);
-            } else { 
-                bumpEnd(0-msg.msecs,0-msg.msecs);
+                bumpEnd(msg.msecs, msg.msecs);
+            } else {
+                bumpEnd(0 - msg.msecs, 0 - msg.msecs);
             }
-            durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
+            durationDisp.textContent = secToStr((seekEndsAt - startedAt) / 1000);
             displayUpdate();
             break;
         }
 
-        case "nudge" : {
+        case "nudge": {
             if (msg.addtime) {
-               bumpEnd(msg.msecs,0); 
-            } else { 
-               bumpEnd(0-msg.msecs,0);
+                bumpEnd(msg.msecs, 0);
+            } else {
+                bumpEnd(0 - msg.msecs, 0);
             }
-            durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
+            durationDisp.textContent = secToStr((seekEndsAt - startedAt) / 1000);
             displayUpdate();
             break;
         }
 
-        case "customMessage" : {
-                   
+        case "customMessage": {
+
             html.classList.remove("edit_custom_message");
             html.classList.remove("show_custom_message");
             custom_message.innerText = msg.text.trim();
-            custom_message.contentEditable=false;
-            
+            custom_message.contentEditable = false;
 
-            if (custom_message.innerText.length>0) {
-                html.classList.add("show_custom_message");                    
+
+            if (custom_message.innerText.length > 0) {
+                html.classList.add("show_custom_message");
             }
-            localStorage.setItem("custom_message",custom_message.innerText);
+            localStorage.setItem("custom_message", custom_message.innerText);
             break;
         }
 
-        case "setTimerColor" : {
+        case "setTimerColor": {
 
-            const oldColor = setCustomColor(msg.name,msg.color);
+            const oldColor = setCustomColor(msg.name, msg.color);
 
 
             break;
         }
 
-        case "setTimerColors" : {
+        case "setTimerColors": {
 
             setCustomColors(msg.colors);
-            
+
             break;
         }
 
-        case "getTimerColor" : {
-            if (timerAPI&& msg.name) {
-                const msg =  {
+        case "getTimerColor": {
+            if (timerAPI && msg.name) {
+                const msg = {
                     setTimerColors: {
-            
-                    } 
+
+                    }
                 };
                 const color = getCustomColor(msg.name);
                 if (color) {
-                    msg.setTimerColors[msg.name]=color;
+                    msg.setTimerColors[msg.name] = color;
                     timerAPI.send(msg);
                 }
             }
             break;
         }
 
-        case "getTimerColors" : {
+        case "getTimerColors": {
             getTimerColors();
-            
+
             break;
         }
 
-        case "redirect" : {
-            if (typeof msg.url ==='number') {
+        case "redirect": {
+            if (typeof msg.url === 'number') {
                 const url = new URL(location.href);
-                url.port =  msg.url.toString();
-                msg.url=url.toString();
+                url.port = msg.url.toString();
+                msg.url = url.toString();
             }
-            if (    msg.url && 
-                     ( msg.url.startsWith('/')|| 
-                       msg.url.startsWith(location.origin.replace(/\:.*$/,''))
-                     ) && msg.url !== location.href
-                      
-                    ) {
+            if (msg.url &&
+                (msg.url.startsWith('/') ||
+                    msg.url.startsWith(location.origin.replace(/\:.*$/, ''))
+                ) && msg.url !== location.href
+
+            ) {
                 if (msg.delay) {
-                    setTimeout(function(){
-                        location.replace (msg.url);
-                    },msg.delay)
+                    setTimeout(function () {
+                        location.replace(msg.url);
+                    }, msg.delay)
                 } else {
-                    location.replace (msg.url);
+                    location.replace(msg.url);
                 }
             }
             break;
         }
 
-        case "presenter" : {
+        case "presenter": {
             if (runMode !== "presenter") {
                 location.replace("/?presenter");
             }
             break;
         }
 
-        case "control" : {
+        case "control": {
             if (runMode === "presenter") {
                 location.replace("/");
             }
@@ -130,20 +131,22 @@ function processTimerApiMessage(err,cmd,msg,code) {
 
         case "opened": {
             if (timerAPI) {
-                console.log("sending startup values",dispNextMins.textContent);
-                let pausedMsec = pausedAt ?  Date.now()-pausedAt : 0;
-                 
-                timerAPI.send( {setVariableValues:{
-                    default:secToStr(defaultDuration/1000),
-                    endsAt:endsDisp.textContent,
-                    startedAt:startedDisp.textContent,
-                    showtimenow:localStorage.getItem('showtimenow')||'0',
-                    showbar:localStorage.getItem('showbar')||'0',
-                    showmessages:localStorage.getItem('showmessages')||'0',
-                    paused: secToStr(pausedMsec / 1000),
-                    pauses: secToStr((pausedMsec+pauseAcum) / 1000),
-                }} );
-                lastTimeText="";
+                console.log("sending startup values", dispNextMins.textContent);
+                let pausedMsec = pausedAt ? Date.now() - pausedAt : 0;
+
+                timerAPI.send({
+                    setVariableValues: {
+                        default: secToStr(defaultDuration / 1000),
+                        endsAt: endsDisp.textContent,
+                        startedAt: startedDisp.textContent,
+                        showtimenow: localStorage.getItem('showtimenow') || '0',
+                        showbar: localStorage.getItem('showbar') || '0',
+                        showmessages: localStorage.getItem('showmessages') || '0',
+                        paused: secToStr(pausedMsec / 1000),
+                        pauses: secToStr((pausedMsec + pauseAcum) / 1000),
+                    }
+                });
+                lastTimeText = "";
                 if (togglePIPMode) togglePIPMode.lastContent = "";
                 getTimerColors();
             }
@@ -151,142 +154,139 @@ function processTimerApiMessage(err,cmd,msg,code) {
             break;
         }
     }
-} 
-
+}
 
 function getHexColor(colorStr) {
     if (getHexColor.cache) {
-        if (getHexColor.cache[colorStr]!==undefined) {
+        if (getHexColor.cache[colorStr] !== undefined) {
             return getHexColor.cache[colorStr];
         }
     } else {
-        getHexColor.cache={};
+        getHexColor.cache = {};
     }
     const a = document.createElement('div');
     a.style.color = colorStr;
-    const colors = window.getComputedStyle( document.body.appendChild(a) ).color.match(/\d+/g).map(function(a){ return parseInt(a,10); });
+    const colors = window.getComputedStyle(document.body.appendChild(a)).color.match(/\d+/g).map(function (a) { return parseInt(a, 10); });
     document.body.removeChild(a);
     getHexColor.cache[colorStr] = (colors.length >= 3) ? '#' + (((1 << 24) + (colors[0] << 16) + (colors[1] << 8) + colors[2]).toString(16).substr(1)) : false;
     return getHexColor.cache[colorStr];
 }
 
-
-function getTimerColors(){
+function getTimerColors() {
     if (timerAPI) {
-        const msg =  {
+        const msg = {
             setTimerColors: {
-    
-            } 
+
+            }
         };
-        let shouldSend=false;
-        (msg.names||getCustomColorNames()).forEach(function(n){
+        let shouldSend = false;
+        (msg.names || getCustomColorNames()).forEach(function (n) {
             const color = getCustomColor(n);
             const hexColor = getHexColor(color);
             const colorName = w3color(color).toName();
             if (color) {
-                msg.setTimerColors[n]={color,hexColor,colorName};
-                shouldSend=true;
+                msg.setTimerColors[n] = { color, hexColor, colorName };
+                shouldSend = true;
             }
         });
         if (shouldSend) {
-            timerAPI.send( msg );
+            timerAPI.send(msg);
         }
     }
 }
 
+function setCustomColor(name, newColor, notify) {
 
-function setCustomColor(name,newColor,notify) {
-   
     let shouldSend = false;
 
-    const current =  getCustomColor(name);
-    if (current==='') return null;
-    if (current===newColor) return false;
+    const current = getCustomColor(name);
+    if (current === '') return null;
+    if (current === newColor) return false;
     document.documentElement.style.setProperty(`--color-${name}`, newColor);
 
-   if (notify!==false && timerAPI) {
-       const msg = {
-           setTimerColors: {
-   
-           } 
-       };
+    if (notify !== false && timerAPI) {
+        const msg = {
+            setTimerColors: {
 
-       msg.setTimerColors[name] = newColor;
-       timerAPI.send( msg );
-   }
+            }
+        };
+
+        msg.setTimerColors[name] = newColor;
+        timerAPI.send(msg);
+    }
 
     return current;
- }
+}
 
- function getCustomColorNames() {
+function getCustomColorNames() {
 
-   return Array.from(document.styleSheets).filter(
-     function (sheet) {
-           return sheet.href === null || sheet.href.startsWith(window.location.origin);
-       }
-   )
-   .reduce(
-     function (acc, sheet) {
-       return (acc = [
-           ...acc,
-           ...Array.from(sheet.cssRules).reduce(
-               function (def, rule) {
-               return (def =
-                   rule.selectorText === ":root"
-                       ? [
-                           ...def,
-                           ...Array.from(rule.style).filter(function (name) {
-                                   return name.startsWith("--");
-                               }
-                           )
-                       ]
-                       : def);
-           },
-               []
-           )
-       ]);
-   },
-     []
-   ).map(function(n){
-       return n.replace(/^--color-/,'');
-   });
- }
+    return Array.from(document.styleSheets).filter(
+        function (sheet) {
+            return sheet.href === null || sheet.href.startsWith(window.location.origin);
+        }
+    )
+        .reduce(
+            function (acc, sheet) {
+                return (acc = [
+                    ...acc,
+                    ...Array.from(sheet.cssRules).reduce(
+                        function (def, rule) {
+                            return (def =
+                                rule.selectorText === ":root"
+                                    ? [
+                                        ...def,
+                                        ...Array.from(rule.style).filter(function (name) {
+                                            return name.startsWith("--");
+                                        }
+                                        )
+                                    ]
+                                    : def);
+                        },
+                        []
+                    )
+                ]);
+            },
+            []
+        ).map(function (n) {
+            return n.replace(/^--color-/, '');
+        });
+}
 
- function getCustomColors (names) {
-   const result = {};
-   (names||getCustomColorNames()).forEach(function(n){
-       result[n]=getCustomColor(n);
-   });
-   return result;
- }
+function getCustomColors(names) {
+    const result = {};
+    (names || getCustomColorNames()).forEach(function (n) {
+        result[n] = getCustomColor(n);
+    });
+    return result;
+}
 
- function setCustomColors(colors,notify) {
-   const changed = {};
-   const msg = notify!==false && timerAPI ? {
-       setTimerColors: {
+function setCustomColors(colors, notify) {
+    const changed = {};
+    const msg = notify !== false && timerAPI ? {
+        setTimerColors: {
 
-       } 
-   }: false;
-   let shouldSend = false;
-   Object.keys(colors).forEach(function(n){
-       const newColor = colors[n];
-       const was =  setCustomColor(n,newColor,false);
-       if (was) {
-           changed[n]=was;
-           if (msg) {
-               msg.setTimerColors[n] = newColor;
-               shouldSend=true;
-           }
-       }
-   });
+        }
+    } : false;
+    let shouldSend = false;
+    Object.keys(colors).forEach(function (n) {
+        const newColor = colors[n];
+        const was = setCustomColor(n, newColor, false);
+        if (was) {
+            changed[n] = was;
+            if (msg) {
+                msg.setTimerColors[n] = newColor;
+                shouldSend = true;
+            }
+        }
+    });
 
-   if (shouldSend) {
-      timerAPI.send(  msg ) ;
-   }
+    if (shouldSend) {
+        timerAPI.send(msg);
+    }
 
-   return changed;
- }
+    return changed;
+}
 
- function getCustomColor(name) {
+function getCustomColor(name) {
     return window.getComputedStyle(document.documentElement).getPropertyValue(`--color-${name}`);
-  }
+}
