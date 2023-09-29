@@ -16,8 +16,19 @@ function processTimerApiMessage(msg) {
         } 
 
         case "pause": {
-
+            tabCount = getTabCount() ;
+     
+            nudgeFactor  =   1000;
+            
+            endDelta     =   0;
+            seekEndDelta =   1000;
+            
             onKey_Pause();
+
+            controlling = false;
+            html.classList[controlling?"add":"remove"]("controlling");
+            shifting = false;
+            html.classList[shifting?"add":"remove"]("shifting");
             break;
         }
 
@@ -64,7 +75,7 @@ function processTimerApiMessage(msg) {
             break;
         }
 
-        case "customMessage": {
+        case "custommessage": {
 
             html.classList.remove("edit_custom_message");
             html.classList.remove("show_custom_message");

@@ -783,8 +783,7 @@ function getTabCount(cont) {
 let custom_msg_timeout;
 
 function onKey_Pause(ev) {
- 
-        
+        const timeNow = Date.now();
         html.classList.toggle("paused");
         lastTimeText="";
         if (togglePIPMode) togglePIPMode.lastContent="";
@@ -795,12 +794,15 @@ function onKey_Pause(ev) {
             const pauseAccumText = secToStr(pauseAcum / oneSecond);
             extraTimeDisp.textContent = "+ "+pauseAccumText+" pauses";
             if (timerAPI) {
+
                 timerAPI.send( {
                     setVariableValues:{
                         default:secToStr(defaultDuration/1000),
                         pausing:true,
                         pauses:pauseAccumText,
-                        paused:'0:00'}} );
+                        paused:'0:00'
+                    }
+                } );
             }
         } else {
             let pausedMsec = pausedAt ? timeNow-pausedAt : 0;
@@ -817,21 +819,20 @@ function onKey_Pause(ev) {
             endsAt = seekEndsAt;
             endsDisp.textContent = local24HourTime ( new Date(seekEndsAt) );
             if (timerAPI) {
+
                 timerAPI.send( {
-                setVariableValues:{
-                    default:secToStr(defaultDuration/1000),
-                    endsAt:endsDisp.textContent,
-                    pausing:false,
-                    pauses:pauseAccumText,
-                    paused:'0:00'}});
+                    setVariableValues:{
+                        default:secToStr(defaultDuration/1000),
+                        endsAt:endsDisp.textContent,
+                        pausing:false,
+                        pauses:pauseAccumText,
+                        paused:'0:00'
+                    }
+                } );
+
             }
             
         }
-        
-        
-        
-         
-        
 }
 
 function onKey_UndoPause (ev) {
@@ -1129,7 +1130,7 @@ function onDocKeyDown(ev){
        
    }
    
-    tabCount = getTabCount(),timeNow =  Date.now() ;
+    tabCount = getTabCount()  ;
      
     nudgeFactor = controlling ? 60000 : 1000;
     
