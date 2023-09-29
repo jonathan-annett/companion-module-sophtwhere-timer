@@ -16,30 +16,36 @@ function processTimerApiMessage(msg) {
         } 
 
         case "pause": {
-            tabCount = getTabCount() ;
-     
-            nudgeFactor  =   1000;
-            
-            endDelta     =   0;
-            seekEndDelta =   1000;
-            
-            onKey_Pause();
-
-            controlling = false;
-            html.classList[controlling?"add":"remove"]("controlling");
-            shifting = false;
-            html.classList[shifting?"add":"remove"]("shifting");
+            press(onKey_Pause);
             break;
         }
 
 
         case "undopause": {
-
-            onKey_UndoPause();
+            press(onKey_UndoPause);
             break;
         }
 
 
+        case "bar" : {
+            press(onKey_B);
+            break;
+        }
+
+        case "time" : {
+            press(onKey_T);
+            break;
+        }
+
+        case "presenter" : {
+            press(onKey_P);
+            break;
+        }
+
+        case "messages" : {
+            press(onKey_M);
+            break;
+        }
 
         case "keys": {
             msg.keys.forEach(function (key) {
@@ -71,6 +77,7 @@ function processTimerApiMessage(msg) {
                 bumpEnd(0 - msg.msecs, 0);
             }
             durationDisp.textContent = secToStr((seekEndsAt - startedAt) / 1000);
+            lastTimeText = "";
             displayUpdate();
             break;
         }
@@ -150,14 +157,14 @@ function processTimerApiMessage(msg) {
             break;
         }
 
-        case "presenter": {
+        case "presentermode": {
             if (runMode !== "presenter") {
                 location.replace("/?presenter");
             }
             break;
         }
 
-        case "control": {
+        case "controlmode": {
             if (runMode === "presenter") {
                 location.replace("/");
             }
@@ -188,6 +195,20 @@ function processTimerApiMessage(msg) {
 
             break;
         }
+    }
+
+    function press(fn) {
+        tabCount = getTabCount() ;     
+        nudgeFactor  =   1000;
+        
+        endDelta     =   0;
+        seekEndDelta =   1000;
+        fn({});
+        controlling = false;
+        shifting = false;
+
+        html.classList.remove("controlling");           
+        html.classList.remove("shifting");
     }
 }
 

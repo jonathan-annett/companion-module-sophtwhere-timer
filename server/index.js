@@ -29,7 +29,7 @@ function api_config(self,config,enabledIps) {
 
     return new Promise(function(resolve,reject){
         
-        const use_ws = !!config.allow_ws;
+        const use_ws = true;//!!config.allow_ws;
 
         
                 
@@ -142,61 +142,14 @@ function api_config(self,config,enabledIps) {
 
                         // encode simple commands as keystrokes
                         switch (data.cmd) {
-                            /*
-                            case "pause" : {
-                                data = {  cmd : "keys",keys :[ '/' ] }
-                                break;
-                            }
-
-                            case "undopause" : {
-                                data = {  cmd : "keys",keys :[ "'" ] }
-                                break;
-                            }
-                            */
-                            case "bar" : {
-                                data = {  cmd : "keys",keys :[ 'b' ] }
-                                break;
-                            }
-
-                            case "time" : {
-                                data = {  cmd : "keys",keys :[ 't' ] }
-                                break;
-                            }
-
-                            case "presenter" : {
-                                data = {  cmd : "keys",keys :[ 'p' ] }
-                                break;
-                            }
-                            /*
-                            case "plus1Min" : {
-                                data = {  cmd : "keys",keys :[ 'Control','ArrowUp','~Control' ] }
-                                break;
-                            }
-
-                            case "minus1Min" : {
-                                data = {  cmd : "keys",keys :[ 'Control','ArrowDown','~Control' ] }
-                                break;
-                            }
-
-                            case "plus1" : {
-                                data = {  cmd : "keys",keys :[ 'ArrowUp' ] }
-                                break;
-                            }
-
-                            case "minus1" : {
-                                data = {  cmd : "keys",keys :[ 'ArrowDown' ] }
-                                break;
-                            }
-*/
+                           
+                         
                             case "catchup" : {
                                 data = {  cmd : "keys",keys :[ 'Control','Enter','~Control' ] }
                                 break;
                             }
 
-                            case "messages" : {
-                                data = {  cmd : "keys",keys :[ 'm' ] }
-                                break;
-                            }
+    
 
 
 
