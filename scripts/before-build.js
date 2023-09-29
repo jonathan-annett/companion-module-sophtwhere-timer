@@ -3,7 +3,7 @@
  * Copyright(c) 2023 Jonathan Annett
  * MIT Licensed
  */
-const includeDev = true;
+const includeDev = false;
 const fs = require('fs'),path=require('path');
 const package_name = require (path.join (__dirname,'..','package.json')).name;
 const { minify,html_regexp } = require ('./minifiers.js');
@@ -15,9 +15,20 @@ const require_regexp = /\.require$/;
 function copyRequireInject(pth,subdir,output_path) {
     const require_inject = JSON.parse(fs.readFileSync(pth,'utf8'));
     const uri =  Object.keys(require_inject)[0];
-    const content   = fs.readFileSync(require.resolve(require_inject[uri]));
+    const req = require_inject[uri];
+    const req_path = typeof req==='string' ? require.resolve(req) : path.join( path.dirname( require.resolve(req.require)), req.resolve) ;
+    const content   = fs.readFileSync(req_path);
     const file_path = path.join(output_path,subdir+'-' + uri);
     fs.writeFileSync(file_path,content);
+    if (file_path.endsWith(".min.js")) return null;
+
+    const minified = minify(path.basename(uri),content);
+    if (minified) {
+        const file_path_min = minified.extFix( file_path );
+        fs.writeFileSync(file_path_min,minified.contentMin);
+    }
+    return minified;
+    
 }
 
 function copyBrowserFilesAsExtra(subdir,filenames,output_path) {
@@ -31,11 +42,18 @@ function copyBrowserFilesAsExtra(subdir,filenames,output_path) {
     const fixups = [];
     filepaths.forEach(function(pth,ix){ 
         if (html_regexp.test(pth)) return;
-        if (require_regexp.test(pth)) return copyRequireInject(pth,subdir,output_path) ;
-
-        const file_data = fs.readFileSync(pth);
-        const file_path = path.join(output_path,subdir+'-' + filenames[ix]);
-        const minified = minify(filenames[ix],file_data);
+        let minified,file_data,file_path;
+        if (require_regexp.test(pth)) {
+            minified = copyRequireInject(pth,subdir,output_path) ;
+            if (minified && minified.htmlFix ) {
+                fixups.push(minified );
+            }
+           return;
+        } else {
+            file_data = fs.readFileSync(pth);
+            file_path = path.join(output_path,subdir+'-' + filenames[ix]);
+            minified = minify(filenames[ix],file_data);
+        }
         if (minified) {
             if (minified.contentMin) {
                 const file_path_min = minified.extFix( file_path );
@@ -44,11 +62,13 @@ function copyBrowserFilesAsExtra(subdir,filenames,output_path) {
                     fixups.push(minified );
                 }
             }
-            if (!minified.contentMin || includeDev) {
+            if (file_data && !minified.contentMin || includeDev) {
                 fs.writeFileSync(file_path,file_data);
             }
         } else {
-            fs.writeFileSync(file_path,file_data);
+            if (file_data) {
+                fs.writeFileSync(file_path,file_data);
+            }
         }  
     });
 

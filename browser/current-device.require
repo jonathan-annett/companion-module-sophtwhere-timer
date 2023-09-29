@@ -1,0 +1,3 @@
+{
+    "current-device.js" : { "require" : "current-device","resolve" : "../umd/current-device.js"}
+}

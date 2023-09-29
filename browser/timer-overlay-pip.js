@@ -3,6 +3,8 @@ global getInheritedBackgroundColor,getInheritedColor
 */
 
 function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQry,toplinefont) {
+    const supported =  typeof document.exitPictureInPicture === 'function' || document.pictureInPictureElement===null;
+    if (!supported) return null;
 
     const waitNextFrame =  window.safari ? waitNextFrameSafari : waitNextFrameChrome;
     const target =  createVideoElement( targetId );

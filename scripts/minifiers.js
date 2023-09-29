@@ -51,9 +51,12 @@ const minifiers = {
                     const replace     = `src="${basename}"`;
                     if (html.indexOf(replace)>=0) {
                         const replaceWith = `src="${extFix(basename)}"`;
+                        //console.log(`replacing "${replace}" with "${replaceWith}"`)
                         while (html.indexOf(replace)>=0) {
                             html = html.replace(replace,replaceWith);
                         }
+                    //} else {
+                       // console.log(`"${replace}" not found`) 
                     }
                     return html;
                 }

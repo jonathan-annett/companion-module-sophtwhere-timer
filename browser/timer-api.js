@@ -1,9 +1,33 @@
-/* global timerAPI*/
+/* global timerAPI,onKey_Pause,onKey_UndoPause*/
 
 function processTimerApiMessage(msg) {
     const { error,cmd, code } = msg ;
     //console.log(error, cmd, msg, code);
-    switch (cmd) {
+    switch (cmd.toLowerCase()) {
+
+        case "start" : {
+            restartTimer(msg.msecs);
+            break;
+        } 
+
+        case "default" : {
+            setDefaultDuration(msg.msecs);
+            break;
+        } 
+
+        case "pause": {
+
+            onKey_Pause();
+            break;
+        }
+
+
+        case "undopause": {
+
+            onKey_UndoPause();
+            break;
+        }
+
 
 
         case "keys": {
@@ -55,7 +79,7 @@ function processTimerApiMessage(msg) {
             break;
         }
 
-        case "setTimerColor": {
+        case "settimercolor": {
 
             const oldColor = setCustomColor(msg.name, msg.color);
 
@@ -63,14 +87,14 @@ function processTimerApiMessage(msg) {
             break;
         }
 
-        case "setTimerColors": {
+        case "settimercolors": {
 
             setCustomColors(msg.colors);
 
             break;
         }
 
-        case "getTimerColor": {
+        case "gettimercolor": {
             if (timerAPI && msg.name) {
                 const msg = {
                     setTimerColors: {
@@ -86,7 +110,7 @@ function processTimerApiMessage(msg) {
             break;
         }
 
-        case "getTimerColors": {
+        case "gettimercolors": {
             getTimerColors();
 
             break;

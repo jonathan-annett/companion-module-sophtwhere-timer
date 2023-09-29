@@ -4,7 +4,8 @@ module.exports = is_webpacked ? getWebpackedBrowserFiles : getBrowserFiles;
 
 const fs = require('fs');
 const aliases_ = {
-    '/'           : '/timer.html',
+    '/'           : '/control.html',
+    '/remote'     : '/remote.html',    
     '/edit'       : '/event-edit.html',
     '/timer'      : '/timer.html',
     '/index.html' : '/timer.html',

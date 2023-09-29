@@ -95,7 +95,12 @@ let togglePIPMode ;
         "#remain_disp_video_text",
         "overlay",
         "#remain_disp_video_text",
-        '40px "Lucida", sans-serif');
+        '40px "Lucida", sans-serif'
+    );
+
+    if (!togglePIPMode) {
+        setHtmlClass('nooverlay');
+    }
 
   }
   
@@ -593,17 +598,18 @@ custom_message.addEventListener('focus', function(){
  }
 
   
-  function restartTimer() {
+  function restartTimer(useDuration) {
+    thisDuration = useDuration ===undefined ? defaultDuration : useDuration;
     lastUpdateTick = 0;
     startedAt  = Date.now();  
-    endsAt     = startedAt + defaultDuration;
+    endsAt     = startedAt + thisDuration;
     pausedAt=undefined;
     pauseAcum=0;
-    thisDuration = defaultDuration;
+    //thisDuration = defaultDuration;
     seekEndsAt = endsAt;
     startedDisp.textContent = local24HourTime ( new Date(startedAt) ); 
     endsDisp.textContent    =  local24HourTime ( new Date(endsAt) ); 
-    durationDisp.textContent = secToStr(defaultDuration / 1000);
+    durationDisp.textContent = secToStr(thisDuration / 1000);
     extraTimeDisp.textContent = "";
     
     
@@ -628,7 +634,7 @@ custom_message.addEventListener('focus', function(){
                 pausing:false,
                 expired:false,
                 showpresenter: html.classList.contains("reduced") ? '1' : '0',
-                impending:defaultDuration<=60000}
+                impending:thisDuration<=60000}
             });
       }
   }
@@ -1355,20 +1361,25 @@ function isSingleScreenMode() {
            runMode === "presenter";
 }
 
+
+    function setDefaultDuration(msecs) {
+        defaultDuration = msecs;
+        if (Date.now()-startedAt<0) { 
+            // if editing a future start time
+            thisDuration = defaultDuration;
+        }
+        enterTimeText  = "";
+        enterHoursText = "";
+        
+        dispNextMins.textContent = secToStr(defaultDuration/1000);
+        clearHtmlClass("editing");
+        writeNumber("defaultDuration",defaultDuration);
+
+    }
+
     function saveEditedTime(){
         if ( !  (  (enterTimeText === "" ) || (enterTimeText === "" ) ) ) {
-            defaultDuration = ((Number(enterHoursText) * 3600) + (Number(enterTimeText) * 60) ) * 1000;
-            
-            if (Date.now()-startedAt<0) { 
-                // if editing a future start time
-                thisDuration = defaultDuration;
-            }
-            enterTimeText  = "";
-            enterHoursText = "";
-            
-            dispNextMins.textContent = secToStr(defaultDuration/1000);
-            clearHtmlClass("editing");
-            writeNumber("defaultDuration",defaultDuration);
+            setDefaultDuration  ( ((Number(enterHoursText) * 3600) + (Number(enterTimeText) * 60) ) * 1000);
 
             if (timerAPI) {
                 timerAPI.send( {setVariableValues:{default:dispNextMins.textContent}});

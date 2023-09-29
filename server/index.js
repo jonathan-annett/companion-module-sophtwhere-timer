@@ -142,48 +142,7 @@ function api_config(self,config,enabledIps) {
 
                         // encode simple commands as keystrokes
                         switch (data.cmd) {
-
-                            case "start" : {
-                                if (typeof data.msecs === 'number') {
-                                    let seconds = (data.msecs/60000).toFixed(3);
-                                    while (seconds.endsWith("0")) {
-                                        seconds = seconds.substring(0,seconds.length-1);
-                                    }
-                                    if (seconds.endsWith(".")) {
-                                        seconds = seconds.substring(0,seconds.length-1);
-                                    }  
-                                    keys = (" "+seconds).split("").concat(["Enter"," "]);
-                                } else {
-                                    keys = [" "];
-                                }
-                                data = {
-                                    cmd : "keys",
-                                    keys : keys
-                                };
-                                break;
-                            }
-
-                            case "default" : {
-                                if (typeof data.msecs === 'number') {
-                                    let seconds = (data.msecs/60000).toFixed(3);
-                                    while (seconds.endsWith("0")) {
-                                        seconds = seconds.substring(0,seconds.length-1);
-                                    }
-                                    if (seconds.endsWith(".")) {
-                                        seconds = seconds.substring(0,seconds.length-1);
-                                    }  
-                                    keys = ["Enter"].concat(seconds.split("")).concat(["Enter"]);
-                                } else {
-                                    return;
-                                }
-                                data = {
-                                    cmd : "keys",
-                                    keys : keys
-                                };
-                                break;
-                            }
-
-
+                            /*
                             case "pause" : {
                                 data = {  cmd : "keys",keys :[ '/' ] }
                                 break;
@@ -193,7 +152,7 @@ function api_config(self,config,enabledIps) {
                                 data = {  cmd : "keys",keys :[ "'" ] }
                                 break;
                             }
-
+                            */
                             case "bar" : {
                                 data = {  cmd : "keys",keys :[ 'b' ] }
                                 break;
@@ -208,11 +167,12 @@ function api_config(self,config,enabledIps) {
                                 data = {  cmd : "keys",keys :[ 'p' ] }
                                 break;
                             }
-                            
+                            /*
                             case "plus1Min" : {
                                 data = {  cmd : "keys",keys :[ 'Control','ArrowUp','~Control' ] }
                                 break;
                             }
+
                             case "minus1Min" : {
                                 data = {  cmd : "keys",keys :[ 'Control','ArrowDown','~Control' ] }
                                 break;
@@ -222,11 +182,12 @@ function api_config(self,config,enabledIps) {
                                 data = {  cmd : "keys",keys :[ 'ArrowUp' ] }
                                 break;
                             }
+
                             case "minus1" : {
                                 data = {  cmd : "keys",keys :[ 'ArrowDown' ] }
                                 break;
                             }
-
+*/
                             case "catchup" : {
                                 data = {  cmd : "keys",keys :[ 'Control','Enter','~Control' ] }
                                 break;

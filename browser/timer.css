@@ -14,6 +14,7 @@
 
 */
 
+
 :root {
     --color-main-background : black;
     --color-main-font:#a0a0a0;
@@ -88,7 +89,6 @@
 
 }
 
- 
 
 body {
     
@@ -126,7 +126,7 @@ body {
     
     color:var(--color-remain-running);
     
-    font-size: 40vh;
+    font-size: 20vw;
     position : absolute;
      
     left: 0;
@@ -201,7 +201,7 @@ html.future #started_disp:before {
 #started_disp {
   position : absolute;
   left : 0;
-  top : calc( 80% + 40px );
+  top : calc( 80% + 44px );
 }
 
 /*
@@ -217,7 +217,7 @@ html.reduced #started_disp {
 #ends_disp {
   position : absolute;
   right :0;
-  top : calc( 80% + 40px);
+  top : calc( 80% + 44px);
 }
 
 /*
@@ -241,7 +241,7 @@ html.future #elapsed_disp:before {
 #elapsed_disp {
   position : absolute;
   left : 0;
-  top : calc( 80% + 0px);    
+  top : calc( 80% - 8px);    
 }
 
  
@@ -408,7 +408,7 @@ html.reduced.future.paused #remain_disp {
 #duration_disp {
   position : absolute;
   right :0;
-  top : calc( 80% + 0px);
+  top : calc( 80% - 8px);
 }
 
 #duration_disp:after {
@@ -647,7 +647,10 @@ html.reduced div.buttons div {
     display : inline-block ;
     
 }
-
+ 
+html.portrait div.buttons {
+    display:none;
+}
 
 
 #fs_help {
@@ -822,6 +825,9 @@ html.overlay #btnfloat {
     animation: blinker 1s infinite;
  }
  
+ html.nooverlay  #btnfloat {
+    display:none;
+ }
 
 html.paused #btnpause {
    display:none;
@@ -845,3 +851,32 @@ html.reduced #css_editor div {
     cursor: text;
 }
  
+html.portrait #link, 
+html.portrait div.buttons {
+    display:none;
+}
+
+html.portrait #remain_disp {
+    font-size: 25vw;
+    top:40vh;
+}
+
+html.portrait  .mainDiv  {
+    top:80%;
+}
+
+
+html.portrait #duration_disp,
+html.portrait #elapsed_disp {
+  top : calc( 85% + 0px);    
+}
+
+html.portrait #started_disp,
+html.portrait #ends_disp {
+  top : calc( 85% + 40px);    
+}
+
+
+html.portrait #disp_next_mins:before{
+    content : "";
+}
