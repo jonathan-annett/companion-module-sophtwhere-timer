@@ -767,6 +767,83 @@ function getTabCount(cont) {
 
 let custom_msg_timeout;
 
+function onPauseKey(ev) {
+ 
+        
+        html.classList.toggle("paused");
+        lastTimeText="";
+        if (togglePIPMode) togglePIPMode.lastContent="";
+        if (html.classList.contains("paused")) {
+            pausedAt = Date.now();
+            writeNumber("pausedAt",pausedAt);
+            endsAt = seekEndsAt;
+            const pauseAccumText = secToStr(pauseAcum / oneSecond);
+            extraTimeDisp.textContent = "+ "+pauseAccumText+" pauses";
+            if (timerAPI) {
+                timerAPI.send( {
+                    setVariableValues:{
+                        default:secToStr(defaultDuration/1000),
+                        pausing:true,
+                        pauses:pauseAccumText,
+                        paused:'0:00'}} );
+            }
+        } else {
+            let pausedMsec = pausedAt ? timeNow-pausedAt : 0;
+            pausedAt = undefined;
+            seekEndsAt += pausedMsec;
+            pauseAcum += pausedMsec;
+            writeNumber("pausedAt",pausedAt);
+            writeNumber("pauseAcum",pauseAcum);
+
+            const pauseAccumText = secToStr(pauseAcum / oneSecond);
+
+            extraTimeDisp.textContent = "+ "+pauseAccumText+" pauses";
+     
+            endsAt = seekEndsAt;
+            endsDisp.textContent = local24HourTime ( new Date(seekEndsAt) );
+            if (timerAPI) {
+                timerAPI.send( {
+                setVariableValues:{
+                    default:secToStr(defaultDuration/1000),
+                    endsAt:endsDisp.textContent,
+                    pausing:false,
+                    pauses:pauseAccumText,
+                    paused:'0:00'}});
+            }
+            
+        }
+        
+        
+        
+         
+        
+}
+
+
+function onUnpauseKey (ev) {
+       
+    clearHtmlClass("paused");
+    pausedAt = undefined;
+    pauseAcum = 0;
+    writeNumber("pausedAt",pausedAt);
+    writeNumber("pauseAcum",pauseAcum);
+    extraTimeDisp.textContent = "";
+    
+    seekEndsAt = startedAt + thisDuration;
+    endsAt = seekEndsAt;
+    endsDisp.textContent = local24HourTime( new Date(seekEndsAt) ) ;
+
+    if (timerAPI) {
+        timerAPI.send ( {
+            setVariableValues:{
+                endsAt:endsDisp.textContent,
+                pauses:'0:00',
+                paused:'0:00'}} );
+    }
+        
+}
+
+
 function onDocKeyDown(ev){
 
     const checkModifiers = function(){
@@ -845,79 +922,11 @@ function onDocKeyDown(ev){
         switch ( ev.key ) {
             
             case "/"://numkeypad
-            case '"':
-                
-                html.classList.toggle("paused");
-                lastTimeText="";
-                if (togglePIPMode) togglePIPMode.lastContent="";
-                if (html.classList.contains("paused")) {
-                    pausedAt = Date.now();
-                    writeNumber("pausedAt",pausedAt);
-                    endsAt = seekEndsAt;
-                    const pauseAccumText = secToStr(pauseAcum / oneSecond);
-                    extraTimeDisp.textContent = "+ "+pauseAccumText+" pauses";
-                    if (timerAPI) {
-                        timerAPI.send( {
-                            setVariableValues:{
-                                default:secToStr(defaultDuration/1000),
-                                pausing:true,
-                                pauses:pauseAccumText,
-                                paused:'0:00'}} );
-                    }
-                } else {
-                    let pausedMsec = pausedAt ? timeNow-pausedAt : 0;
-                    pausedAt = undefined;
-                    seekEndsAt += pausedMsec;
-                    pauseAcum += pausedMsec;
-                    writeNumber("pausedAt",pausedAt);
-                    writeNumber("pauseAcum",pauseAcum);
-
-                    const pauseAccumText = secToStr(pauseAcum / oneSecond);
-    
-                    extraTimeDisp.textContent = "+ "+pauseAccumText+" pauses";
-             
-                    endsAt = seekEndsAt;
-                    endsDisp.textContent = local24HourTime ( new Date(seekEndsAt) );
-                    if (timerAPI) {
-                        timerAPI.send( {
-                        setVariableValues:{
-                            default:secToStr(defaultDuration/1000),
-                            endsAt:endsDisp.textContent,
-                            pausing:false,
-                            pauses:pauseAccumText,
-                            paused:'0:00'}});
-                    }
-                    
-                }
-                
-                
-                
-                break;
+            case '"': return onPauseKey(ev);
                 
             case "Tab":  //numkeypad 
-            case "'": 
+            case "'":  return onUnpauseKey (ev);
                 
-                clearHtmlClass("paused");
-                pausedAt = undefined;
-                pauseAcum = 0;
-                writeNumber("pausedAt",pausedAt);
-                writeNumber("pauseAcum",pauseAcum);
-                extraTimeDisp.textContent = "";
-                
-                seekEndsAt = startedAt + thisDuration;
-                endsAt = seekEndsAt;
-                endsDisp.textContent = local24HourTime( new Date(seekEndsAt) ) ;
-
-                if (timerAPI) {
-                    timerAPI.send ( {
-                        setVariableValues:{
-                            endsAt:endsDisp.textContent,
-                            pauses:'0:00',
-                            paused:'0:00'}} );
-                }
-                    
-                break;
-            
             case ".":
                  if ( (enterTimeText !== "") && (enterTimeText.indexOf(".") <0 ) ) {
                      
@@ -1253,9 +1262,11 @@ function isSingleScreenMode() {
           }*/
     }
 
-
-    function bumpStart(factor){
-        startedAt += factor;   
+/* 
+add milliseconds to the start time
+ */
+    function bumpStart(milliseconds){
+        startedAt += milliseconds;   
         startedDisp.textContent = local24HourTime( new Date(startedAt) );
         writeNumber("startedAt",startedAt);
         lastTimeText="";
