@@ -22,8 +22,16 @@ let doc = document;
 let qs = doc.querySelector.bind(doc);
 let getEl = doc.getElementById.bind(doc);
 
+let tabCount = 1;
+
 let shifting = false;
 let controlling = false;
+
+let nudgeFactor  = controlling ? 60000 : 1000;
+    
+let endDelta     =  controlling ? 60000 : 0;
+let seekEndDelta =  controlling ? 60000 : 1000;
+
 
 let stylesheet1= getEl ("style_1");
 let stylesheet1_obj;
@@ -59,15 +67,7 @@ let pauseAcum = 0;
   
 let runMode = "controller";
 
-let togglePIPMode = setupPip(
-    "remain_disp",
-    "remain_disp_video",
-    192*2,108*2,
-    '100px "Lucida", sans-serif',
-    "#remain_disp_video_text",
-    "overlay",
-    "#remain_disp_video_text",
-    '40px "Lucida", sans-serif');
+let togglePIPMode ;
 
   if (window.location.search.startsWith("?presenter")) {
 
@@ -87,7 +87,15 @@ let togglePIPMode = setupPip(
          document.title = "Presentation Timer - Control Screen";
      }
 
-   
+     togglePIPMode = setupPip(
+        "remain_disp",
+        "remain_disp_video",
+        192*2,108*2,
+        '100px "Lucida", sans-serif',
+        "#remain_disp_video_text",
+        "overlay",
+        "#remain_disp_video_text",
+        '40px "Lucida", sans-serif');
 
   }
   
@@ -256,7 +264,8 @@ custom_message.addEventListener('focus', function(){
   
   function displayUpdate() {
       
-      let tabCount = getTabCount(),timeNow =  Date.now() ;
+      let timeNow =  Date.now() ; 
+      tabCount = getTabCount();
       let controllerCount = getTabCount(true);
       let pausing = false;
 
@@ -767,6 +776,292 @@ function getTabCount(cont) {
 
 let custom_msg_timeout;
 
+function onKey_Pause(ev) {
+ 
+        
+        html.classList.toggle("paused");
+        lastTimeText="";
+        if (togglePIPMode) togglePIPMode.lastContent="";
+        if (html.classList.contains("paused")) {
+            pausedAt = Date.now();
+            writeNumber("pausedAt",pausedAt);
+            endsAt = seekEndsAt;
+            const pauseAccumText = secToStr(pauseAcum / oneSecond);
+            extraTimeDisp.textContent = "+ "+pauseAccumText+" pauses";
+            if (timerAPI) {
+                timerAPI.send( {
+                    setVariableValues:{
+                        default:secToStr(defaultDuration/1000),
+                        pausing:true,
+                        pauses:pauseAccumText,
+                        paused:'0:00'}} );
+            }
+        } else {
+            let pausedMsec = pausedAt ? timeNow-pausedAt : 0;
+            pausedAt = undefined;
+            seekEndsAt += pausedMsec;
+            pauseAcum += pausedMsec;
+            writeNumber("pausedAt",pausedAt);
+            writeNumber("pauseAcum",pauseAcum);
+
+            const pauseAccumText = secToStr(pauseAcum / oneSecond);
+
+            extraTimeDisp.textContent = "+ "+pauseAccumText+" pauses";
+     
+            endsAt = seekEndsAt;
+            endsDisp.textContent = local24HourTime ( new Date(seekEndsAt) );
+            if (timerAPI) {
+                timerAPI.send( {
+                setVariableValues:{
+                    default:secToStr(defaultDuration/1000),
+                    endsAt:endsDisp.textContent,
+                    pausing:false,
+                    pauses:pauseAccumText,
+                    paused:'0:00'}});
+            }
+            
+        }
+        
+        
+        
+         
+        
+}
+
+function onKey_UndoPause (ev) {
+       
+    clearHtmlClass("paused");
+    pausedAt = undefined;
+    pauseAcum = 0;
+    writeNumber("pausedAt",pausedAt);
+    writeNumber("pauseAcum",pauseAcum);
+    extraTimeDisp.textContent = "";
+    
+    seekEndsAt = startedAt + thisDuration;
+    endsAt = seekEndsAt;
+    endsDisp.textContent = local24HourTime( new Date(seekEndsAt) ) ;
+
+    if (timerAPI) {
+        timerAPI.send ( {
+            setVariableValues:{
+                endsAt:endsDisp.textContent,
+                pauses:'0:00',
+                paused:'0:00'}} );
+    }
+        
+}
+
+function  onKey_ArrowDown(ev) {
+                  
+        bumpEnd(0-seekEndDelta,0-endDelta);
+        durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
+        displayUpdate();
+    
+}
+
+function  onKey_Shift_ArrowDown(ev) {
+                  
+    bumpStart(nudgeFactor);
+    durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
+    displayUpdate();
+
+}
+
+function  onKey_ArrowUp(ev) {
+     bumpEnd(seekEndDelta,endDelta);
+     durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
+     displayUpdate();
+}
+
+function  onKey_Shift_ArrowUp(ev) {
+     bumpStart(0-nudgeFactor);
+     durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
+     displayUpdate();
+}
+
+function onKey_ArrowLeft(ev) {
+
+    bumpStart(0-nudgeFactor);
+    bumpEnd(0-seekEndDelta,0-endDelta);
+    
+    durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
+    displayUpdate();
+
+}
+ 
+function onKey_ArrowRight(ev) {
+    bumpStart(nudgeFactor); 
+    bumpEnd(seekEndDelta,endDelta);
+    
+    durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
+    displayUpdate();
+}
+
+ 
+function onKey_Ctrl_Q(ev) {
+   
+    if (is_nwjs()) {
+        require('nw.gui').App.quit();
+    }
+    
+}
+
+
+function onKey_Space(ev) {
+ 
+    const preserve_default = defaultDuration;
+        
+    saveEditedTime();
+    restartTimer();
+        
+    if (defaultDuration !== preserve_default) {
+        defaultDuration = preserve_default;
+        dispNextMins.textContent = secToStr(defaultDuration/1000);
+        clearHtmlClass("editing");
+        writeNumber("defaultDuration",defaultDuration);
+    }
+        
+}
+
+function onKey_Shift_Space(ev) {
+ 
+    const preserve_default = defaultDuration;
+    
+    saveEditedTime();
+    
+    extendDefaultToCurrentTimer();
+    
+    if (defaultDuration !== preserve_default) {
+        defaultDuration = preserve_default;
+        dispNextMins.textContent = secToStr(defaultDuration/1000);
+        clearHtmlClass("editing");
+        writeNumber("defaultDuration",defaultDuration);
+    }
+    
+}
+
+function onKey_Control_Space(ev) {
+ 
+    const preserve_default = defaultDuration;
+
+    lastUpdateTick = 0;
+    endsAt = seekEndsAt;
+    clearRemainClass("adjusting") ;
+    clearRemainClass("adjustingDown") ;
+    keyDisp.textContent = tabCount+" tabs open";
+    lastTimeText="";
+    writeNumber("endsAt",endsAt);
+
+}
+
+
+function onKey_M (ev) {
+    html.classList.toggle("showmessages");
+    writeNumber("showmessages",html.classList.contains("showmessages") ? 1 : 0);
+    if (togglePIPMode) togglePIPMode.lastContent="";
+    lastTimeText = "";
+}
+
+function onKey_B(ev) {
+    const toggledState = html.classList.contains("showbar") ? 0 : 1;
+    html.classList.toggle("showbar");
+    writeNumber("showbar",toggledState);
+}
+
+function onKey_T(ev) {
+    const toggledState = html.classList.contains("showtimenow") ? 0 : 1;
+    html.classList.toggle("showtimenow");
+    writeNumber("showtimenow",toggledState);
+}
+
+function onKey_O (ev) {
+    if (togglePIPMode) togglePIPMode();
+}
+
+function onKey_P (ev) {
+   
+
+    if (window.location.search !== "?presenter" &&  tabCount === 1) {
+        html.classList.toggle("reduced");
+        const isPres = html.classList.contains("reduced");
+        runMode = isPres ? "presenter":"controller";
+
+        if (timerAPI) {
+            timerAPI.send(  {setVariableValues:{showpresenter: isPres ? '1' : '0' }});
+        }
+    }
+    html.classList[ html.classList.contains("reduced") ? "remove" : "add"]("showbuttons");
+
+}
+
+function onKey_S (ev) {
+ 
+    if (window.location.search !== "?presenter" &&  tabCount === 1) {
+        html.classList.add("reduced");
+        html.classList.add("showbuttons");
+        runMode = "presenter";
+        if (!fs_api.isFullscreen()) {
+            fs_api.enterFullscreen();  
+            }
+
+        if (timerAPI) {
+            timerAPI.send({setVariableValues:{showpresenter: '1' }});
+        }
+    }
+
+            
+}
+
+function onKey_Control_S (ev) {
+ 
+            
+  
+    if (stylesheet1_obj) {
+       stylesheet1_obj.editToggle();
+    }
+    ev.preventDefault();
+  
+    
+}
+
+function onKey_Control_Shift_S (ev) {
+ 
+    if (stylesheet1_obj) {
+        stylesheet1_obj.reset();
+        if (stylesheet1_obj.editing) {
+            stylesheet1_obj.editToggle();
+        }
+    }
+    ev.preventDefault();
+    
+}
+
+function onKey_X (ev) {
+    extendDefaultToCurrentTimer();
+}
+
+function onKey_C (ev) {
+                 
+    html.classList.add("edit_custom_message");
+    html.classList.remove("show_custom_message");
+    custom_message.innerText="custom message";
+    custom_message.contentEditable=true;
+    custom_message.focus();
+    ev.preventDefault();            
+         
+}
+
+function onKey_R ( ev ) {
+
+    if (!controlling) {
+        ev.preventDefault();
+        if (!isSingleScreenMode() && !(runMode === "presenter" && tabCount===1)) {
+            openTimerWindow(tabCount>1);
+        }
+    }
+}
+
+
 function onDocKeyDown(ev){
 
     const checkModifiers = function(){
@@ -828,12 +1123,12 @@ function onDocKeyDown(ev){
        
    }
    
-  let tabCount = getTabCount(),timeNow =  Date.now() ;
+    tabCount = getTabCount(),timeNow =  Date.now() ;
      
-    let factor = controlling ? 60000 : 1000;
+    nudgeFactor = controlling ? 60000 : 1000;
     
-    let endDelta     =  controlling ? 60000 : 0;
-    let seekEndDelta =  controlling ? 60000 : 1000;
+    endDelta     =  controlling ? 60000 : 0;
+    seekEndDelta =  controlling ? 60000 : 1000;
     
     
     if (typeof ev.key === 'string' && ( ( ev.key >= 1 && ev.key <=9) || ev.key=== "0") ) {
@@ -845,79 +1140,11 @@ function onDocKeyDown(ev){
         switch ( ev.key ) {
             
             case "/"://numkeypad
-            case '"':
-                
-                html.classList.toggle("paused");
-                lastTimeText="";
-                if (togglePIPMode) togglePIPMode.lastContent="";
-                if (html.classList.contains("paused")) {
-                    pausedAt = Date.now();
-                    writeNumber("pausedAt",pausedAt);
-                    endsAt = seekEndsAt;
-                    const pauseAccumText = secToStr(pauseAcum / oneSecond);
-                    extraTimeDisp.textContent = "+ "+pauseAccumText+" pauses";
-                    if (timerAPI) {
-                        timerAPI.send( {
-                            setVariableValues:{
-                                default:secToStr(defaultDuration/1000),
-                                pausing:true,
-                                pauses:pauseAccumText,
-                                paused:'0:00'}} );
-                    }
-                } else {
-                    let pausedMsec = pausedAt ? timeNow-pausedAt : 0;
-                    pausedAt = undefined;
-                    seekEndsAt += pausedMsec;
-                    pauseAcum += pausedMsec;
-                    writeNumber("pausedAt",pausedAt);
-                    writeNumber("pauseAcum",pauseAcum);
-
-                    const pauseAccumText = secToStr(pauseAcum / oneSecond);
-    
-                    extraTimeDisp.textContent = "+ "+pauseAccumText+" pauses";
-             
-                    endsAt = seekEndsAt;
-                    endsDisp.textContent = local24HourTime ( new Date(seekEndsAt) );
-                    if (timerAPI) {
-                        timerAPI.send( {
-                        setVariableValues:{
-                            default:secToStr(defaultDuration/1000),
-                            endsAt:endsDisp.textContent,
-                            pausing:false,
-                            pauses:pauseAccumText,
-                            paused:'0:00'}});
-                    }
-                    
-                }
-                
-                
-                
-                break;
+            case '"': return onKey_Pause(ev);
                 
             case "Tab":  //numkeypad 
-            case "'": 
+            case "'":  return onKey_UndoPause (ev);
                 
-                clearHtmlClass("paused");
-                pausedAt = undefined;
-                pauseAcum = 0;
-                writeNumber("pausedAt",pausedAt);
-                writeNumber("pauseAcum",pauseAcum);
-                extraTimeDisp.textContent = "";
-                
-                seekEndsAt = startedAt + thisDuration;
-                endsAt = seekEndsAt;
-                endsDisp.textContent = local24HourTime( new Date(seekEndsAt) ) ;
-
-                if (timerAPI) {
-                    timerAPI.send ( {
-                        setVariableValues:{
-                            endsAt:endsDisp.textContent,
-                            pauses:'0:00',
-                            paused:'0:00'}} );
-                }
-                    
-                break;
-            
             case ".":
                  if ( (enterTimeText !== "") && (enterTimeText.indexOf(".") <0 ) ) {
                      
@@ -960,74 +1187,56 @@ function onDocKeyDown(ev){
                  }                
                 
                 break;
-                
-            //case "-":    
-            case "ArrowDown" : {
-                
-                //if (controlling && ev.key==="-") break;
-                
-                if (!html.classList.contains("editing") ) {
-                    if (shifting) {
-                        bumpStart(factor);
-                    } else {
-                        bumpEnd(0-seekEndDelta,0-endDelta);
-                    }
-                    durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
-                    displayUpdate();
-                } 
-                else
-                {
-                       
-                }
-                break;
-            }
-
 
             case "q":
             case "Q":
-                if (controlling) {
-                    if (is_nwjs()) {
-                         require('nw.gui').App.quit();
+                    if (controlling) {
+                        onKey_Ctrl_Q(ev);
                     }
-                }
+    
+                    break;
+                
+            
+            case "ArrowDown" : 
+                
+                if (!html.classList.contains("editing") ) {
+                    if (shifting) {
+                        onKey_Shift_ArrowDown(ev)
+                    } else {
+                        onKey_ArrowDown(ev)
+                    }                     
+                } 
 
                 break;
-            
-            //case "+":
-            case "ArrowUp" : {
-                 //if (controlling && ev.key==="+") break;
+           
+            case "ArrowUp" : 
                  
-                 if (!html.classList.contains("editing") ) {
+                if (!html.classList.contains("editing") ) {
                     if (shifting) {
-                       bumpStart(0-factor);
+                        onKey_Shift_ArrowUp(ev)
                     } else {
-                       bumpEnd(seekEndDelta,endDelta);
-                    }
-                    durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
-                    displayUpdate();
-                 }
-                 else {
-                     
-                 }
-                break;
-            }
+                        onKey_ArrowUp(ev)
+                    }                     
+                } 
+                
+                break;            
             
             case "ArrowLeft": 
-                bumpStart(0-factor);
-                bumpEnd(0-seekEndDelta,0-endDelta);
-                
-                durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
-                displayUpdate();
-            
-            break; 
+
+                if (!html.classList.contains("editing") ) {
+                        onKey_ArrowLeft(ev)
+                } 
+                break; 
+
+           
             case "ArrowRight": 
-                bumpStart(factor); 
-                bumpEnd(seekEndDelta,endDelta);
+
+                if (!html.classList.contains("editing") ) {
+                        onKey_ArrowRight(ev)
+                } 
                 
-                durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
-                displayUpdate();
-                
-            break;
+              break;
+
             case "Shift" : {
                 shifting = true; 
                 setHtmlClass("shifting");
@@ -1049,152 +1258,86 @@ function onDocKeyDown(ev){
                 break;  
             case "F":
             case "f":  
-                if (fs_api.isFullscreen()) {
-                    fs_api.exitFullscreen();
-                } else {
-                     fs_api.enterFullscreen();  
-                 } 
+                  if (!controlling) {      
+                     if (fs_api.isFullscreen()) {
+                        fs_api.exitFullscreen();
+                    } else {
+                        fs_api.enterFullscreen();  
+                    } }
                   break;
                   
             case "b":
-            case "B": {
-                const toggledState = html.classList.contains("showbar") ? 0 : 1;
-                html.classList.toggle("showbar");
-                writeNumber("showbar",toggledState);
-                
+            case "B": 
+                if (!controlling) {onKey_B(ev);}
                 break;
-             }
+             
             case "*":// numkey pad use
             case " ":
-                const preserve_default = defaultDuration;
                 
                  if (controlling) {
-                      lastUpdateTick = 0;
-                      endsAt = seekEndsAt;
-                      clearRemainClass("adjusting") ;
-                      clearRemainClass("adjustingDown") ;
-                      keyDisp.textContent = tabCount+" tabs open";
-                      lastTimeText="";
-                      writeNumber("endsAt",endsAt);
+                    onKey_Control_Space(ev);
                  } else {      
-                    saveEditedTime();
-                    
-                    if (shifting)  
-                       extendDefaultToCurrentTimer();
-                    else
-                       restartTimer();
-                       
-                    if (defaultDuration !== preserve_default) {
-                        defaultDuration = preserve_default;
-                        dispNextMins.textContent = secToStr(defaultDuration/1000);
-                        clearHtmlClass("editing");
-                        writeNumber("defaultDuration",defaultDuration);
+                    if (shifting)  {
+                       onKey_Shift_Space(ev);
+                    } else {
+                       onKey_Space(ev);
                     }
-                    
                  }
+
                 break;
                 
             case "m":
             case "M":
-                html.classList.toggle("showmessages");
-                writeNumber("showmessages",html.classList.contains("showmessages") ? 1 : 0);
-                if (togglePIPMode) togglePIPMode.lastContent="";
-                lastTimeText = "";
+                if (!controlling){ onKey_M (ev);}
                 break;
                 
             case "t":
-            case "T": {
-                const toggledState = html.classList.contains("showtimenow") ? 0 : 1;
-                html.classList.toggle("showtimenow");
-                writeNumber("showtimenow",toggledState);
+            case "T": 
+                if (!controlling) {onKey_T(ev) ;}
                 break;
-            }
 
             case "o":
             case "O":
-
-                if (togglePIPMode) togglePIPMode();
+                if (!controlling) {onKey_O (ev);}
                 break;
 
             case "p":
-            case "P":
-                
-                if (window.location.search !== "?presenter" &&  tabCount === 1) {
-                    html.classList.toggle("reduced");
-                    const isPres = html.classList.contains("reduced");
-                    runMode = isPres ? "presenter":"controller";
-
-                    if (timerAPI) {
-                        timerAPI.send(  {setVariableValues:{showpresenter: isPres ? '1' : '0' }});
-                    }
-
-                   
-                    
-        
-            
-                }
-                html.classList[ html.classList.contains("reduced") ? "remove" : "add"]("showbuttons");
+            case "P":                
+                if (!controlling) {onKey_P (ev);}
                 break;
 
             case "s":
             case "S":
                 
-                if (ev.ctrlKey) {
-                    if (stylesheet1_obj) {
-                        if (ev.shiftKey) {
-                            stylesheet1_obj.reset();
-                            if (stylesheet1_obj.editing) {
-                               stylesheet1_obj.editToggle();
-                            }
-                        } else {
-                            stylesheet1_obj.editToggle();
-                        }
+                if (controlling) {
+                   
+                    if (shifting) {
+                        onKey_Control_Shift_S (ev)
+                    } else {
+                        onKey_Control_S (ev)
                     }
-                    ev.preventDefault();
                 
                 } else {
                 
-                    if (window.location.search !== "?presenter" &&  tabCount === 1) {
-                        html.classList.add("reduced");
-                        html.classList.add("showbuttons");
-                        runMode = "presenter";
-                        if (!fs_api.isFullscreen()) {
-                          fs_api.enterFullscreen();  
-                          }
-
-                        if (timerAPI) {
-                            timerAPI.send({setVariableValues:{showpresenter: '1' }});
-                        }
-                    }
+                    onKey_S (ev)
                 }
                 break;
                 
             case "x":
             case "X": // extend current timer to default time
-               extendDefaultToCurrentTimer();
+                if (!controlling) { onKey_X (ev); }
                 break;
                 
             case "c":
             case "C":
-                
-                    
-                html.classList.add("edit_custom_message");
-                html.classList.remove("show_custom_message");
-                custom_message.innerText="custom message";
-                custom_message.contentEditable=true;
-                custom_message.focus();
-                ev.preventDefault();
-                
+                if (!controlling) { onKey_C (ev); }              
                 break;
 
             case "R":
             case "r":
 
                 if (!controlling) {
-                    ev.preventDefault();
-                    if (!isSingleScreenMode() && !(runMode === "presenter" && tabCount===1)) {
-                        openTimerWindow(tabCount>1);
-                    }
+                    onKey_R ( ev ) ;
                 }
                 break;
 
@@ -1253,9 +1396,11 @@ function isSingleScreenMode() {
           }*/
     }
 
-
-    function bumpStart(factor){
-        startedAt += factor;   
+/* 
+add milliseconds to the start time
+ */
+    function bumpStart(milliseconds){
+        startedAt += milliseconds;   
         startedDisp.textContent = local24HourTime( new Date(startedAt) );
         writeNumber("startedAt",startedAt);
         lastTimeText="";

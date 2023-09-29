@@ -2,7 +2,7 @@
 
 function processTimerApiMessage(msg) {
     const { error,cmd, code } = msg ;
-    //console.log(err, cmd, msg, code);
+    //console.log(error, cmd, msg, code);
     switch (cmd) {
 
 

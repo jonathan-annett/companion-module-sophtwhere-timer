@@ -5,7 +5,7 @@ global getInheritedBackgroundColor,getInheritedColor
 function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQry,toplinefont) {
 
     const waitNextFrame =  window.safari ? waitNextFrameSafari : waitNextFrameChrome;
-    const target = document.getElementById(targetId);
+    const target =  createVideoElement( targetId );
     if (!target.requestPictureInPicture) return null;
     
     const content = document.getElementById(sourceId);
@@ -103,3 +103,14 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQ
 
   
 
+function createVideoElement(id) {
+    let el = document.querySelector(`#${id}`);
+    if (!el) {
+        const parentEl = document.createElement('div');
+        parentEl.innerHTML =  `<video id="${id}" muted autoplay></video>`;
+        el = parentEl.querySelector('video');
+        parentEl.removeChild(el);
+        document.body.appendChild(el);
+    }
+    return el;
+}
