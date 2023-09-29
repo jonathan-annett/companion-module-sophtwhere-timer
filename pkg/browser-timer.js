@@ -6,7 +6,7 @@
 
 /*jshint maxerr: 10000 */
 
-/* global fs_api,ace*/
+/* global fs_api,ace,timerAPI*/
 
 
 const oneSecond        = 1000;
@@ -17,8 +17,6 @@ var timerWin;
 
 window.addEventListener ("unload",onControlUnload);
 
- 
-let server_conn;
 
 let doc = document;
 let qs = doc.querySelector.bind(doc);
@@ -355,9 +353,9 @@ custom_message.addEventListener('focus', function(){
              const accumTimeStr = secToStr((pauseAcum+pausedMsec) / oneSecond);
              extraTimeDisp.textContent = "+ "+accumTimeStr+" pauses";
              pausing = true;
-             if (server_conn && lastEndsAtText !== endsDisp.textContent) {
+             if (timerAPI && lastEndsAtText !== endsDisp.textContent) {
                 lastEndsAtText = endsDisp.textContent;
-                server_conn.send(JSON.stringify({
+                timerAPI.send({
                     setVariableValues:{
                         adjusting_up,
                         adjusting_down,
@@ -367,7 +365,7 @@ custom_message.addEventListener('focus', function(){
                         paused:pausedTimeStr,
                         pauses:accumTimeStr,
                         pausing}
-                    }));
+                    });
              }
 
             
@@ -449,8 +447,8 @@ custom_message.addEventListener('focus', function(){
                         setBarPct(100);
                      }
                      localStorage.setItem("remainDisp",timeText);
-                     if (server_conn) {
-                        server_conn.send(JSON.stringify({
+                     if (timerAPI) {
+                        timerAPI.send({
                             setVariableValues:{
                                 adjusting_up,
                                 adjusting_down,
@@ -458,7 +456,7 @@ custom_message.addEventListener('focus', function(){
                                 remain_actual: remain_actual||timeText,
                                 expired,impending,pausing,
                                 remain:timeText,
-                                elapsed:elapsedText}}));
+                                elapsed:elapsedText}});
                      }
 
                   }
@@ -483,7 +481,7 @@ custom_message.addEventListener('focus', function(){
  function replaceStylesheet(el,cb) {
      
      let src = el.href;
-     var xhr = new XMLHttpRequest(),
+     let xhr = new XMLHttpRequest(),
          css = '';//Empty string variable intended for the XMLHttpRequest response data...
 
         function processRequest(){
@@ -610,8 +608,8 @@ custom_message.addEventListener('focus', function(){
     clearHtmlClass("paused");
     setBarPct(0);
 
-    if (server_conn) {
-        server_conn.send(JSON.stringify({
+    if (timerAPI) {
+        timerAPI.send( {
             setVariableValues:{
                 startedAt:startedDisp.textContent,
                 endsAt:endsDisp.textContent,
@@ -622,23 +620,23 @@ custom_message.addEventListener('focus', function(){
                 expired:false,
                 showpresenter: html.classList.contains("reduced") ? '1' : '0',
                 impending:defaultDuration<=60000}
-            }));
+            });
       }
   }
   
   function setPresenterMode() {
       runMode = "presenter";
       html.classList.add("reduced");
-      if (server_conn) {
-        server_conn.send(JSON.stringify({setVariableValues:{showpresenter:  '1' }}));
+      if (timerAPI) {
+        timerAPI.send( {setVariableValues:{showpresenter:  '1' }})   ;
     }
   }
   
   function setControllerMode() {
       runMode = "controller";
       html.classList.remove("reduced");
-      if (server_conn) {
-        server_conn.send(JSON.stringify({setVariableValues:{showpresenter:  '0' }}));
+      if (timerAPI) {
+        timerAPI.send( {setVariableValues:{showpresenter:  '0' }});
     }
   }
  
@@ -858,13 +856,13 @@ function onDocKeyDown(ev){
                     endsAt = seekEndsAt;
                     const pauseAccumText = secToStr(pauseAcum / oneSecond);
                     extraTimeDisp.textContent = "+ "+pauseAccumText+" pauses";
-                    if (server_conn) {
-                        server_conn.send(JSON.stringify({
+                    if (timerAPI) {
+                        timerAPI.send( {
                             setVariableValues:{
                                 default:secToStr(defaultDuration/1000),
                                 pausing:true,
                                 pauses:pauseAccumText,
-                                paused:'0:00'}}));
+                                paused:'0:00'}} );
                     }
                 } else {
                     let pausedMsec = pausedAt ? timeNow-pausedAt : 0;
@@ -880,14 +878,14 @@ function onDocKeyDown(ev){
              
                     endsAt = seekEndsAt;
                     endsDisp.textContent = local24HourTime ( new Date(seekEndsAt) );
-                    if (server_conn) {
-                      server_conn.send(JSON.stringify({
+                    if (timerAPI) {
+                        timerAPI.send( {
                         setVariableValues:{
                             default:secToStr(defaultDuration/1000),
                             endsAt:endsDisp.textContent,
                             pausing:false,
                             pauses:pauseAccumText,
-                            paused:'0:00'}}));
+                            paused:'0:00'}});
                     }
                     
                 }
@@ -910,12 +908,12 @@ function onDocKeyDown(ev){
                 endsAt = seekEndsAt;
                 endsDisp.textContent = local24HourTime( new Date(seekEndsAt) ) ;
 
-                if (server_conn) {
-                    server_conn.send(JSON.stringify({
+                if (timerAPI) {
+                    timerAPI.send ( {
                         setVariableValues:{
                             endsAt:endsDisp.textContent,
                             pauses:'0:00',
-                            paused:'0:00'}}));
+                            paused:'0:00'}} );
                 }
                     
                 break;
@@ -1126,8 +1124,8 @@ function onDocKeyDown(ev){
                     const isPres = html.classList.contains("reduced");
                     runMode = isPres ? "presenter":"controller";
 
-                    if (server_conn) {
-                        server_conn.send(JSON.stringify({setVariableValues:{showpresenter: isPres ? '1' : '0' }}));
+                    if (timerAPI) {
+                        timerAPI.send(  {setVariableValues:{showpresenter: isPres ? '1' : '0' }});
                     }
 
                    
@@ -1164,8 +1162,8 @@ function onDocKeyDown(ev){
                           fs_api.enterFullscreen();  
                           }
 
-                        if (server_conn) {
-                            server_conn.send(JSON.stringify({setVariableValues:{showpresenter: '1' }}));
+                        if (timerAPI) {
+                            timerAPI.send({setVariableValues:{showpresenter: '1' }});
                         }
                     }
                 }
@@ -1229,8 +1227,8 @@ function isSingleScreenMode() {
             clearHtmlClass("editing");
             writeNumber("defaultDuration",defaultDuration);
 
-            if (server_conn) {
-                server_conn.send(JSON.stringify({setVariableValues:{default:dispNextMins.textContent}}));
+            if (timerAPI) {
+                timerAPI.send( {setVariableValues:{default:dispNextMins.textContent}});
             }
 
             
@@ -1261,8 +1259,8 @@ function isSingleScreenMode() {
         startedDisp.textContent = local24HourTime( new Date(startedAt) );
         writeNumber("startedAt",startedAt);
         lastTimeText="";
-        if (server_conn) {
-            server_conn.send(JSON.stringify({setVariableValues:{startedAt:startedDisp.textContent}}));
+        if (timerAPI) {
+            timerAPI.send ({setVariableValues:{startedAt:startedDisp.textContent}});
         }
     }
     
@@ -1275,8 +1273,8 @@ function isSingleScreenMode() {
        endsDisp.textContent    = local24HourTime( new Date(seekEndsAt) );
        writeNumber("seekEndsAt",seekEndsAt);
        lastTimeText="";
-       if (server_conn) {
-        server_conn.send(JSON.stringify({setVariableValues:{endsAt:endsDisp.textContent}}));
+       if (timerAPI) {
+        timerAPI.send( {setVariableValues:{endsAt:endsDisp.textContent}}) ;
        }
    }
 
@@ -1304,10 +1302,10 @@ function isSingleScreenMode() {
           localStorage.setItem(nm,val.toString());
       }
 
-      if (server_conn && ["showtimenow","showmessages","showbar"].indexOf(nm)>=0) {
+      if (timerAPI && ["showtimenow","showmessages","showbar"].indexOf(nm)>=0) {
         const vars = {};
         vars[nm]=val.toString()||'0';
-        server_conn.send(JSON.stringify({setVariableValues:vars})); 
+        timerAPI.send( {setVariableValues:vars} ); 
       }
   }
 
@@ -1386,221 +1384,15 @@ function isSingleScreenMode() {
     } catch (e){
         return false;
     }
-}
+ }
 
 if (
     (runMode !== 'presenter') && 
     (location.protocol === 'http:' && !location.hostname.endsWith('.com')) &&
-    (typeof openLongPollPoster === 'function') ) {
-    restartLongPoll();
+    (typeof startTimerApi === 'function') ) {
+    startTimerApi();
 }
 
-
-function restartLongPoll() {
-
-    getLongPollPosterMode().then(function(useWs){
-        console.log({useWs});
-        if (useWs === 'error' ) {
-            return location.replace(location.href);
-        }
-        html.classList[useWs?'add':'remove']('ws');
-        server_conn = openLongPollPoster( readNumber('lastLongPollId',0),function(message){    
-            const {error,cmd,code} = message;
-            processServerMessage(error,cmd,message,code);    
-            writeNumber('lastLongPollId',server_conn.lastId);
-        },useWs);
-    }); 
-}
-function getHexColor(colorStr) {
-    if (getHexColor.cache) {
-        if (getHexColor.cache[colorStr]!==undefined) {
-            return getHexColor.cache[colorStr];
-        }
-    } else {
-        getHexColor.cache={};
-    }
-    var a = document.createElement('div');
-    a.style.color = colorStr;
-    var colors = window.getComputedStyle( document.body.appendChild(a) ).color.match(/\d+/g).map(function(a){ return parseInt(a,10); });
-    document.body.removeChild(a);
-    getHexColor.cache[colorStr] = (colors.length >= 3) ? '#' + (((1 << 24) + (colors[0] << 16) + (colors[1] << 8) + colors[2]).toString(16).substr(1)) : false;
-    return getHexColor.cache[colorStr];
-}
-function getTimerColors(){
-    if (server_conn) {
-        const msg =  {
-            setTimerColors: {
-    
-            } 
-        };
-        let shouldSend=false;
-        (msg.names||getCustomColorNames()).forEach(function(n){
-            const color = getCustomColor(n);
-            const hexColor = getHexColor(color);
-            const colorName = w3color(color).toName();
-            if (color) {
-                msg.setTimerColors[n]={color,hexColor,colorName};
-                shouldSend=true;
-            }
-        });
-        if (shouldSend) {
-            server_conn.send(JSON.stringify(msg));
-        }
-    }
-}
-
-function processServerMessage(err,cmd,msg,code) {
-    console.log(err,cmd,msg,code);
-    switch (cmd) {
-
-
-        case "keys": {
-            msg.keys.forEach(function(key) {
-                if (key.startsWith('~')) {
-                    onDocKeyUp({key:key.substring(1),preventDefault: function (){}});
-                } else {
-                    onDocKeyDown({key:key,preventDefault: function (){}});
-                }
-               
-            });
-            break;
-        }
-
-        case "adjust" : {
-            if (msg.addtime) {
-                bumpEnd(msg.msecs,msg.msecs);
-            } else { 
-                bumpEnd(0-msg.msecs,0-msg.msecs);
-            }
-            durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
-            displayUpdate();
-            break;
-        }
-
-        case "nudge" : {
-            if (msg.addtime) {
-               bumpEnd(msg.msecs,0); 
-            } else { 
-               bumpEnd(0-msg.msecs,0);
-            }
-            durationDisp.textContent = secToStr((seekEndsAt-startedAt) / 1000);
-            displayUpdate();
-            break;
-        }
-
-        case "customMessage" : {
-                   
-            html.classList.remove("edit_custom_message");
-            html.classList.remove("show_custom_message");
-            custom_message.innerText = msg.text.trim();
-            custom_message.contentEditable=false;
-            
-
-            if (custom_message.innerText.length>0) {
-                html.classList.add("show_custom_message");                    
-            }
-            localStorage.setItem("custom_message",custom_message.innerText);
-            break;
-        }
-
-        case "setTimerColor" : {
-
-            const oldColor = setCustomColor(msg.name,msg.color);
-
-
-            break;
-        }
-
-        case "setTimerColors" : {
-
-            setCustomColors(msg.colors);
-            
-            break;
-        }
-
-        case "getTimerColor" : {
-            if (server_conn&& msg.name) {
-                const msg =  {
-                    setTimerColors: {
-            
-                    } 
-                };
-                const color = getCustomColor(msg.name);
-                if (color) {
-                    msg.setTimerColors[msg.name]=color;
-                    server_conn.send(JSON.stringify(msg));
-                }
-            }
-            break;
-        }
-
-        case "getTimerColors" : {
-            getTimerColors();
-            
-            break;
-        }
-
-        case "redirect" : {
-            if (typeof msg.url ==='number') {
-                const url = new URL(location.href);
-                url.port =  msg.url.toString();
-                msg.url=url.toString();
-            }
-            if (    msg.url && 
-                     ( msg.url.startsWith('/')|| 
-                       msg.url.startsWith(location.origin.replace(/\:.*$/,''))
-                     ) && msg.url !== location.href
-                      
-                    ) {
-                if (msg.delay) {
-                    setTimeout(function(){
-                        location.replace (msg.url);
-                    },msg.delay)
-                } else {
-                    location.replace (msg.url);
-                }
-            }
-            break;
-        }
-
-        case "presenter" : {
-            if (runMode !== "presenter") {
-                location.replace("/?presenter");
-            }
-            break;
-        }
-
-        case "control" : {
-            if (runMode === "presenter") {
-                location.replace("/");
-            }
-            break;
-        }
-
-        case "opened": {
-            if (server_conn) {
-                console.log("sending startup values",dispNextMins.textContent);
-                let pausedMsec = pausedAt ?  Date.now()-pausedAt : 0;
-                 
-                server_conn.send(JSON.stringify({setVariableValues:{
-                    default:secToStr(defaultDuration/1000),
-                    endsAt:endsDisp.textContent,
-                    startedAt:startedDisp.textContent,
-                    showtimenow:localStorage.getItem('showtimenow')||'0',
-                    showbar:localStorage.getItem('showbar')||'0',
-                    showmessages:localStorage.getItem('showmessages')||'0',
-                    paused: secToStr(pausedMsec / 1000),
-                    pauses: secToStr((pausedMsec+pauseAcum) / 1000),
-                }}));
-                lastTimeText="";
-                if (togglePIPMode) togglePIPMode.lastContent = "";
-                getTimerColors();
-            }
-
-            break;
-        }
-    }
-} 
 
 function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQry,toplinefont) {
 
@@ -1703,43 +1495,43 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQ
 
   function getInheritedBackgroundColor(el) {
     // get default style for current browser
-    var defaultStyle = getDefaultBackground() // typically "rgba(0, 0, 0, 0)"
+    const defaultStyle = getDefaultBackground(); // typically "rgba(0, 0, 0, 0)"
     
     // get computed color for el
-    var backgroundColor = window.getComputedStyle(el).backgroundColor
+    const backgroundColor = window.getComputedStyle(el).backgroundColor;
     
     // if we got a real value, return it
-    if (backgroundColor != defaultStyle) return backgroundColor
+    if (backgroundColor != defaultStyle) return backgroundColor;
   
     // if we've reached the top parent el without getting an explicit color, return default
-    if (!el.parentElement) return defaultStyle
+    if (!el.parentElement) return defaultStyle;
     
     // otherwise, recurse and try again on parent element
-    return getInheritedBackgroundColor(el.parentElement)
+    return getInheritedBackgroundColor(el.parentElement);
   }
   
   function getDefaultBackground() {
     // have to add to the document in order to use getComputedStyle
-    var div = document.createElement("div")
-    document.head.appendChild(div)
-    var bg = window.getComputedStyle(div).backgroundColor
-    document.head.removeChild(div)
-    return bg
+    const div = document.createElement("div");
+    document.head.appendChild(div);
+    const bg = window.getComputedStyle(div).backgroundColor;
+    document.head.removeChild(div);
+    return bg;
   }
 
 
   function getInheritedColor(el) {
     // get default style for current browser
-    var defaultStyle = getDefaultColor() // typically "rgba(0, 0, 0, 0)"
+    const defaultStyle = getDefaultColor(); // typically "rgba(0, 0, 0, 0)"
     
     // get computed color for el
-    var color = window.getComputedStyle(el).color
+    const color = window.getComputedStyle(el).color;
     
     // if we got a real value, return it
-    if (color != defaultStyle) return color
+    if (color != defaultStyle) return color;
   
     // if we've reached the top parent el without getting an explicit color, return default
-    if (!el.parentElement) return defaultStyle
+    if (!el.parentElement) return defaultStyle;
     
     // otherwise, recurse and try again on parent element
     return getInheritedColor(el.parentElement);
@@ -1747,102 +1539,12 @@ function setupPip(sourceId,targetId,width,height,font,fgQuery,htmlClass,toplineQ
   
   function getDefaultColor() {
     // have to add to the document in order to use getComputedStyle
-    var div = document.createElement("div")
-    document.head.appendChild(div)
-    var bg = window.getComputedStyle(div).color
-    document.head.removeChild(div)
-    return bg
+    const div = document.createElement("div");
+    document.head.appendChild(div);
+    const bg = window.getComputedStyle(div).color;
+    document.head.removeChild(div);
+    return bg;
   }
 
 
-  function getCustomColor(name) {
-    return window.getComputedStyle(document.documentElement).getPropertyValue(`--color-${name}`);
-  }
-
-  function setCustomColor(name,newColor,notify) {
-   
-     let shouldSend = false;
-
-     const current =  getCustomColor(name);
-     if (current==='') return null;
-     if (current===newColor) return false;
-     document.documentElement.style.setProperty(`--color-${name}`, newColor);
-
-    if (notify!==false && server_conn) {
-        const msg = {
-            setTimerColors: {
-    
-            } 
-        };
-
-        msg.setTimerColors[name] = newColor;
-        server_conn.send(JSON.stringify(msg));
-    }
-
-     return current;
-  }
-
-  function getCustomColorNames() {
-    return Array.from(document.styleSheets)
-    .filter(
-      sheet =>
-        sheet.href === null || sheet.href.startsWith(window.location.origin)
-    )
-    .reduce(
-      (acc, sheet) =>
-        (acc = [
-          ...acc,
-          ...Array.from(sheet.cssRules).reduce(
-            (def, rule) =>
-              (def =
-                rule.selectorText === ":root"
-                  ? [
-                      ...def,
-                      ...Array.from(rule.style).filter(name =>
-                        name.startsWith("--")
-                      )
-                    ]
-                  : def),
-            []
-          )
-        ]),
-      []
-    ).map(function(n){
-        return n.replace(/^--color-/,'');
-    });
-  }
-
-  function getCustomColors (names) {
-    const result = {};
-    (names||getCustomColorNames()).forEach(function(n){
-        result[n]=getCustomColor(n);
-    });
-    return result;
-  }
-
-  function setCustomColors(colors,notify) {
-    const changed = {};
-    const msg = notify!==false && server_conn ? {
-        setTimerColors: {
-
-        } 
-    }: false;
-    let shouldSend = false;
-    Object.keys(colors).forEach(function(n){
-        const newColor = colors[n];
-        const was =  setCustomColor(n,newColor,false);
-        if (was) {
-            changed[n]=was;
-            if (msg) {
-                msg.setTimerColors[n] = newColor;
-                shouldSend=true;
-            }
-        }
-    });
-
-    if (shouldSend) {
-        server_conn.send(JSON.stringify(msg));
-     }
-
-    return changed;
-  }
+ 

@@ -64,10 +64,19 @@ class ModuleInstance extends InstanceBase {
 				}
 			});
 
+			let saveNeeded=false;
+
 			ip_list.forEach(function (ip) {
 				const key = `iface_${ip.replace(/\./g, '_')}`;
-				if (typeof config[key] === 'undefined') config[key] = true;
+				if (typeof config[key] === 'undefined') { 
+					config[key] = ip==='127.0.0.1';
+					saveNeeded=true;
+				}
 			});
+
+			if (saveNeeded) {
+				self.saveConfig();
+			}
 
 			
 
@@ -167,9 +176,11 @@ class ModuleInstance extends InstanceBase {
 	get_ips_enabled(asHost) {
 		const config = this.config;
 		const iface_enabled = {};
+		iface_enabled[asHost ? `127.0.0.1:${config.port}` : '127.0.0.1'] = true;
 		if (config && api.ip_list) {
 			api.ip_list.forEach(function (ip, ix) {
-				if (config[`iface_${ip.replace(/\./g, '_')}`]) {
+				const en = config[`iface_${ip.replace(/\./g, '_')}`];
+				if (en || (en===undefined && ip==='127.0.0.1')) {
 					iface_enabled[asHost ? `${ip}:${config.port}` : ip] = true;
 				}
 			});

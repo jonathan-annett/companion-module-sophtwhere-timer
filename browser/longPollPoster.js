@@ -1,18 +1,17 @@
-/* 
-
- const connection = openLongPollPoster(function(message){
-    
-    // message = message from server, parsed json object as sent by server
-
-    connection.send({hello:"hi there server"});
+/*global processServerMessage,writeNumber*/
+ 
+let server_conn;
 
 
+window.timerAPI = { 
+    send : sendTimerApiMessage
+};
 
- });
-
-
-
-*/
+function sendTimerApiMessage( msg ) {
+    if (server_conn) {
+        server_conn.send(JSON.stringify(msg));
+    }
+}
 
 function openLongPollPoster(lastId,cb,useWs) {
     lastId = lastId || 0;
@@ -252,3 +251,19 @@ function getLongPollPosterMode() {
     });
 }
 
+
+function startTimerApi() {
+
+    getLongPollPosterMode().then(function(useWs){
+        console.log({useWs});
+        if (useWs === 'error' ) {
+            return location.replace(location.href);
+        }
+        html.classList[useWs?'add':'remove']('ws');
+        server_conn = openLongPollPoster( readNumber('lastLongPollId',0),function(message){    
+            const {error,cmd,code} = message;
+            processTimerApiMessage(error,cmd,message,code);    
+            writeNumber('lastLongPollId',server_conn.lastId);
+        },useWs);
+    }); 
+}
