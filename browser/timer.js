@@ -15,6 +15,19 @@ const skip_granularity = 15 * oneSecond;
 
 var timerWin;
 
+if (
+    (!!window.opener &&
+         ["timer_control_window","remote_timer_window"].indexOf(window.name)>=0
+    ) // companion / local hosted mode 
+         ||
+    (window.location.protocol==="https:") // hosted single page mode
+   ) {
+    console.log("page load mode confirmed",document.referrer,location.origin);
+} else {
+    location.replace(location.origin);
+}
+
+
 window.addEventListener ("unload",onControlUnload);
 
 

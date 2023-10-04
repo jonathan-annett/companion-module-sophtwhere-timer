@@ -36,7 +36,9 @@ function getBrowserFiles(srcpath,aliases) {
         if ( ext === 'require' ) {
             const require_inject = JSON.parse(fs.readFileSync(fn_read_path,'utf8'));
             fn =  Object.keys(require_inject)[0];
-            fn_read_path = require.resolve(require_inject[fn]);
+            const req = require_inject[fn];
+            fn_read_path = typeof req==='string' ? require.resolve(req) : path.join( path.dirname( require.resolve(req.require)), req.resolve) ;
+           // fn_read_path = require.resolve(require_inject[fn]);
             const uri = filtered ? '/' + fn.substring(filtered.length) : '/' + fn ; 
             console.log({fn,ext,fn_read_path,uri});
             content[uri] = function(request,response) {

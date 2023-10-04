@@ -290,7 +290,7 @@ class ModuleInstance extends InstanceBase {
 					value:
 
 						iface_enabled[ip] ?
-							`<a href="http://${ip}:${HTTP_PORT}" target="_blank" rel="noopener">http://${ip}:${HTTP_PORT}</a>`
+							`<a href="http://${ip}:${HTTP_PORT}" target="timer_control_boot" rel="noopener">http://${ip}:${HTTP_PORT}</a>`
 							: `<s>http://${ip}:${HTTP_PORT}</s> is disabled`
 				};
 				return cfg;

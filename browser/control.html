@@ -10,12 +10,18 @@
     <script>
 
         function openTimerWindow() {
-            open("timer.html", 'timer_control_window', "location=0");
+            if (window.name!=="timer_control_boot") {
+                window.open(location.href,"timer_control_boot");
+            } else {
+                window.open("timer.html", 'timer_control_window');
+            }
         }
 
+       
+            document.body.onclick = openTimerWindow;
+            document.body.onkeydown = openTimerWindow;
 
-        document.body.onclick = openTimerWindow;
-        document.body.onkeydown = openTimerWindow;
+       
 
     </script>
 
