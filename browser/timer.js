@@ -82,6 +82,8 @@ let runMode = "controller";
 
 let togglePIPMode ;
 
+const isLinked = window.location.search.indexOf("&linked")>0;
+
   if (window.location.search.startsWith("?presenter")) {
 
       html.classList.add("reduced");
@@ -324,7 +326,7 @@ custom_message.addEventListener('focus', function(){
             }  
       } 
       
-      if (runMode==="controller" || tabCount=== 1 ) {
+      if ((runMode==="controller" || tabCount=== 1) && !isLinked ) {
          
          let pausedMsec = pausedAt ? timeNow-pausedAt : 0;
           

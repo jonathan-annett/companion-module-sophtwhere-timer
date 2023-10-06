@@ -1,0 +1,17 @@
+<html><head><style>body {
+			background : black;
+			color : white;
+		}</style></head><body><h1>Linking...</h1><input value=""> <button disabled=disabled>download</button><script>try {
+				const base64=location.search.replace(/^\?/,'');
+				const json = atob(base64);
+				const data = JSON.parse(json);
+				localStorage.setItem('linked-peer-data',base64);
+			} catch (e) {
+				alert (e);
+			}
+			
+			window.onstorage = function(ev) {
+			    if (ev.key==="linked-peer-data" && !ev.newValue) {
+			        document.querySelector('h1').innerHTML = "Linked... you can close this tab now";
+			    }
+			};</script></body></html>
