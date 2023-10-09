@@ -60,9 +60,7 @@ let endsDisp     = getEl("ends_disp");
 
 let remainInfoDisp = getEl("remain_info_message");
 
-
 let custom_message  = getEl("custom_message");
-
 
 let durationDisp = getEl("duration_disp");
 let extraTimeDisp = getEl("extra_time_disp");
@@ -82,7 +80,9 @@ let runMode = "controller";
 
 let togglePIPMode ;
 
-const isLinked = window.location.search.indexOf("&linked")>0;
+
+
+const isLinked = false;//window.location.search.indexOf("&linked")>0;
 
   if (window.location.search.startsWith("?presenter")) {
 
@@ -131,7 +131,12 @@ let lastTimeText   = "";
 let lastEndsAtText = "";
 let enterTimeText  = "";
 let enterHoursText = "";
+
+
 window.tab_id = "tab_"+Date.now().toString(); 
+var controller_tab_id = "controller_"+tab_id;
+const updateTabTick = hysteresisWrap(doUpdateTabTick,500); 
+
 
 custom_message.addEventListener('focus', function(){
   setTimeout(function(){
@@ -204,6 +209,8 @@ custom_message.addEventListener('focus', function(){
   }
 
   dispNextMins.textContent = secToStr( defaultDuration / oneSecond );
+
+
   
   setInterval(displayUpdate,100);
   doc.addEventListener("keyup",onDocKeyUp);
@@ -751,17 +758,35 @@ function onLocalStorage(ev){
       }
 }
 
+function doUpdateTabTick(tickNow) {
+   
+    writeNumber (tab_id,tickNow);
+    if (runMode==="controller") {
+        writeNumber (controller_tab_id,tickNow);
+    } else {
+       localStorage.removeItem (controller_tab_id);
+    }
+}
+
+function hysteresisWrap(fn,msec) {
+    let last = null;
+    
+    return function () {
+        const tickNow = Date.now();
+        if (last && last+msec>tickNow) {
+            return;
+        }
+        last = tickNow;
+        fn(tickNow);
+    };
+}
+
 function getTabCount(cont) {
     let dead = [];
     let count=1,tickNow = Date.now(),oldest=tickNow - 3000;
    
     if (!cont) { 
-        writeNumber (tab_id,tickNow);
-        if (runMode==="controller") {
-            writeNumber ("controller_"+tab_id,tickNow);
-        } else {
-           localStorage.removeItem ("controller_"+tab_id);
-        }
+        updateTabTick()
     }
     
     for (let i=0; i< localStorage.length; i++) {
@@ -1546,7 +1571,7 @@ add milliseconds to the start time
         timerWin = undefined;
      }
      localStorage.removeItem (tab_id);
-     localStorage.removeItem ("controller_"+tab_id);
+     localStorage.removeItem (controller_tab_id);
   }
   
 

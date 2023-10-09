@@ -1,7 +1,6 @@
 
 <html>
-	
-	
+		
 	<head>
 		<style>
 			
@@ -10,7 +9,7 @@
 				color : white;
 			}
 		</style>
-
+		<script src="urlObjEncode.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" integrity="sha512-csNcFYJniKjJxRWRV1R7fvnXrycHP6qDR21mgz1ZP55xY5d+aHLfo9/FcGDQLfn2IfngbAHd8LdfsagcCqgTcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.11.1/simplepeer.min.js" integrity="sha512-0f7Ahsuvr+/P2btTY4mZIw9Vl23lS6LY/Y7amdkmUg2dqsUF+cTe4QjWvj/NIBHJoGksOiqndKQuI9yzn2hB0g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	</head>
@@ -20,173 +19,8 @@
 			Establishing WEB rtc connection data...
 		</h1>
 		<input type="text" value="" style="width:50vw;">
-		<button disabled>download</button><button disabled>Copy</button>
-		<script>
-		
-			const validKeys = [
-				"endsAt",
-				"barpct",
-				"showtimenow",
-				"remainDisp",
-				"defaultDuration",
-				"logo",
-				"custom_message",
-				"showbar",
-				"seekEndsAt",
-				"remainDispClass",
-				"pauseAcum",
-				"showmessages",
-				"elapsedDisp",
-				"intercom",
-				"startedAt"];
-		
-			var peer = new SimplePeer({ initiator: true,trickle:false });
-			const [button,button2] = [].slice.call(document.querySelectorAll('button'));
-			const h1 = document.querySelector('h1');
-			
-			var timerWin;
-			
-			
-			const loopbackId = Math.random().toString();
-			localStorage.setItem('linked-peer-id',loopbackId);
-			peer.on('signal', function(data) {
-			  // when peer1 has signaling data, give it to peer2 somehow
-			  const json = JSON.stringify({signal:data,id:loopbackId});
-			  const url  = location.origin+'/webrtcRemote.html?'+btoa(json);
-			  document.querySelector('input').value=url;
-			  window.onstorage=waitStoragePeerData;
-			  
-			  const blob = new Blob ([ '[InternetShortcut]\nURL='+url] );
-			
-			  button.onclick = function(){
-				  saveAs(blob,'linked.url');
-				  button.onclick = null;
-				  button.disabled = true;
-			  };
-			  
-			  
-			  button2.onclick = function() {
-				  var copyText = document.querySelector("input");
-				
-				  // Select the text field
-				  copyText.select();
-				  copyText.setSelectionRange(0, 99999); // For mobile devices
-				
-				   // Copy the text inside the text field
-				  navigator.clipboard.writeText(copyText.value);
-				  button2.disabled = true;
-			  };
-			  button.disabled = false;
-			  button2.disabled = false;
-			  
-			  h1.innerHTML="Open this link on the OTHER computer, and keep this tab open.";
-			
-			  
-			});
-			
-			peer.on('connect', () => {
-			  
-			  document.querySelector('input').hidden = true;
-			  button.hidden=true;
-
-			  h1.innerHTML='WebRTC Link Established';
-			  
-			  localStorage.removeItem("linked-peer-data");
-			  localStorage.removeItem("linked-peer-id");
-			  
-			  
-			  const payload = {storage:{}};
-			  
-			  validKeys.forEach(function(k){
-				  const val = localStorage.getItem(k);
-				  if (val) {
-					payload.storage[k] = val;
-				  }
-			  })
-			  
-			  peer.send(JSON.stringify(payload));
-			  console.log({out:payload});
-			  
-			  window.onstorage=relayToPeer;
-
-			  button2.onclick = function(){
-				  openTimerWindow(false)
-				  button2.disabled = true;
-				  setTimeout(function(){
-					  const payload = {ready:true};
-			  
-					peer.send(JSON.stringify(payload));
-					console.log({out:payload});
-					h1.innerHTML='Timer window opened - keep this tab open to maintain the WebRTC link';
-			  
-				  },1000);
-			  };
-			  button2.innerHTML = "open timer";
-			  button2.disabled = false;
-
-			})
-			
-			
-			peer.on('close',function(){
-				location.replace(location.href);
-		
-			});
-
-			peer.on('error',function(){
-				location.replace(location.href);
-			
-			});
-			
-			
-			function waitStoragePeerData(ev) {
-				if (ev.key==="linked-peer-data") {
-					const json = atob(ev.newValue);
-					try {
-						const data = JSON.parse(json);
-						window.onstorage=null;
-						peer.signal(data);
-					} catch (e) {
-						alert (e);
-					}
-				}
-			}
-			
-			function relayToPeer (ev) {
-				  if (validKeys.indexOf(ev.key)>=0) {
-					  
-					  const payload = {storage:{}};
-					  payload.storage[ev.key]=ev.newValue;
-					  peer.send(JSON.stringify(payload));
-					  console.log({out:payload});
-			   
-
-				  } 
-			}
-			
-			function openTimerWindow(close) {
-				if (close===true) {
-				   if (timerWin) timerWin.close();
-				   if (window.opener) window.close();
-				   timerWin = undefined;
-				} else {
-				   timerWin = open("timer.html", 'timer_control_window');
-				   if (timerWin) {
-					  timerWin.addEventListener ("load",function(){
-						  console.log("timer win loaded");
-						  timerWin.addEventListener ("unload",onTimerWinUnload);
-					  });
-				   }
-				}
-				return false;
-			}
-			
-			function onTimerWinUnload() {
-				timerWin = undefined;
-				button2.disabled = false;
-			}
-		  
-
-
-		</script>
+		<button disabled>download</button><button disabled>Copy</button><button disabled>Paste</button>
+		<script defer src="webrtc.js"></script>
 	</body>
-</html>
+
+</html>1

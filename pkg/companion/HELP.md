@@ -7,6 +7,7 @@ This connection enables a countdown timer on your computer, which you display us
 
 Open the timer controller screen using a link from the "<a href="/connections" target="_blank" rel="noopener">Edit Connection</a>" page for the timer instance
 
+latest beta download link is [here](https://github.com/jonathan-annett/companion-module-sophtwhere-timer/tree/main/dist)
 
 Keys used in the browser
 ---

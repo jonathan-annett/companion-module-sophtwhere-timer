@@ -3,22 +3,53 @@
 <head>
     <style>
         @import url("timer.css");
+        div {
+            position: absolute;
+            top: 47.5vh;
+            left : 0;
+            width : 100vw;
+            height : 5vh;
+            text-align: center;
+            font-size:5vh;
+        }
+
+        span {
+            position: absolute;
+            bottom :0;
+            width : 100vw;
+            text-align: center;
+            font-size:2.5vh;
+        }
     </style>
+
 </head>
 
 <body>
+   <div>
+        Press any key or click here to open timer remote view mode
+   </div>
+
+   <span>
+      Pro tip - press F11 twice to quickly get to full screen mode
+   </span>
     <script>
 
+        if (window.name!=="remote_timer_boot") {
+            window.name = "remote_timer_boot";
+            location.replace(location.href);
+        } else {
+            document.body.onclick = openTimerWindow;
+            document.body.onkeydown = openTimerWindow;
+        }
+        
         function openTimerWindow() {
             open("timer.html?presenter", 'remote_timer_window', "location=0");
         }
-  
-        document.body.onclick = openTimerWindow;
-        document.body.onkeydown = openTimerWindow;
-
+    
     </script>
 
-    Press any key or click here to timer remote view window
+   
 </body>
 
 </html>
+

@@ -1,7 +1,6 @@
 
 <html>
 	
-	
 	<head>
 		<style>
 			
@@ -10,6 +9,7 @@
 				color : white;
 			}
 		</style>
+		<script src="urlObjEncode.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js" integrity="sha512-csNcFYJniKjJxRWRV1R7fvnXrycHP6qDR21mgz1ZP55xY5d+aHLfo9/FcGDQLfn2IfngbAHd8LdfsagcCqgTcQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.11.1/simplepeer.min.js" integrity="sha512-0f7Ahsuvr+/P2btTY4mZIw9Vl23lS6LY/Y7amdkmUg2dqsUF+cTe4QjWvj/NIBHJoGksOiqndKQuI9yzn2hB0g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	</head>
@@ -19,138 +19,8 @@
 			Establishing WEB rtc connection data...
 		</h1>
 		<input type="text" value="" style="width:50vw;">
-		<button disabled>download</button><button disabled>Copy</button>
-		<script>
-			var peer = new SimplePeer({ initiator: false,trickle:false });
-			const [button,button2] = [].slice.call(document.querySelectorAll('button'));
-			const h1 = document.querySelector('h1');
-			
-			
-			var timerWin;
-			
-			
-			peer.on('signal', function(data) {
-			  // when peer1 has signaling data, give it to peer2 somehow
-			  const json = JSON.stringify(data);
-			  const url  = location.origin+'/webrtcSignal.html?'+btoa(json);
-			  document.querySelector('input').value=url;
-
-			  const blob = new Blob ([ '[InternetShortcut]\nURL='+url] );
-			
-			  button.onclick = function(){
-				  saveAs(blob,'link.url');
-				  button.onclick = null;
-				  button.disabled = true;
-			  };
-			  button2.disabled = false;
-			  
-			  button2.onclick = function() {
-				  var copyText = document.querySelector("input");
-				
-				  // Select the text field
-				  copyText.select();
-				  copyText.setSelectionRange(0, 99999); // For mobile devices
-				
-				   // Copy the text inside the text field
-				  navigator.clipboard.writeText(copyText.value);
-				  button2.disabled = true;
-			  }
-
-			  button.disabled = false;
-			  button2.disabled = false;
-			  
-			  h1.innerHTML="Open this link in a new tab, on the OTHER computer. (keep this tab open)";
-				
-			  
-			});
-			
-			peer.on('connect',function(){
-				document.querySelector('input').hidden = true;
-				button.hidden=true;
-				button2.hidden=true;
-				h1.innerHTML="Link established";
-	
-			 })
-			
-			peer.on('data',function(json){
-			   try {
-				   const msg = JSON.parse(json);
-				   console.log({in:msg});
-				   if (msg.storage) {
-					   Object.keys(msg.storage).forEach(function(k){
-						   const v= msg.storage[k];
-						   localStorage.setItem(k,v);
-						   console.log(k,'--->',v);
-					   });
-				   } else {
-					   if (msg.ready) {
-									   
-						   button2.onclick = function(){
-							   openTimerWindow(false)
-							   button2.disabled = true;
-							   h1.innerHTML='Timer window opened - keep this tab open to maintain the WebRTC link';
-			  
-						   };
-						   button2.innerHTML = "open timer";
-						   button2.disabled = false;
-						   button2.hidden=false;
-					   }
-				   }	   
-			   } catch (e) {
-				   console.log(e);
-			   }
-			
-			});
-			
-			peer.on('close',function(){
-				document.querySelector('input').hidden = true;
-				button.hidden=true;
-				button2.hidden=true;
-				h1.innerHTML="WebRTC Link is Closed";
-		
-			});
-			
-			peer.on('error',function(err){
-				document.querySelector('input').hidden = true;
-				button.hidden=true;
-				button2.hidden=true;
-				h1.innerHTML="WebRTC Link is Closed:"+String(err);
-			
-			});
-			
-			try {
-				const json = atob(location.search.replace(/^\?/,''));
-				const data = JSON.parse(json);
-				window.onstorage=null;
-				if (localStorage.getItem('linked-peer-id')===data.id) {
-					h1.innerHTML="Link opened on same system - ignored"
-				} else {
-					peer.signal(data.signal);
-				}
-			} catch (e) {
-				alert (e);
-			}
-			
-			function openTimerWindow(close) {
-				if (close===true) {
-				   if (timerWin) timerWin.close();
-				   if (window.opener) window.close();
-				   timerWin = undefined;
-				} else {
-				   timerWin = open("timer.html?presenter&linked", 'remote_timer_window', "location=0");
-				   if (timerWin) {
-					  timerWin.addEventListener ("load",function(){
-						  console.log("timer win loaded");
-						  timerWin.addEventListener ("unload",onTimerWinUnload);
-					  });
-				   }
-				}
-				return false;
-			}
-		  
-
-		
-			
-		</script>
+		<button disabled>download</button><button disabled>Copy</button><button disabled>Paste</button>
+		<script defer src="webrtcRemote.js"></script>
 	</body>
+
 </html>

@@ -1,11 +1,27 @@
-<html class=launcher><head><style>@import url("timer.css");</style></head><body><script>function openTimerWindow() {
-            if (window.name!=="timer_control_boot") {
-                window.open(location.href,"timer_control_boot");
-            } else {
-                window.open("timer.html", 'timer_control_window');
-            }
+<html class=launcher><head><style>@import url("timer.css");
+        div {
+            position: absolute;
+            top: 47.5vh;
+            left : 0;
+            width : 100vw;
+            height : 5vh;
+            text-align: center;
+            font-size:5vh;
         }
 
-       
+        span {
+            position: absolute;
+            bottom :0;
+            width : 100vw;
+            text-align: center;
+            font-size:2.5vh;
+        }</style></head><body><div>Press any key or click here to open timer control screen</div><span>Pro tip - press F11 twice to quickly get to full screen mode</span><script>if (window.name!=="timer_control_boot") {
+            window.name = "timer_control_boot";
+            location.replace(location.href);
+        } else {
             document.body.onclick = openTimerWindow;
-            document.body.onkeydown = openTimerWindow;</script>Press any key or click here to open timer control screen</body></html>
+            document.body.onkeydown = openTimerWindow;
+        }
+        function openTimerWindow() {
+            window.open("timer.html", 'timer_control_window');
+        }</script></body></html>

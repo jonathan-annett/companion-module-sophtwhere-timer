@@ -9,6 +9,7 @@ const aliases_ = {
     '/edit'       : '/event-edit.html',
     '/timer'      : '/timer.html',
     '/index.html' : '/timer.html',
+    '/webrtc'     : '/webrtc.html'
 };  
 
 const ctype = {
