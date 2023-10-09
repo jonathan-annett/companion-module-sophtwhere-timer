@@ -1,8 +1,8 @@
 <html class="launcher">
 
 <head>
+    <link rel="stylesheet" href="timer.css">
     <style>
-        @import url("timer.css");
         div {
             position: absolute;
             top: 47.5vh;
@@ -41,7 +41,7 @@
             document.body.onclick = openTimerWindow;
             document.body.onkeydown = openTimerWindow;
         }
-        
+
         function openTimerWindow() {
             open("timer.html?presenter", 'remote_timer_window', "location=0");
         }

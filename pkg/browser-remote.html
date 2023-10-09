@@ -1,5 +1,4 @@
-<html class=launcher><head><style>@import url("timer.css");
-        div {
+<html class=launcher><head><link rel=stylesheet href=timer.min.css><style>div {
             position: absolute;
             top: 47.5vh;
             left : 0;
@@ -22,7 +21,7 @@
             document.body.onclick = openTimerWindow;
             document.body.onkeydown = openTimerWindow;
         }
-        
+
         function openTimerWindow() {
             open("timer.html?presenter", 'remote_timer_window', "location=0");
         }</script></body></html>
