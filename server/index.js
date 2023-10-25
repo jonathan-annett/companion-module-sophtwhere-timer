@@ -100,14 +100,23 @@ function api_config(self,config,enabledIps) {
 
                     if ( msg.setVariableValues ) {
                             module.exports.api.setVariableValues( msg.setVariableValues );
-                            browserControlId = msg.browserId;
+                            if (msg.browserId) {
+                                browserControlId = msg.browserId;
+                            }
                     } else {
                         if (msg.setTimerColors) {
                         
                             module.exports.api.updateTimerColors (msg.setTimerColors);
-
+                            if (msg.browserId) {
+                                browserControlId = msg.browserId;
+                            }
                         } else {
-                            console.log("unhandled message:",msg,typeof msg);
+                            if (msg.controlClosed) {
+                                console.log("control browser closed",browserControlId);
+                                browserControlId = undefined;
+                            } else {
+                                console.log("unhandled message:",msg,typeof msg);
+                            }
                         }
                     }
 
@@ -132,7 +141,10 @@ function api_config(self,config,enabledIps) {
                         }
                         return response.end();
                     } else {
-                        if (req_uri === "/remote" ) {
+                        if (req_uri === "/remote" || req_uri === "/control" ) {
+                            // requests for control or remote from a browser/pc that's not in control are linked
+                            // this means only 1 pc is ever "in control". linked browsers still receive messages
+                            // but dont't keep time for the others (they interally keep time, or respond to localStorage messages if running in presenter mode)
                             if ((request.browserId !== browserControlId) && browserControlId) {
                                 response.writeHead(301, { "Location": "/linked" });
                                 return response.end();
@@ -140,7 +152,6 @@ function api_config(self,config,enabledIps) {
                         }
                     }
                    
-
                     const handler = content [req_uri];
 
                     if (handler) {

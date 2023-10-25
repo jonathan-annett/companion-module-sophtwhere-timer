@@ -1566,12 +1566,17 @@ add milliseconds to the start time
   }
   
   function onControlUnload () {
+    if (timerAPI && !isLinked) {
+        timerAPI.send({
+            controlClosed:true
+        });
+     }
      if (timerWin) {
         timerWin.close();
         timerWin = undefined;
      }
      localStorage.removeItem (tab_id);
-     localStorage.removeItem (controller_tab_id);
+     localStorage.removeItem (controller_tab_id);    
   }
 
   function is_nwjs(){
