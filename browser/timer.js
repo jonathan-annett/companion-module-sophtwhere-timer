@@ -82,7 +82,7 @@ let togglePIPMode ;
 
 
 
-const isLinked = false;//window.location.search.indexOf("&linked")>0;
+const isLinked = (window.location.search.indexOf("&linked")>=0)||(window.location.search.indexOf("?linked")>=0);
 
   if (window.location.search.startsWith("?presenter")) {
 
@@ -333,7 +333,7 @@ custom_message.addEventListener('focus', function(){
             }  
       } 
       
-      if ((runMode==="controller" || tabCount=== 1) && !isLinked ) {
+      if ( runMode==="controller" || tabCount=== 1 ) {
          
          let pausedMsec = pausedAt ? timeNow-pausedAt : 0;
           
@@ -389,7 +389,7 @@ custom_message.addEventListener('focus', function(){
              const accumTimeStr = secToStr((pauseAcum+pausedMsec) / oneSecond);
              extraTimeDisp.textContent = "+ "+accumTimeStr+" pauses";
              pausing = true;
-             if (timerAPI && lastEndsAtText !== endsDisp.textContent) {
+             if (timerAPI && lastEndsAtText !== endsDisp.textContent  && !isLinked) {
                 lastEndsAtText = endsDisp.textContent;
                 timerAPI.send({
                     setVariableValues:{
@@ -483,7 +483,7 @@ custom_message.addEventListener('focus', function(){
                         setBarPct(100);
                      }
                      localStorage.setItem("remainDisp",timeText);
-                     if (timerAPI) {
+                     if (timerAPI && !isLinked) {
                         timerAPI.send({
                             setVariableValues:{
                                 adjusting_up,
@@ -1573,7 +1573,6 @@ add milliseconds to the start time
      localStorage.removeItem (tab_id);
      localStorage.removeItem (controller_tab_id);
   }
-  
 
   function is_nwjs(){
     try{

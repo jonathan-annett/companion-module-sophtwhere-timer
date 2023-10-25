@@ -37,6 +37,8 @@ function api_config(self,config,enabledIps) {
             const restartURL = server && server.last_port === HTTP_PORT ? "/" : Number(HTTP_PORT); 
             console.log({HTTP_PORT,restartURL,last: server ? server.last_port : '?'});
 
+            let browserControlId;
+
             let redirect_host;
             const hosts = Object.keys(enabledIps).map(function(x){
                 const this_ip = x.split(':')[0]
@@ -98,6 +100,7 @@ function api_config(self,config,enabledIps) {
 
                     if ( msg.setVariableValues ) {
                             module.exports.api.setVariableValues( msg.setVariableValues );
+                            browserControlId = msg.browserId;
                     } else {
                         if (msg.setTimerColors) {
                         
@@ -116,7 +119,30 @@ function api_config(self,config,enabledIps) {
                         return;
                     }
 
-                    const handler = content [request.url.split('?')[0]];
+                    let req_uri = request.url.split('?')[0];
+
+            
+                    if (req_uri === "/" ) {
+                      
+
+                        if ((request.browserId === browserControlId) || !browserControlId) {
+                            response.writeHead(301, { "Location": "/control" });
+                        } else {
+                            response.writeHead(301, { "Location": "/linked" });
+                        }
+                        return response.end();
+                    } else {
+                        if (req_uri === "/remote" ) {
+                            if ((request.browserId !== browserControlId) && browserControlId) {
+                                response.writeHead(301, { "Location": "/linked" });
+                                return response.end();
+                            }
+                        }
+                    }
+                   
+
+                    const handler = content [req_uri];
+
                     if (handler) {
                         return handler(request,response);
                     }
@@ -167,6 +193,8 @@ function api_config(self,config,enabledIps) {
                 }
 
         }
+
+      
 
     });
 

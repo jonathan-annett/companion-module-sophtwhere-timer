@@ -51,6 +51,11 @@ function startLongPollPoster(reqHandler,requestPermitted,useWs) {
         }
     }
 
+    function getCookieValue(cookieName = '', cookie = '') {
+        const matches = cookie.match(`(^|[^;]+)\\s*${cookieName}\\s*=\\s*([^;]+)`)
+        return matches ? matches.pop() : ''
+      }
+
     function cleanup() {
         return new Promise(function(resolve){
             callbacks.splice(0,callbacks.length);
@@ -98,6 +103,10 @@ function startLongPollPoster(reqHandler,requestPermitted,useWs) {
             return;
         }
 
+        request.browserId = getCookieValue('browserId', request.headers.cookie);
+
+        console.log("request.browserId",request.browserId)
+
         const body = [];
         if (request.url === msg_poll_url && request.method==="POST") {
             request.on('data', function(chunk ) {
@@ -109,6 +118,9 @@ function startLongPollPoster(reqHandler,requestPermitted,useWs) {
                    // console.log({payload});
                     if (payload.send) {
                         const msg = JSON.parse(payload.send);
+                        if (request.browserId) {
+                            msg.browserId = request.browserId;
+                        } 
                         callbacks.forEach(function(fn){
                             fn(msg);
                         });
@@ -171,11 +183,10 @@ function startLongPollPoster(reqHandler,requestPermitted,useWs) {
         };
         const wss = new WebSocket.Server({ server: server })
     
-        
         wss.on('connection', onWSConnection);
     
         function onWSConnection (ws) {
-    
+        
             connections.push(ws);
     
             ws.on('message',onWsMessage);
@@ -185,7 +196,7 @@ function startLongPollPoster(reqHandler,requestPermitted,useWs) {
                 try {
         
                 const msg = JSON.parse( message.toString('utf8'));
-                    
+                  
                 callbacks.forEach(function(fn){
                     fn(msg);
                 });
@@ -213,6 +224,9 @@ function startLongPollPoster(reqHandler,requestPermitted,useWs) {
                 return;
             }
 
+            request.browserId = getCookieValue('browserId', request.headers.cookie);
+
+    
             if (request.url === msg_poll_url && request.method==="POST") {
                 const body = [];
                 request.on('data', function(chunk ) {
@@ -245,8 +259,8 @@ function startLongPollPoster(reqHandler,requestPermitted,useWs) {
                     }            
                 });
                 return;
-            } else {
-                console.log(request.url ,'vs', msg_poll_url );
+          //  } else {
+          //      console.log(request.url ,'vs', msg_poll_url );
             }
             
             if (request.url.startsWith(msg_poll_mode_url) && request.method==="POST") {

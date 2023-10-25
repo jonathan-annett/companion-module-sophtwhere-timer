@@ -9,7 +9,11 @@ window.timerAPI = {
 
 function sendTimerApiMessage( msg ) {
     if (server_conn) {
+        if (window.thisBrowserId) {
+            msg.browserId = window.thisBrowserId;
+        }
         server_conn.send(JSON.stringify(msg));
+        delete msg.browserId;
     }
 }
 

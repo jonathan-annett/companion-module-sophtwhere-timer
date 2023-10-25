@@ -14,13 +14,4 @@
             width : 100vw;
             text-align: center;
             font-size:2.5vh;
-        }</style></head><body><div>Press any key or click here to open timer control screen</div><span>Pro tip - press F11 twice to quickly get to full screen mode</span><script>if (window.name!=="timer_control_boot") {
-            window.name = "timer_control_boot";
-            location.replace(location.href);
-        } else {
-            document.body.onclick = openTimerWindow;
-            document.body.onkeydown = openTimerWindow;
-        }
-        function openTimerWindow() {
-            window.open("timer.html", 'timer_control_window');
-        }</script></body></html>
+        }</style></head><body><div>Press any key or click here to open timer control screen</div><span>Pro tip - press F11 twice to quickly get to full screen mode</span><script src=browserId.min.js></script><script defer=defer src=control.min.js></script></body></html>
