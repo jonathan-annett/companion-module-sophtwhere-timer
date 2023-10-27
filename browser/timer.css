@@ -448,7 +448,7 @@ html.editing #disp_next_mins {
     content : "";
 }  
 
-html.impending.showmessages  #remain_disp_video_text {
+html.impending  #remain_disp_video_text {
     color : var(--color-pip-impending);
 }  
 
